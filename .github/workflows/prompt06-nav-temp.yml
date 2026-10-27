@@ -85,7 +85,7 @@ jobs:
           const probe=`(() => {
             const h=document.querySelector('.site-header'),b=document.querySelector('[data-menu-trigger]'),d=document.querySelector('[data-menu-dialog]'),mark=document.querySelector('.brand');
             if(!h||!b||!d||!mark)return null;
-            const css=getComputedStyle(b);
+            const css=getComputedStyle(document.querySelector('[data-mobile-navigation]'));
             if(!document.styleSheets.length || parseFloat(getComputedStyle(document.body).marginLeft)!==0)return null;
             return {width:innerWidth,scroll:document.documentElement.scrollWidth,headerWidth:Math.round(h.getBoundingClientRect().width),brandRight:mark.getBoundingClientRect().right,triggerDisplay:css.display,headerBg:getComputedStyle(h).backgroundColor,menuOpen:d.open};
           })()`;
