@@ -36,9 +36,8 @@ const input = {
 const validate = (value) => validateEditorialIntegrity(value);
 const fail = (value, message) => assert.throws(() => validate(value), new RegExp(message));
 
-assert.deepEqual(topics, []);
-assert.deepEqual(sources, []);
-assert.deepEqual(featuredContent, base.features);
+// Test an artificial empty selection without asserting real approved registries
+// will always be empty after the editorial launch.
 assert.doesNotThrow(() => validate({ entries: [], topics, sources, features: featuredContent }));
 assert.deepEqual(resolveFeatureSections({ entries: [], topics, sources, features: featuredContent }), {},
   "Nothing to feature must render no sections, not fake latest entries");
