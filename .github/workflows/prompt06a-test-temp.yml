@@ -172,7 +172,7 @@ jobs:
               await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27,nativeVirtualKeyCode:27});
               await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27,nativeVirtualKeyCode:27});
               await waitFor(async()=>await evaluate('!document.querySelector("[data-menu-dialog]").open'),'Escape closed dialog');
-              assert(await evaluate('document.activeElement===document.querySelector("[data-menu-trigger]")'));
+              await waitFor(async()=>await evaluate('document.activeElement===document.querySelector("[data-menu-trigger]")'),'Escape focus return');
               await evaluate('document.querySelector("[data-menu-trigger]").click()');
               await evaluate('document.querySelector("[data-menu-close]").click()');
               await waitFor(async()=>await evaluate('!document.querySelector("[data-menu-dialog]").open'),'Close button');
