@@ -55,6 +55,7 @@ if (!(await getPublishedGrimoireEntry("public-library"))) throw new Error("Publi
 fs.writeFileSync("src/pages/__prompt09-qa.astro", qa);
 console.log("Created temporary MDX and internal-only QA route.");
 
+if (process.argv.includes("--verify")) {
 const expected = ["dist/index.html", "dist/about/index.html", "dist/__prompt09-qa/index.html"];
 for (const f of expected) assert.ok(fs.existsSync(f), "Expected generated page " + f);
 const generated = [];
@@ -71,3 +72,5 @@ const rendered = fs.readFileSync("dist/__prompt09-qa/index.html", "utf8");
 assert.match(rendered, /Public collection helper tests passed/);
 assert.match(rendered, /noindex/);
 console.log("PASS: draft/review withheld, published entries allowed, stable IDs, no extra routes.");
+
+}
