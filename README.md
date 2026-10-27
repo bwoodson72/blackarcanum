@@ -47,6 +47,12 @@ The `typecheck` script uses `astro check` and requires the project's `@astrojs/c
 
 Execute exactly **one approved numbered prompt** at a time, verify the changes, submit for review, and stop. Do not treat future prompts as authorization to implement their features. The project uses Astro 7, TypeScript, Tailwind CSS 4, Starwind UI, MDX, and optional Svelte islands. Styling must use centralized semantic design tokens; fonts and production art have not yet been installed.
 
+## Vercel deployment and dependency security
+
+The current frontend is **fully static**. Vercel deploys static Astro sites without `@astrojs/vercel`; the adapter was removed to eliminate an unused vulnerable dependency tree. The Vercel project is already linked to the GitHub repository. No production domain has been chosen.
+
+When a later authorized prompt introduces on-demand API routes or server rendering (for example, secure Kit form submission), reassess the **latest compatible, security-patched** Vercel adapter and rerun `npm ci`, `npm run build`, `npm run typecheck` and `npm audit --audit-level=high` before enabling those routes. Do **not** reinstall vulnerable adapter versions or rely on a forced downgrade.
+
 ## Environment configuration
 
 No production domain or integration credentials are supplied for this starter. Do not commit secrets or invent service endpoints. Deployment configuration, newsletter API keys, commerce APIs, and other environment settings belong to their respective later prompts.

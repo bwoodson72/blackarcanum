@@ -29,18 +29,5 @@ jobs:
         run: npm run build
       - name: Astro typecheck
         run: npm run typecheck
-      - name: Report dependency audit findings (non-blocking)
-        shell: bash
-        run: |
-          npm audit --json > "$RUNNER_TEMP/npm-audit.json" || true
-          node --input-type=module -e '
-            import fs from "node:fs";
-            const audit = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/npm-audit.json", "utf8"));
-            const issues = Object.entries(audit.vulnerabilities ?? {}).map(([name, data]) => ({
-              name,
-              severity: data.severity,
-              direct: data.isDirect,
-              fixAvailable: data.fixAvailable
-            }));
-            console.log(JSON.stringify({ counts: audit.metadata?.vulnerabilities, issues }, null, 2));
-          '
+      - name: Security audit (high and critical)
+        run: npm audit --audit-level=high
