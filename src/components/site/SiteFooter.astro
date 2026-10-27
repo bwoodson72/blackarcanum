@@ -1,0 +1,150 @@
+---
+import Container from "../foundation/Container.astro";
+import {
+  primaryNavigation,
+  footerInformationLinks,
+} from "../../lib/site-navigation";
+
+const currentYear = new Date().getUTCFullYear();
+// Only link to verified public destinations. The homepage is already live.
+const siteLinks = [{ label: "Home", href: "/" }, ...primaryNavigation];
+---
+
+<footer class="site-footer">
+  <Container width="wide">
+    <div class="site-footer__columns">
+      <div class="site-footer__identity">
+        <p class="site-footer__wordmark">Mystagogia</p>
+        <p class="site-footer__description">
+          An editorial project exploring esoteric history and practice.
+        </p>
+      </div>
+
+      <nav class="site-footer__navigation" aria-label="Footer navigation">
+        <h2>Explore</h2>
+        <ul>
+          {siteLinks.map(({ label, href }) => (
+            <li><a href={href}>{label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      {footerInformationLinks.length > 0 && (
+        <nav class="site-footer__navigation" aria-label="Information and policies">
+          <h2>Information</h2>
+          <ul>
+            {footerInformationLinks.map(({ label, href }) => (
+              <li><a href={href}>{label}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </div>
+
+    <div class="site-footer__bottom">
+      <span>&copy; {currentYear} Mystagogia</span>
+    </div>
+  </Container>
+</footer>
+
+<style>
+  .site-footer {
+    width: 100%;
+    margin-top: auto;
+    padding-block: var(--spacing-section) 1.5rem;
+    background: var(--color-charcoal);
+    color: var(--color-parchment);
+    border-top: 1px solid var(--color-antique-gold);
+  }
+
+  .site-footer__columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .site-footer__identity {
+    min-width: 0;
+    max-width: 26rem;
+  }
+
+  .site-footer__wordmark {
+    margin: 0;
+    color: var(--color-antique-gold);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.125rem + 1.5vw, 2rem);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .site-footer__description {
+    max-width: 35ch;
+    margin-top: 0.75rem;
+    color: var(--color-aged-paper);
+    font-family: var(--font-reading);
+    font-size: var(--text-body);
+    line-height: 1.6;
+  }
+
+  .site-footer__navigation h2 {
+    margin: 0 0 1rem;
+    color: var(--color-antique-gold);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .site-footer__navigation ul {
+    display: grid;
+    justify-items: start;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-footer__navigation a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--color-parchment);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    text-decoration: none;
+    text-underline-offset: 0.25em;
+  }
+
+  .site-footer__navigation a:hover {
+    color: var(--color-antique-gold);
+    text-decoration: underline;
+  }
+
+  .site-footer__navigation a:focus-visible {
+    outline: 3px solid var(--color-antique-gold);
+    outline-offset: 4px;
+    border-radius: var(--radius-control);
+  }
+
+  .site-footer__bottom {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-deep-brown);
+    color: var(--color-aged-paper);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+  }
+
+  @media (min-width: 768px) {
+    .site-footer__columns {
+      grid-template-columns: minmax(0, 2fr) minmax(10rem, 1fr);
+    }
+  }
+</style>

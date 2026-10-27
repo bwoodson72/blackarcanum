@@ -1,0 +1,95 @@
+---
+/**
+ * A breadcrumb trail has at least one real ancestor link and an unlinked,
+ * current-page label. This prevents generating a self-link for the current page.
+ */
+export interface BreadcrumbAncestor {
+  label: string;
+  href: `/${string}`;
+}
+
+export interface BreadcrumbCurrent {
+  label: string;
+  href?: never;
+}
+
+export type BreadcrumbTrail = readonly [
+  BreadcrumbAncestor,
+  ...BreadcrumbAncestor[],
+  BreadcrumbCurrent,
+];
+
+interface Props {
+  items: BreadcrumbTrail;
+  class?: string;
+}
+
+const { items, class: className } = Astro.props;
+const lastIndex = items.length - 1;
+---
+
+<nav aria-label="Breadcrumb" class:list={["breadcrumbs", className]}>
+  <ol>
+    {items.map((item, index) => (
+      <li>
+        {index > 0 && (
+          <span class="breadcrumbs__separator" aria-hidden="true">/</span>
+        )}
+        {index === lastIndex ? (
+          <span aria-current="page" class="breadcrumbs__current">{item.label}</span>
+        ) : (
+          <a href={item.href}>{item.label}</a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    color: var(--text-muted);
+  }
+  .breadcrumbs ol {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    gap: 0.375rem;
+  }
+  .breadcrumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--accent-interactive);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+    overflow-wrap: anywhere;
+  }
+  .breadcrumbs a:hover {
+    text-decoration-thickness: 2px;
+  }
+  .breadcrumbs a:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-control);
+  }
+  .breadcrumbs__separator {
+    color: var(--text-muted);
+    user-select: none;
+  }
+  .breadcrumbs__current {
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+  }
+</style>
