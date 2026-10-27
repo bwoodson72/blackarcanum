@@ -1,0 +1,43 @@
+---
+type Variant = "rule" | "diamond";
+
+interface Props {
+  variant?: Variant;
+  class?: string;
+}
+
+const { variant = "rule", class: className } = Astro.props;
+---
+
+<span class:list={["ornament", `ornament--${variant}`, className]} aria-hidden="true">
+  <span class="ornament__diamond"></span>
+</span>
+
+<style>
+  /* Original geometric CSS ornament, not a copied mark or licensed image. */
+  .ornament {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    vertical-align: middle;
+    color: var(--color-antique-gold);
+  }
+
+  .ornament--rule::before,
+  .ornament--rule::after {
+    content: "";
+    display: block;
+    width: clamp(1.5rem, 5vw, 3.5rem);
+    height: 1px;
+    background-color: currentColor;
+  }
+
+  .ornament__diamond {
+    display: block;
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 1px solid currentColor;
+    transform: rotate(45deg);
+  }
+</style>

@@ -1,0 +1,24 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Width = "wide" | "reading" | "full";
+type Tag = "div" | "section" | "article" | "aside";
+
+interface Props extends HTMLAttributes<"div"> {
+  /** wide = 1280px, reading = 720px, full = viewport-width with gutters. */
+  width?: Width;
+  as?: Tag;
+}
+
+const { width = "wide", as = "div", class: className, ...attrs } = Astro.props;
+const Tag = as;
+const limits: Record<Width, string> = {
+  wide: "max-w-wide",
+  reading: "max-w-reading",
+  full: "max-w-none",
+};
+---
+
+<Tag {...attrs} data-container-width={width} class:list={["mx-auto w-full px-gutter", limits[width], className]}>
+  <slot />
+</Tag>
