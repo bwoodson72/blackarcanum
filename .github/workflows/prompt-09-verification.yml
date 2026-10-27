@@ -1,0 +1,73 @@
+name: Prompt 09 verification (temporary)
+
+on:
+  push:
+    branches:
+      - feature/prompt-09-editorial-mdx-collections
+
+permissions:
+  contents: read
+
+jobs:
+  content-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.4"
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Schema and duplicate-ID unit tests
+        run: npm run test:content
+      - name: Typecheck without entries
+        run: npm run typecheck
+      - name: Build without entries
+        run: npm run build
+      - name: Verify empty collections produce no routes
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from "node:assert/strict";
+          import fs from "node:fs";
+          const expected = ["dist/index.html", "dist/about/index.html"];
+          const actual = [];
+          function walk(dir) {
+            for (const d of fs.readdirSync(dir, { withFileTypes: true })) {
+              const p = dir + "/" + d.name;
+              if (d.isDirectory()) walk(p);
+              else if (p.endsWith(".html")) actual.push(p);
+            }
+          }
+          walk("dist");
+          assert.deepEqual(actual.sort(), expected.sort());
+          console.log("PASS: empty collections, existing 2 routes only");
+          NODE
+      - name: Security audit
+        run: npm audit --audit-level=high
+      - name: Generate temporary MDX and internal-only QA route
+        run: node scripts/temp-prompt-09-fixtures.mjs
+      - name: Build integrated publication gate fixture
+        run: |
+          rm -rf .astro
+          npm run build
+          node scripts/temp-prompt-09-fixtures.mjs --verify
+      - name: Verify duplicate slug fails content sync/build
+        run: |
+          cat > src/content/library/integration-duplicate.mdx <<'MDX'
+          ---
+          slug: public-library
+          title: Colliding article
+          description: Must fail build
+          status: draft
+          ---
+          Collision regression test.
+          MDX
+          rm -rf .astro
+          if npm run build > /tmp/duplicate-slug-test.log 2>&1; then
+            echo "ERROR: Duplicate Library slug was accepted"; exit 1
+          fi
+          if ! grep -qi 'duplicate slug' /tmp/duplicate-slug-test.log; then
+            cat /tmp/duplicate-slug-test.log; echo "ERROR: Build failed for unexpected reason"; exit 1
+          fi
+          echo "PASS: duplicate slug blocked before publication"
