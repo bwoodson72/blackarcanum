@@ -1,36 +1,68 @@
-name: Inspect approved self-hosted font packages (temporary)
+name: Vendor licensed Mystagogia WOFF2 files (temporary)
 
 on:
   push:
     branches: [feature/prompt-03-self-hosted-fonts]
+    paths: [.github/workflows/prompt03-font-prep-temp.yml]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  inspect:
+  vendor:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
       - uses: actions/setup-node@v4
         with:
           node-version: 22.23.4
-      - name: Download licensed WOFF2 font bundles (no package/lock changes)
+      - name: Download pinned OFL-licensed fontsource variable families
         run: |
           npm ci
-          npm install --no-save --package-lock=false --ignore-scripts @fontsource-variable/cormorant-garamond @fontsource-variable/source-serif-4 @fontsource-variable/inter
-      - name: Inspect subsets, licenses, and package versions
+          npm install --no-save --package-lock=false --ignore-scripts \
+            @fontsource-variable/cormorant-garamond@5.3.0 \
+            @fontsource-variable/source-serif-4@5.3.1 \
+            @fontsource-variable/inter@5.3.0
+      - name: Copy only selected WOFF2 subsets and complete font licenses
         shell: bash
         run: |
           set -euo pipefail
-          for family in cormorant-garamond source-serif-4 inter; do
-            dir="node_modules/@fontsource-variable/$family"
-            echo "===== $family ====="
-            node -p "const p=require('./$dir/package.json'); p.name+' '+p.version+' '+p.license"
-            find "$dir" -maxdepth 1 -type f -printf '%f\n' | head -22
-            find "$dir/files" -maxdepth 1 -name "*latin*wght*normal.woff2" -printf '%f %s bytes\n' | sort
-            find "$dir/files" -maxdepth 1 -name "*greek*wght*normal.woff2" -printf '%f %s bytes\n' | sort
-            find "$dir/files" -maxdepth 1 -name "*latin*wght*italic.woff2" -printf '%f %s bytes\n' | sort
-            test -s "$dir/LICENSE"
-            head -n 2 "$dir/LICENSE"
+          mkdir -p public/fonts docs/font-licenses
+          copy() {
+            local family="$1" subset="$2" style="$3"
+            local filename="$family-$subset-wght-$style.woff2"
+            local source="node_modules/@fontsource-variable/$family/files/$filename"
+            test -s "$source"
+            cp "$source" "public/fonts/$filename"
+          }
+          for subset in latin latin-ext; do
+            for style in normal italic; do copy cormorant-garamond "$subset" "$style"; done
+            for style in normal italic; do copy source-serif-4 "$subset" "$style"; done
           done
+          for style in normal italic; do copy source-serif-4 greek "$style"; done
+          for subset in latin latin-ext greek greek-ext; do copy inter "$subset" normal; done
+          for family in cormorant-garamond source-serif-4 inter; do
+            cp "node_modules/@fontsource-variable/$family/LICENSE" "docs/font-licenses/$family-OFL.txt"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          fonts=sorted(Path('public/fonts').glob('*.woff2'))
+          assert len(fonts)==14,(len(fonts),[f.name for f in fonts])
+          for f in fonts:
+              assert f.read_bytes()[:4] == b'wOF2',(f.name,'not WOFF2')
+          print('Verified', len(fonts), 'WOFF2 files and 3 complete OFL licenses')
+          for f in fonts: print(f.name, f.stat().st_size)
+          PY
+          sha256sum public/fonts/*.woff2
+          git add public/fonts/ docs/font-licenses/
+          git diff --cached --stat
+      - name: Commit source files to reviewed branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'assets: vendor licensed, subsetted variable WOFF2 fonts'
+          git push origin "HEAD:refs/heads/feature/prompt-03-self-hosted-fonts"
