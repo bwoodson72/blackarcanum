@@ -1,11 +1,21 @@
 import { z } from "astro/zod";
+import { EDITORIAL_SLUG_PATTERN } from "./editorial-identifiers.ts";
+import { citationSchema } from "./editorial-citations.ts";
+import { topics } from "../data/topics.ts";
+import { sources } from "../data/sources.ts";
+import type { Topic } from "../data/topics.ts";
+import type { SourceRecord } from "../data/sources.ts";
+import {
+  validateTopicRegistry,
+  validateSourceRegistry,
+} from "./editorial-registry-validation.ts";
+
+export { EDITORIAL_SLUG_PATTERN } from "./editorial-identifiers.ts";
 
 /**
- * Public URL slugs are deliberate, lowercase, single-path segments. No slash,
- * percent encoding, whitespace or accidental filename-derived public paths.
+ * Public URL slugs are deliberate single-path segments, never derived
+ * implicitly from a filename, and cannot contain spaces, slashes, or capitals.
  */
-export const EDITORIAL_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
 const slug = z.string().regex(
   EDITORIAL_SLUG_PATTERN,
   "Use a lowercase, hyphen-separated URL slug (one segment).",
@@ -23,26 +33,78 @@ const sharedFields = z.object({
     src: z.string().trim().min(1),
     alt: z.string().trim().min(1),
   }).optional(),
-  /** Controlled registry and referential validation arrive in Prompt 10. */
+  /** References ONLY to the owner-approved topic registry. */
   topics: z.array(slug).optional(),
   /** A related article's collection and stable ID, e.g. library:article-slug. */
   relatedIds: z.array(z.string().regex(/^(library|grimoire):[a-z0-9]+(?:-[a-z0-9]+)*$/)).optional(),
+  /** Bibliographic IDs and individual citations refer to the SAME source registry. */
   sourceIds: z.array(slug).optional(),
+  citations: z.array(citationSchema).optional(),
 });
 
+export interface EditorialRegistries {
+  topics?: readonly Topic[];
+  sources?: readonly SourceRecord[];
+}
+
 /**
- * The single schema for both editorial collections. Draft and review entries
- * need no publication date, but a published entry MUST have one.
+ * Validate registries at collection load, then validate every incoming MDX
+ * article's topic/source references. Fixture injection exists for tests only;
+ * live collections use the immutable version-controlled registry exports.
  */
-export const editorialSchema = sharedFields.superRefine((entry, ctx) => {
-  if (entry.status === "published" && !entry.publishedAt) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["publishedAt"],
-      message: "publishedAt is required when status is published.",
-    });
-  }
-});
+export function createEditorialSchema(registries: EditorialRegistries = {}) {
+  const approvedTopics = registries.topics ?? topics;
+  const approvedSources = registries.sources ?? sources;
+
+  validateTopicRegistry(approvedTopics);
+  validateSourceRegistry(approvedSources);
+
+  const knownTopics = new Set(approvedTopics.map(({ id }) => id));
+  const knownSources = new Set(approvedSources.map(({ id }) => id));
+
+  return sharedFields.superRefine((entry, ctx) => {
+    if (entry.status === "published" && !entry.publishedAt) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["publishedAt"],
+        message: "publishedAt is required when status is published.",
+      });
+    }
+
+    for (const [index, topicId] of (entry.topics ?? []).entries()) {
+      if (!knownTopics.has(topicId)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["topics", index],
+          message: `Unknown topic ID "${topicId}". Approve it in src/data/topics.ts first.`,
+        });
+      }
+    }
+
+    for (const [index, sourceId] of (entry.sourceIds ?? []).entries()) {
+      if (!knownSources.has(sourceId)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["sourceIds", index],
+          message: `Unknown source ID "${sourceId}". Approve it in src/data/sources.ts first.`,
+        });
+      }
+    }
+
+    for (const [index, citation] of (entry.citations ?? []).entries()) {
+      if (!knownSources.has(citation.sourceId)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["citations", index, "sourceId"],
+          message: `Unknown citation source ID "${citation.sourceId}". Approve it first.`,
+        });
+      }
+    }
+  });
+}
+
+/** Both editorial collections use exactly these approved empty registries. */
+export const editorialSchema = createEditorialSchema();
 
 /**
  * Enforce explicit, unique slugs per collection *before* Astro inserts an
