@@ -17,3 +17,16 @@ Use BaseLayout's optional `breadcrumbs={...}` prop **only on real nested pages w
 Footer link targets have a minimum height of 44px with an antique-gold 3px focus-visible outline and discernible labels. Its text color is parchment or aged paper on charcoal, not low-contrast tiny gold text on parchment. Breadcrumb links use contextual interactive ink on a light surface and a visible focus ring. The footer is part of the existing native page crossfade, with no additional animations.
 
 **Acceptance checks:** `npm ci`, `npm run typecheck`, `npm run build`, `npm audit --audit-level=high`; inspect generated markup and nav landmarks; check links resolve to real routes; verify 375px/768px/1440px responsive column counts and no overflow; verify a temporary **noindex** nested-page fixture renders Home → parent → current and keyboard focus contrast in a real browser. Remove any temporary fixture and one-time test workflow before PR review. Do not implement Prompt 08.
+
+## Prompt 07 validation record — October 27, 2026
+
+[GitHub Actions run 40590247521](https://github.com/bwoodson72/blackarcanum/actions/runs/40590247521) — **passed**:
+
+- `npm ci`; `npm run typecheck` (**0 errors / 0 warnings**); `npm run build`; `npm audit --audit-level=high` (**0 vulnerabilities**).
+- Three generated routes tested: the existing `/` homepage and two **temporary, non-indexed** nested fixtures `/chrome-parent/` and `/chrome-parent/child/` created by CI only. They do not appear in the PR diff or production site.
+- On all three pages, one header, one footer, one main landmark; no invented contact/privacy/terms links, no owner identity, and valid footer Home links. The homepage has no breadcrumbs; nested fixtures show ordered trails with an unlinked `aria-current="page"` ending.
+- Headless Chrome: at **375px**, footer grid = **1 column**, no horizontal scroll; at **768px / 1440px**, footer grid = **2 columns**, no overflow.
+- Real keyboard Tab reached the footer's Home link. Computed text contrast **15.04:1** against charcoal, focus ring **7.62:1** against charcoal, with a solid **3px** outline.
+- Chrome confirmed that a breadcrumb ancestor URL is correctly focusable and points to an existing tested parent route.
+
+The fixture routes and one-time workflow were not committed to the final implementation. Only Chrome was exercised; browser-specific visual QA on Firefox and Safari remains for later whole-site review.
