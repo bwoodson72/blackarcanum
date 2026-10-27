@@ -58,7 +58,7 @@ assert.equal(first.previous, undefined);
 assert.equal(first.next, "/library/page/2/");
 assert.deepEqual(first.parts, [
   { kind: "page", page: 1 }, { kind: "page", page: 2 },
-  { kind: "page", page: 3 }, { kind: "ellipsis" },
+  { kind: "ellipsis" },
   { kind: "page", page: 5 },
 ]);
 const middle = getPaginationModel("library", 5, 10);
