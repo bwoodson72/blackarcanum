@@ -1,5 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { checkEditorialBuild } from "../lib/editorial-build-qa";
+
+// Every production build validates all editorial references and curated IDs.
+// The homepage stays a noindex project shell until its own implementation step.
+await checkEditorialBuild();
 ---
 
 <BaseLayout noindex>
