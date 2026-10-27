@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LibraryArchive from "../../components/editorial/LibraryArchive.astro";
+import { getPublishedLibraryEntries } from "../../lib/editorial-public";
+import { getArchivePage } from "../../lib/editorial-archive";
+import { toPublishedArticle } from "../../lib/editorial-presentation";
+
+export const prerender = true;
+
+const page = getArchivePage(await getPublishedLibraryEntries());
+const articles = page.entries.flatMap((entry) => {
+  const article = toPublishedArticle({ collection: "library", entry });
+  return article ? [article] : [];
+});
+---
+
+<BaseLayout
+  title="The Library"
+  description={page.totalItems === 0
+    ? "An introduction to Mystagogia's Library and its approach to source-led esoteric research."
+    : "Browse source-led research into esoteric texts, histories, and traditions in Mystagogia's Library."}
+  noindex={page.totalItems === 0}
+>
+  <LibraryArchive
+    articles={articles}
+    currentPage={page.currentPage}
+    totalPages={page.totalPages}
+    totalItems={page.totalItems}
+  />
+</BaseLayout>

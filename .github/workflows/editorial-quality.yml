@@ -1,0 +1,37 @@
+name: Editorial Quality
+
+on:
+  push:
+    branches:
+      - master
+      - "feature/**"
+
+permissions:
+  contents: read
+
+jobs:
+  editorial:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.4"
+          cache: npm
+      - name: Clean dependency install
+        run: npm ci
+      - name: Schema, integrity, presentation, archive tests and production build
+        run: npm run qa:content
+      - name: Astro and TypeScript diagnostics
+        run: npm run typecheck
+      - name: Security audit
+        run: npm audit --audit-level=high
+      - name: Empty Library responsive and accessibility QA (Prompt 13 only)
+        if: github.ref == 'refs/heads/feature/prompt-13-library-hub'
+        run: node scripts/test-library-browser.mjs --empty
+      - name: Isolated 0/1/12/13/25-entry MDX builds (Prompt 13 only)
+        if: github.ref == 'refs/heads/feature/prompt-13-library-hub'
+        run: node scripts/test-library-build-fixtures.mjs
+      - name: Published archive responsive and accessibility QA (Prompt 13 only)
+        if: github.ref == 'refs/heads/feature/prompt-13-library-hub'
+        run: node scripts/test-library-browser.mjs --full
