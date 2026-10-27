@@ -13,7 +13,8 @@
     "typecheck": "astro check",
     "test:content": "node --experimental-strip-types scripts/test-editorial-schema.mjs",
     "test:editorial": "node --experimental-strip-types scripts/test-editorial-qa.mjs",
-    "qa:content": "npm run test:content && npm run test:editorial && npm run build"
+    "qa:content": "npm run test:content && npm run test:editorial && npm run test:presentation && npm run build",
+    "test:presentation": "node --experimental-strip-types scripts/test-editorial-presentation.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.5",
