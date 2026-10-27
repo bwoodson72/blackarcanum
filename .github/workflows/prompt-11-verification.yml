@@ -1,0 +1,123 @@
+name: Prompt 11 verification (temporary)
+
+on:
+  push:
+    branches:
+      - feature/prompt-11-editorial-feature-qa
+
+permissions:
+  contents: read
+
+jobs:
+  verify-editorial-features:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.4"
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Repeatable content QA command (empty data)
+        run: npm run qa:content
+      - name: Typecheck and security audit
+        run: |
+          npm run typecheck
+          npm audit --audit-level=high
+      - name: Check empty public output is unchanged
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          import assert from "node:assert/strict";
+          const routes = [];
+          function walk(folder) {
+            for (const d of fs.readdirSync(folder, { withFileTypes: true })) {
+              const p = folder + "/" + d.name;
+              if (d.isDirectory()) walk(p);
+              else if (p.endsWith(".html")) routes.push(p);
+            }
+          }
+          walk("dist");
+          assert.deepEqual(routes.sort(), ["dist/about/index.html", "dist/index.html"]);
+          const home = fs.readFileSync("dist/index.html", "utf8");
+          assert.doesNotMatch(home, /featured-library|featured-grimoire|feature-card|test-library/);
+          console.log("PASS: empty registries generate no cards or extra public routes");
+          NODE
+      - name: Create ephemeral published fixtures and select actual IDs
+        run: |
+          cat > src/content/library/qa-library.mdx <<'MDX'
+          ---
+          slug: test-library
+          title: Fixture Library
+          description: Test-only research entry
+          status: published
+          publishedAt: 2026-10-03
+          updatedAt: 2026-10-04
+          relatedIds:
+            - grimoire:test-grimoire
+          ---
+          Test only.
+          MDX
+          cat > src/content/grimoire/qa-grimoire.mdx <<'MDX'
+          ---
+          slug: test-grimoire
+          title: Fixture Grimoire
+          description: Test-only method entry
+          status: published
+          publishedAt: 2026-10-03
+          ---
+          Test only.
+          MDX
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const p = "src/data/features.ts";
+          let source = fs.readFileSync(p, "utf8");
+          source = source.replace("homepageLibrary: [],", 'homepageLibrary: ["test-library"],');
+          source = source.replace("primaryGrimoire: null,", 'primaryGrimoire: "test-grimoire",');
+          fs.writeFileSync(p, source);
+          NODE
+          rm -rf .astro
+          npm run build
+          test ! -e dist/library/test-library/index.html
+          test ! -e dist/grimoire/test-grimoire/index.html
+          echo "PASS: published curated IDs pass build, no article route introduced"
+      - name: Unpublished featured ID must break build
+        run: |
+          sed -i 's/status: published/status: review/' src/content/grimoire/qa-grimoire.mdx
+          rm -rf .astro
+          if npm run build > /tmp/feature-unpublished.log 2>&1; then
+            echo "FAIL: unpublished feature accepted"; exit 1
+          fi
+          grep -q 'not published' /tmp/feature-unpublished.log || { cat /tmp/feature-unpublished.log; exit 1; }
+          echo "PASS: draft/review feature rejected"
+          sed -i 's/status: review/status: published/' src/content/grimoire/qa-grimoire.mdx
+      - name: Unknown featured ID must break build
+        run: |
+          sed -i 's/"test-library"/"missing-feature"/' src/data/features.ts
+          rm -rf .astro
+          if npm run build > /tmp/feature-missing.log 2>&1; then
+            echo "FAIL: missing featured ID accepted"; exit 1
+          fi
+          grep -q 'does not exist' /tmp/feature-missing.log || { cat /tmp/feature-missing.log; exit 1; }
+          echo "PASS: missing feature rejected"
+          sed -i 's/"missing-feature"/"test-library"/' src/data/features.ts
+      - name: Unknown related reference must break build
+        run: |
+          sed -i 's/grimoire:test-grimoire/grimoire:missing-related/' src/content/library/qa-library.mdx
+          rm -rf .astro
+          if npm run build > /tmp/missing-related.log 2>&1; then
+            echo "FAIL: unknown related ID accepted"; exit 1
+          fi
+          grep -q 'unknown related article' /tmp/missing-related.log || { cat /tmp/missing-related.log; exit 1; }
+          echo "PASS: unknown related article rejected"
+          sed -i 's/grimoire:missing-related/grimoire:test-grimoire/' src/content/library/qa-library.mdx
+      - name: Invalid update chronology must break build
+        run: |
+          sed -i 's/updatedAt: 2026-10-04/updatedAt: 2026-09-30/' src/content/library/qa-library.mdx
+          rm -rf .astro
+          if npm run build > /tmp/reversed-date.log 2>&1; then
+            echo "FAIL: reversed date order accepted"; exit 1
+          fi
+          grep -q 'earlier than publishedAt' /tmp/reversed-date.log || { cat /tmp/reversed-date.log; exit 1; }
+          echo "PASS: reversed publication/update dates rejected"
