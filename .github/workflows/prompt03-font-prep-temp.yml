@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat > src/pages/__font_probe.astro <<'ASTRO'
+          cat > src/pages/font-probe.astro <<'ASTRO'
           ---
           import Layout from '../layouts/Layout.astro';
           ---
@@ -88,7 +88,7 @@ jobs:
           server=$!
           trap 'kill "$server" || true' EXIT
           for i in $(seq 1 20); do
-            if curl -fsS http://127.0.0.1:8765/__font_probe/ -o /tmp/font-probe.html; then break; fi
+            if curl -fsS http://127.0.0.1:8765/font-probe/ -o /tmp/font-probe.html; then break; fi
             sleep 0.5
           done
           test -s /tmp/font-probe.html
@@ -99,10 +99,10 @@ jobs:
           echo 'FONT_HTTP_PASS: three local faces served over HTTP with identical bytes'
           if command -v google-chrome >/dev/null 2>&1; then
             google-chrome --version
-            google-chrome --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=15000 --dump-dom http://127.0.0.1:8765/__font_probe/ > /tmp/font-browser.html 2>/tmp/font-browser.err
+            google-chrome --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=15000 --dump-dom http://127.0.0.1:8765/font-probe/ > /tmp/font-browser.html 2>/tmp/font-browser.err
             grep 'FONT_AUDIT_PASS' /tmp/font-browser.html
             echo 'FONT_BROWSER_PASS: Chrome loaded all three families and computed styles match roles'
           else
             echo 'FONT_BROWSER_UNAVAILABLE: browser-runner check was not performed'
           fi
-          rm src/pages/__font_probe.astro
+          rm src/pages/font-probe.astro
