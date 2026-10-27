@@ -49,7 +49,7 @@ Execute exactly **one approved numbered prompt** at a time, verify the changes, 
 
 ## Vercel deployment and dependency security
 
-The Astro frontend includes `@astrojs/vercel@11.0.16` (compatible with Astro 7). The existing site builds as static pages by default, but future approved on-demand API endpoints can use `export const prerender = false` without switching adapters. The Vercel project is linked to this GitHub repository. The public domain has not been chosen.
+The Astro frontend includes `@astrojs/vercel@11.0.16` (compatible with Astro 7). The existing site builds in Astro's default static mode. When approved on-demand endpoints are added, configure the appropriate server output (for example, `output: 'server'`), use `export const prerender = false` for server routes, and explicitly prerender editorial pages as needed. A temporary on-demand endpoint was compiled successfully into a Vercel function in CI; **no server endpoint is currently deployed**. The Vercel project is linked to this GitHub repository. The public domain has not been chosen.
 
 The current Vercel adapter's transitive dependency tree pins vulnerable versions of `path-to-regexp@6.1.0` and `zod@4.1.11`. The root `package.json` uses **narrow overrides** to select patched releases within the same major version specifically for `@vercel/routing-utils` and `@vercel/cli-config`. These overrides are deliberately temporary compatibility maintenance; review them when Vercel upstream updates its pinned dependencies, rather than leaving them indefinitely or applying `npm audit fix --force` (which proposed an incompatible adapter downgrade).
 
