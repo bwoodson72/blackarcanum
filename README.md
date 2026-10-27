@@ -1,46 +1,56 @@
-# Astro Starter Kit: Basics
+# Mystagogia — Astro Frontend
+
+This repository (`blackarcanum`) contains the **Astro frontend starter** for **Mystagogia**, an editorial website with separate Library and Grimoire sections and a future Shop. The site has **not** been implemented yet. Mystagogia is the final public brand; the production domain is still undecided.
+
+The Medusa v2 commerce backend is maintained as a **separate repository and deployment**. Do not add Medusa to this Astro project or create a monorepo.
+
+## Prerequisites
+
+- Node.js **22.23.4 or later**, consistent with `package.json`.
+- npm (the project uses the committed npm lockfile).
+
+## Local development
+
+From the repository root:
 
 ```sh
-npm create astro@latest -- --template basics
+npm ci
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Astro's development server ordinarily runs at `http://localhost:4321`.
 
-## 🚀 Project Structure
+## Repeatable checks
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```sh
+npm ci            # Clean install using package-lock.json
+npm run build     # Production Astro build
+npm run typecheck # Astro diagnostics for .astro, TypeScript and framework files
+npm run preview   # Preview local production build
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+The `typecheck` script uses `astro check` and requires the project's `@astrojs/check` development dependency. The lockfile must remain synchronized with `package.json`; use a clean `npm ci` when verifying changes.
 
-## 🧞 Commands
+## Current structure
 
-All commands are run from the root of the project, from a terminal:
+- `src/pages/index.astro` — untouched starter homepage (not the final Mystagogia design).
+- `src/layouts/Layout.astro` — starter HTML shell.
+- `src/styles/starwind.css` — currently contains Starwind's initial theme.
+- `starwind.config.json` — Starwind is initialized; no individual components are installed.
+- `docs/SPECIFICATION.md` — approved product/design/architecture requirements.
+- `docs/DESIGN_SYSTEM.md` — semantic token and typography standards.
+- `docs/design-references/` — approved visual previews; not production art assets.
+- `docs/IMPLEMENTATION_PROMPTS.md` — sequential, separately authorized development tasks.
+- `AGENTS.md` — coding-agent execution rules.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Implementation process
 
-## 👀 Want to learn more?
+Execute exactly **one approved numbered prompt** at a time, verify the changes, submit for review, and stop. Do not treat future prompts as authorization to implement their features. The project uses Astro 7, TypeScript, Tailwind CSS 4, Starwind UI, MDX, and optional Svelte islands. Styling must use centralized semantic design tokens; fonts and production art have not yet been installed.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Environment configuration
+
+No production domain or integration credentials are supplied for this starter. Do not commit secrets or invent service endpoints. Deployment configuration, newsletter API keys, commerce APIs, and other environment settings belong to their respective later prompts.
+
+## Baseline validation
+
+Prompt 01 establishes dependency reproducibility, a production build, and Astro diagnostics. The run results and any unresolved blockers should be recorded in the Prompt 01 review/PR; a README alone is **not** evidence that commands passed.

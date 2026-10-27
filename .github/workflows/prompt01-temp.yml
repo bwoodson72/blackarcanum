@@ -1,0 +1,33 @@
+name: Generate Astro check lockfile (temporary)
+
+on:
+  push:
+    branches:
+      - chore/prompt-01-baseline
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node 22.23.4
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.4
+      - name: Resolve lockfile for Astro check
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Verify clean install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Typecheck Astro
+        run: npm run typecheck
+      - name: Save resolved lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: prompt01-lockfile
+          path: package-lock.json
