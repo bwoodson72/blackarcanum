@@ -1,0 +1,36 @@
+name: Inspect approved self-hosted font packages (temporary)
+
+on:
+  push:
+    branches: [feature/prompt-03-self-hosted-fonts]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.4
+      - name: Download licensed WOFF2 font bundles (no package/lock changes)
+        run: |
+          npm ci
+          npm install --no-save --package-lock=false --ignore-scripts @fontsource-variable/cormorant-garamond @fontsource-variable/source-serif-4 @fontsource-variable/inter
+      - name: Inspect subsets, licenses, and package versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          for family in cormorant-garamond source-serif-4 inter; do
+            dir="node_modules/@fontsource-variable/$family"
+            echo "===== $family ====="
+            node -p "const p=require('./$dir/package.json'); p.name+' '+p.version+' '+p.license"
+            find "$dir" -maxdepth 1 -type f -printf '%f\n' | head -22
+            find "$dir/files" -maxdepth 1 -name "*latin*wght*normal.woff2" -printf '%f %s bytes\n' | sort
+            find "$dir/files" -maxdepth 1 -name "*greek*wght*normal.woff2" -printf '%f %s bytes\n' | sort
+            find "$dir/files" -maxdepth 1 -name "*latin*wght*italic.woff2" -printf '%f %s bytes\n' | sort
+            test -s "$dir/LICENSE"
+            head -n 2 "$dir/LICENSE"
+          done
