@@ -1,0 +1,260 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/foundation/Container.astro";
+import Ornament from "../components/foundation/Ornament.astro";
+---
+
+<BaseLayout
+  title="About"
+  description="Discover Mystagogia's approach to source-led esoteric research in the Library and original methods and observations in the Grimoire."
+>
+  <section class="about-hero" aria-labelledby="about-title">
+    <Container width="wide" class="about-hero__inner">
+      <p class="about-eyebrow about-hero__eyebrow">Research · Tradition · Practice</p>
+      <h1 id="about-title">About Mystagogia</h1>
+      <p class="about-hero__lead">
+        An editorial project devoted to the study of esoteric traditions
+        and the thoughtful exploration of practical magic.
+      </p>
+      <Ornament variant="rule" />
+    </Container>
+  </section>
+
+  <section class="about-introduction" aria-labelledby="about-purpose">
+    <Container width="reading">
+      <p class="about-eyebrow">The purpose</p>
+      <h2 id="about-purpose">Two approaches to the hidden arts.</h2>
+      <p>
+        Mystagogia brings historical inquiry and contemporary practice into the
+        same conversation without confusing one for the other. Its writing
+        follows two complementary paths: the Library and the Grimoire.
+      </p>
+    </Container>
+  </section>
+
+  <section class="about-paths" aria-labelledby="about-paths-title">
+    <Container width="wide">
+      <h2 id="about-paths-title" class="about-paths__heading">
+        The Library &amp; the Grimoire
+      </h2>
+      <div class="about-paths__grid">
+        <article class="about-path">
+          <p class="about-path__eyebrow">Source-led inquiry</p>
+          <h3>The Library</h3>
+          <p>
+            The Library is for research into historical texts, traditions, and
+            ideas. Its purpose is to trace claims to identifiable sources,
+            distinguish primary evidence from later interpretation, and give
+            readers the context to explore further.
+          </p>
+        </article>
+        <article class="about-path">
+          <p class="about-path__eyebrow">Applied exploration</p>
+          <h3>The Grimoire</h3>
+          <p>
+            The Grimoire is for methods, adaptations, experiments, and firsthand
+            observations. It separates a practice's source or inspiration from
+            what was actually tried, experienced, and interpreted.
+          </p>
+        </article>
+      </div>
+    </Container>
+  </section>
+
+  <section class="about-reading" aria-labelledby="about-reading-title">
+    <Container width="reading">
+      <p class="about-eyebrow">An editorial distinction</p>
+      <h2 id="about-reading-title">What a source says. What a practitioner observes.</h2>
+      <p>
+        A historical account, a scholarly interpretation, and a personal
+        experience are different kinds of material. Mystagogia aims to identify
+        each clearly, attribute the work of others, and make room for practical
+        investigation without presenting it as historical fact.
+      </p>
+
+      <div class="about-reading__next" aria-labelledby="about-navigation-title">
+        <h2 id="about-navigation-title">Finding your way</h2>
+        <p>
+          Begin with the Library for context and sources, or the Grimoire for
+          methods and observations. Each section will appear in the site's
+          navigation when its published material is available.
+        </p>
+        <a href="/" class="about-home-link">
+          Return to the homepage <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-hero {
+    padding-block: var(--spacing-section);
+    background: var(--color-charcoal);
+    border-bottom: 1px solid var(--color-antique-gold);
+    color: var(--color-parchment);
+  }
+
+  .about-hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    max-width: 75rem;
+  }
+
+  .about-eyebrow,
+  .about-path__eyebrow {
+    margin: 0;
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .about-hero__eyebrow {
+    color: var(--color-antique-gold);
+  }
+
+  .about-hero h1 {
+    max-width: 16ch;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 600;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  .about-hero__lead {
+    max-width: 43ch;
+    margin: 0;
+    color: var(--color-aged-paper);
+    font-family: var(--font-reading);
+    font-size: var(--text-lead);
+    line-height: 1.5;
+  }
+
+  .about-introduction,
+  .about-reading {
+    padding-block: var(--spacing-section);
+    background: var(--color-parchment);
+  }
+
+  .about-introduction .about-eyebrow,
+  .about-reading .about-eyebrow {
+    color: var(--color-sage-ink);
+  }
+
+  .about-introduction h2,
+  .about-reading h2 {
+    margin: 0.75rem 0 1.25rem;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .about-introduction p:not(.about-eyebrow),
+  .about-reading p:not(.about-eyebrow) {
+    color: var(--text-primary);
+    font-family: var(--font-reading);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+
+  .about-paths {
+    padding-block: var(--spacing-section);
+    background: var(--color-aged-paper);
+    border-block: 1px solid var(--color-border-paper);
+  }
+
+  .about-paths__heading {
+    margin: 0 0 clamp(1.75rem, 4vw, 3rem);
+    text-align: center;
+    color: var(--color-charcoal);
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  .about-paths__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .about-path {
+    min-width: 0;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1px solid var(--color-border-paper);
+    border-top: 3px solid var(--color-sage-ink);
+    background: var(--color-parchment);
+  }
+
+  .about-path__eyebrow {
+    color: var(--color-sage-ink);
+  }
+
+  .about-path h3 {
+    margin: 0.75rem 0 1rem;
+    color: var(--color-charcoal);
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .about-path p:not(.about-path__eyebrow) {
+    max-width: 55ch;
+    color: var(--color-charcoal);
+    font-family: var(--font-reading);
+    font-size: var(--text-body);
+    line-height: 1.65;
+  }
+
+  .about-reading__next {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: clamp(1.5rem, 3vw, 2rem);
+    border-top: 1px solid var(--color-border-paper);
+  }
+
+  .about-reading__next h2 {
+    margin-top: 0;
+  }
+
+  .about-home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    margin-top: 0.5rem;
+    color: var(--accent-interactive);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .about-home-link:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .about-home-link:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-control);
+  }
+
+  @media (min-width: 768px) {
+    .about-paths__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
