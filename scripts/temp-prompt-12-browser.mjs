@@ -92,7 +92,7 @@ try {
         updatedDates: document.querySelectorAll("#qa-metadata time").length,
         headingCount: variants.filter((article) => article.querySelector("h3 a")).length,
         allLinksValid: anchors.every((a) => { const u = a.getAttribute("href"); return (u.startsWith("/library/") || u.startsWith("/grimoire/")) && u.endsWith("/"); }),
-        controlMinHeight: Math.min(...[...pager.querySelectorAll("a")].map((a) => a.getBoundingClientRect().height)),
+        controlMinHeight: Math.min(...[...pager.querySelectorAll("a.pagination__control")].map((a) => a.getBoundingClientRect().height)),
       };
     })()`);
     console.log("CHROME", width, JSON.stringify(report));
