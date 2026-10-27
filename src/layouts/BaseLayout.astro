@@ -1,6 +1,9 @@
 ---
 import "@/styles/global.css";
 import SiteHeader from "../components/site/SiteHeader.astro";
+import SiteFooter from "../components/site/SiteFooter.astro";
+import Breadcrumbs from "../components/site/Breadcrumbs.astro";
+import type { BreadcrumbTrail } from "../components/site/Breadcrumbs.astro";
 
 interface Props {
   /** Page-specific heading/title. The brand-only title is used by default. */
@@ -19,6 +22,8 @@ interface Props {
    * when astro.config.mjs has a real, approved `site` value.
    */
   canonical?: string;
+  /** Optional accurate trail for a published nested route. */
+  breadcrumbs?: BreadcrumbTrail;
 }
 
 const SITE_NAME = "Mystagogia";
@@ -31,6 +36,7 @@ const {
   image,
   noindex = false,
   canonical,
+  breadcrumbs,
 } = Astro.props;
 
 const pageTitle = title === SITE_NAME ? SITE_NAME : `${title} | ${SITE_NAME}`;
@@ -94,8 +100,14 @@ const socialImage = absoluteWebUrl(image);
     <a class="skip-link" href="#main-content">Skip to content</a>
     <SiteHeader />
     <main id="main-content" tabindex="-1">
+      {breadcrumbs && (
+        <div class="mx-auto w-full max-w-wide px-gutter pt-4">
+          <Breadcrumbs items={breadcrumbs} />
+        </div>
+      )}
       <slot />
     </main>
+    <SiteFooter />
   </body>
 </html>
 
