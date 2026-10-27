@@ -1,0 +1,184 @@
+---
+import ArticleMetadata from "./ArticleMetadata.astro";
+import type { PublishedArticleView } from "../../lib/editorial-presentation";
+import { articlePath } from "../../lib/editorial-presentation";
+
+export type ArticleCardVariant = "standard" | "featured" | "editorial" | "compact";
+
+interface Props {
+  article: PublishedArticleView;
+  variant?: ArticleCardVariant;
+  /** The surrounding document's heading hierarchy controls the card heading. */
+  headingLevel?: "h2" | "h3";
+  class?: string;
+}
+
+const {
+  article,
+  variant = "standard",
+  headingLevel = "h3",
+  class: className,
+} = Astro.props;
+
+const Heading = headingLevel;
+// Never render arbitrary URLs as editorial article links.
+const href = articlePath(article.collection, article.id);
+const image = article.image?.src?.trim() && article.image.alt?.trim()
+  ? article.image
+  : undefined;
+const excerpt = article.excerpt?.trim();
+---
+
+<article class:list={["article-card", `article-card--${variant}`, className]}>
+  {image && (
+    <div class="article-card__media">
+      <img
+        src={image.src}
+        alt={image.alt}
+        loading="lazy"
+        decoding="async"
+        width="720"
+        height="480"
+      />
+    </div>
+  )}
+  <div class="article-card__content">
+    <ArticleMetadata
+      collection={article.collection}
+      publishedAt={article.publishedAt}
+      updatedAt={article.updatedAt}
+    />
+    <Heading class="article-card__title">
+      <a href={href} class="article-card__link">{article.title}</a>
+    </Heading>
+    {excerpt && variant !== "compact" && <p class="article-card__excerpt">{excerpt}</p>}
+  </div>
+</article>
+
+<style>
+  .article-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 100%;
+    overflow-wrap: anywhere;
+    background: var(--color-parchment);
+    color: var(--color-charcoal);
+    border: 1px solid var(--color-border-paper);
+    border-radius: var(--radius-card);
+    transition: box-shadow 160ms ease, border-color 160ms ease;
+  }
+  .article-card:hover {
+    border-color: var(--color-sage-ink);
+    box-shadow: var(--shadow-panel);
+  }
+  .article-card:focus-within {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+  .article-card__media {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--color-aged-paper);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
+  .article-card__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    min-width: 0;
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+  }
+  .article-card__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 1.35rem + 0.8vw, 2.125rem);
+    font-weight: 600;
+    line-height: 1.17;
+  }
+  .article-card__link {
+    color: var(--color-charcoal);
+    text-decoration: none;
+    text-underline-offset: 0.17em;
+  }
+  .article-card__link:hover {
+    color: var(--color-oxide-red);
+    text-decoration: underline;
+  }
+  .article-card__link:focus-visible {
+    outline: none; /* A strong ring surrounds the whole card on focus-within. */
+  }
+  .article-card__excerpt {
+    margin: 0;
+    color: var(--color-muted-ink);
+    font-family: var(--font-reading);
+    font-size: var(--text-body);
+    line-height: 1.58;
+  }
+  .article-card--featured {
+    border-top: 3px solid var(--color-antique-gold);
+    background: var(--color-aged-paper);
+  }
+  .article-card--featured .article-card__title {
+    font-size: clamp(2rem, 1.5rem + 1.5vw, 3rem);
+  }
+  .article-card--editorial {
+    border: 0;
+    border-left: 3px solid var(--color-sage-ink);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .article-card--editorial .article-card__media {
+    border-radius: 0;
+  }
+  .article-card--editorial:hover {
+    box-shadow: none;
+  }
+  .article-card--compact {
+    border: 0;
+    border-bottom: 1px solid var(--color-border-paper);
+    border-radius: 0;
+    min-height: auto;
+    background: transparent;
+    box-shadow: none;
+  }
+  .article-card--compact:hover {
+    box-shadow: none;
+  }
+  .article-card--compact .article-card__content {
+    gap: 0.35rem;
+    padding-block: 1rem;
+    padding-inline: 0;
+  }
+  .article-card--compact .article-card__title {
+    font-size: clamp(1.375rem, 1.2rem + 0.5vw, 1.75rem);
+  }
+  .article-card--compact .article-card__media {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .article-card--featured:has(.article-card__media) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      align-items: stretch;
+    }
+    .article-card--featured .article-card__media {
+      aspect-ratio: auto;
+      min-height: 18rem;
+      border-radius: var(--radius-card) 0 0 var(--radius-card);
+    }
+    .article-card--featured .article-card__content {
+      justify-content: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .article-card { transition: none; }
+  }
+</style>

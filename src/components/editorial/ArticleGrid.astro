@@ -1,0 +1,46 @@
+---
+import ArticleCard from "./ArticleCard.astro";
+import type { ArticleCardVariant } from "./ArticleCard.astro";
+import type { PublishedArticleView } from "../../lib/editorial-presentation";
+
+interface Props {
+  articles: readonly PublishedArticleView[];
+  variant?: ArticleCardVariant;
+  headingLevel?: "h2" | "h3";
+  class?: string;
+}
+
+const { articles, variant = "standard", headingLevel = "h3", class: className } = Astro.props;
+---
+
+{articles.length > 0 && (
+  <ul class:list={["article-grid", className]}>
+    {articles.map((article) => (
+      <li class="article-grid__item">
+        <ArticleCard article={article} variant={variant} headingLevel={headingLevel} />
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .article-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacing-article-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .article-grid__item { min-width: 0; }
+  @media (min-width: 768px) {
+    .article-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1280px) {
+    .article-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
