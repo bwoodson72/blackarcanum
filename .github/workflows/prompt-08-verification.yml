@@ -63,3 +63,5 @@ jobs:
           assert.match(home.html, /href="\/about\//);
           console.log("PASS: About route, metadata, editorial distinction, links, and unpublished-route gate");
           NODE
+      - name: Responsive and mobile navigation Chrome smoke
+        run: node scripts/temp-prompt-08-browser-check.mjs
