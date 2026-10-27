@@ -5,8 +5,9 @@ This repository is the **Astro frontend** for Mystagogia (GitHub repository name
 ## Read before making changes
 1. [docs/SPECIFICATION.md](docs/SPECIFICATION.md) — approved Mystagogia specification v1.2: **what** the project must accomplish.
 2. [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) — concise reference for tokens, type, responsive design and images.
-3. [docs/IMPLEMENTATION_PROMPTS.md](docs/IMPLEMENTATION_PROMPTS.md) — ordered implementation prompts: **what is authorized now**.
-4. Read the existing project configuration and affected source files before edits.
+3. [docs/IMPLEMENTATION_PROMPTS.md](docs/IMPLEMENTATION_PROMPTS.md) — **41** sequential tasks (v1.1); only the task explicitly authorized now may be executed.
+4. [docs/design-references/README.md](docs/design-references/README.md) — approved visual references and production-art restrictions. Inspect relevant image previews for visual tasks.
+5. Read the existing project configuration and affected source files before edits.
 
 **Execution rule:** Work on **only one explicitly assigned numbered prompt at a time**. The existence of later prompts is not permission to execute them. Do not proceed automatically, deploy, publish content, purchase services, create artwork, or enable payments without express authorization. After the assigned prompt, run relevant checks, summarize changes/results/limitations, and **STOP** for review.
 

@@ -54,3 +54,7 @@ These values are **initial references**, not blanket text colors. Verify accessi
 
 ## Implementation checks
 Confirm tokens rather than hardcoded brand values; typography roles; responsive behavior; keyboard/focus support; contrast; no horizontal page overflow; and reduced-motion behavior. Record checks and changed files in the prompt handoff.
+
+## Visual reference files
+
+The six approved, optimized preview images and their approval hierarchy are catalogued in [docs/design-references/README.md](./design-references/README.md). Inspect the applicable image before building visual components. The apparel-inclusive Shop mockup supersedes the earlier books-first concept for current merchandising. Images are references only, not production artwork.
