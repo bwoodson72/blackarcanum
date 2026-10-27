@@ -35,6 +35,21 @@ jobs:
             image="https://example.org/preview.webp"
           >
             <h1>Temporary override route</h1>
+            <script is:inline>
+              window.addEventListener("load", () => {
+                const skip = document.querySelector("a.skip-link");
+                skip.focus();
+                const focused = document.activeElement === skip;
+                skip.click();
+                setTimeout(() => {
+                  document.body.dataset.skipResult =
+                    focused &&
+                    location.hash === "#main-content" &&
+                    document.activeElement?.id === "main-content"
+                      ? "pass" : "fail";
+                }, 40);
+              });
+            </script>
           </BaseLayout>
           ASTRO
           npm run build
@@ -105,14 +120,11 @@ jobs:
           done
           test -s /tmp/base-home.html
           if command -v google-chrome >/dev/null 2>&1; then
-            cat >/tmp/check_skip.mjs <<'JS'
-            // Dynamic browser test via Chrome DevTools Protocol is optional;
-            // generated DOM + direct target check are required above.
-            JS
-            google-chrome --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=4000 --dump-dom http://127.0.0.1:8765/ >/tmp/rendered.html 2>/tmp/chrome.err
+            google-chrome --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=5000 --dump-dom http://127.0.0.1:8765/metadata-probe/ >/tmp/rendered.html 2>/tmp/chrome.err
             grep -q 'href="#main-content"' /tmp/rendered.html
             grep -q 'id="main-content"' /tmp/rendered.html
-            echo 'LAYOUT_BROWSER_DOM_PASS: Chrome rendered skip anchor and target'
+            grep -q 'data-skip-result="pass"' /tmp/rendered.html
+            echo 'LAYOUT_BROWSER_SKIP_PASS: Chrome focused skip link and navigated to main landmark'
           else
             echo 'LAYOUT_BROWSER_UNAVAILABLE: semantic HTML assertions passed; browser unavailable'
           fi
