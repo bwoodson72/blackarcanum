@@ -1,0 +1,297 @@
+---
+import Container from "../foundation/Container.astro";
+import Ornament from "../foundation/Ornament.astro";
+import ArticleCard from "./ArticleCard.astro";
+import Pagination from "./Pagination.astro";
+import type { PublishedArticleView } from "../../lib/editorial-presentation";
+import { EDITORIAL_PAGE_SIZE } from "../../lib/editorial-archive";
+
+interface Props {
+  articles: readonly PublishedArticleView[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+}
+
+const { articles, currentPage, totalPages, totalItems } = Astro.props;
+const empty = totalItems === 0;
+const start = (currentPage - 1) * EDITORIAL_PAGE_SIZE + 1;
+const end = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
+const [first, ...remaining] = articles;
+---
+
+<header class="grimoire-hero">
+  <Container width="wide" class="grimoire-hero__inner">
+    <p class="grimoire-eyebrow">Mystagogia <span aria-hidden="true">·</span> Methods &amp; observations</p>
+    <h1>The Grimoire</h1>
+    <p class="grimoire-hero__lead">
+      An editorial space for original methods, adaptations, experiments, and
+      practitioner observations—where what was done is distinguished from
+      what it might mean.
+    </p>
+    <Ornament variant="rule" />
+  </Container>
+</header>
+
+<section class="grimoire-content" aria-labelledby="grimoire-list-heading">
+  <Container width="wide">
+    {empty ? (
+      <div class="grimoire-empty">
+        <div class="grimoire-empty__heading">
+          <p class="grimoire-eyebrow">The practice archive</p>
+          <h2 id="grimoire-list-heading">The first entries are still to come.</h2>
+          <Ornament variant="rule" />
+        </div>
+        <div class="grimoire-empty__details">
+          <p>
+            No Grimoire entries have been published yet. Documented methods,
+            experiments, and firsthand observations will appear here only when
+            they are ready to share.
+          </p>
+          <p>
+            The <a href="/library/">Library</a> explores the sources and historical
+            context that can inform a practice, without presenting interpretation
+            as evidence.
+          </p>
+          <a class="grimoire-empty__about" href="/about/">About Mystagogia <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    ) : (
+      <div class="grimoire-archive">
+        <div class="grimoire-archive__heading">
+          <div>
+            <p class="grimoire-eyebrow">Published Grimoire</p>
+            <h2 id="grimoire-list-heading">{currentPage === 1 ? "Methods & observations" : `Methods & observations · Page ${currentPage}`}</h2>
+          </div>
+          <p class="grimoire-archive__count" aria-label={`Showing entries ${start} through ${end} of ${totalItems}`}>
+            {start}–{end} of {totalItems}
+          </p>
+        </div>
+
+        {first && (
+          <div class="grimoire-lead">
+            <div class="grimoire-lead__aside">
+              <p class="grimoire-lead__label">Entry {String(start).padStart(2, "0")}</p>
+              <p class="grimoire-lead__note">From the published Grimoire</p>
+              <Ornament variant="diamond" />
+            </div>
+            <ArticleCard article={first} variant="editorial" headingLevel="h3" />
+          </div>
+        )}
+
+        {remaining.length > 0 && (
+          <ol class="grimoire-list" start={start + 1}>
+            {remaining.map((article, index) => (
+              <li class="grimoire-list__item">
+                <span class="grimoire-list__number" aria-hidden="true">
+                  {String(start + index + 1).padStart(2, "0")}
+                </span>
+                <ArticleCard article={article} variant="editorial" headingLevel="h3" />
+              </li>
+            ))}
+          </ol>
+        )}
+        <Pagination collection="grimoire" currentPage={currentPage} totalPages={totalPages} />
+      </div>
+    )}
+  </Container>
+</section>
+
+<style>
+  .grimoire-hero {
+    background: var(--color-deep-brown);
+    border-bottom: 1px solid var(--color-antique-gold);
+    color: var(--color-parchment);
+    padding-block: var(--spacing-section);
+  }
+  .grimoire-hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+    max-width: 72rem;
+  }
+  .grimoire-eyebrow,
+  .grimoire-lead__label {
+    margin: 0;
+    color: var(--color-sage-ink);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+  .grimoire-hero .grimoire-eyebrow { color: var(--color-antique-gold); }
+  .grimoire-hero h1 {
+    margin: 0;
+    color: var(--color-parchment);
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 600;
+    line-height: 1.06;
+    overflow-wrap: anywhere;
+  }
+  .grimoire-hero__lead {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--color-aged-paper);
+    font-family: var(--font-reading);
+    font-size: var(--text-lead);
+    line-height: 1.55;
+  }
+  .grimoire-content {
+    min-height: 45vh;
+    background: var(--color-parchment);
+    color: var(--color-charcoal);
+    padding-block: var(--spacing-section);
+  }
+  .grimoire-empty {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid var(--color-border-paper);
+    border-top: 3px solid var(--color-antique-gold);
+    background: var(--color-aged-paper);
+  }
+  .grimoire-empty__heading {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 0;
+  }
+  .grimoire-empty h2,
+  .grimoire-archive h2 {
+    margin: 0;
+    color: var(--color-charcoal);
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: 1.16;
+    overflow-wrap: anywhere;
+  }
+  .grimoire-empty__details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 0;
+  }
+  .grimoire-empty__details p {
+    margin: 0;
+    max-width: 62ch;
+    font-family: var(--font-reading);
+    font-size: var(--text-body);
+    line-height: 1.65;
+  }
+  .grimoire-empty__details a {
+    color: var(--color-oxide-red);
+    text-underline-offset: 0.22em;
+    text-decoration: underline;
+  }
+  .grimoire-empty__details a:hover { text-decoration-thickness: 2px; }
+  .grimoire-empty__details a:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-control);
+  }
+  .grimoire-empty__details .grimoire-empty__about {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    font-weight: 650;
+  }
+  .grimoire-archive__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border-paper);
+  }
+  .grimoire-archive__heading > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .grimoire-archive__count {
+    margin: 0;
+    color: var(--color-muted-ink);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+  }
+  .grimoire-lead {
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(1.25rem, 3.5vw, 2.5rem);
+    border-top: 3px solid var(--color-antique-gold);
+    background: var(--color-aged-paper);
+  }
+  .grimoire-lead__aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  .grimoire-lead__note {
+    max-width: 22ch;
+    margin: 0;
+    font-family: var(--font-reading);
+    font-size: var(--text-body);
+    line-height: 1.5;
+    color: var(--color-muted-ink);
+  }
+  .grimoire-list {
+    display: grid;
+    gap: 0;
+    margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .grimoire-list__item {
+    display: grid;
+    gap: 0.6rem;
+    min-width: 0;
+    padding-block: clamp(1rem, 2vw, 1.75rem);
+    border-bottom: 1px solid var(--color-border-paper);
+  }
+  .grimoire-list__number {
+    display: block;
+    color: var(--color-sage-ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.4rem + 1vw, 2.3rem);
+    line-height: 1;
+  }
+  .grimoire-list__item :global(.article-card--editorial) {
+    min-height: auto;
+  }
+  .grimoire-lead :global(.article-card--editorial),
+  .grimoire-list__item :global(.article-card--editorial) {
+    border-left-color: var(--color-antique-gold);
+  }
+  @media (min-width: 1024px) {
+    .grimoire-empty {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    }
+    .grimoire-empty__details {
+      padding-left: clamp(1.5rem, 3vw, 3rem);
+      border-left: 1px solid var(--color-border-paper);
+    }
+    .grimoire-lead {
+      grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr);
+      align-items: start;
+    }
+    .grimoire-list__item {
+      grid-template-columns: minmax(0, 0.18fr) minmax(0, 1fr);
+      align-items: start;
+      gap: clamp(1.5rem, 3vw, 3rem);
+    }
+  }
+</style>

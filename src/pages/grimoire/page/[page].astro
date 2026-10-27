@@ -1,0 +1,40 @@
+---
+import type { GetStaticPaths, Page } from "astro";
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import GrimoireArchive from "../../../components/editorial/GrimoireArchive.astro";
+import { getPublishedGrimoireEntries } from "../../../lib/editorial-public";
+import { EDITORIAL_PAGE_SIZE, sortPublishedEntries } from "../../../lib/editorial-archive";
+import { toPublishedArticle } from "../../../lib/editorial-presentation";
+
+export const prerender = true;
+
+/** Only real pages 2+ are generated; /grimoire/ is the sole first-page URL. */
+export const getStaticPaths = (async ({ paginate }) => {
+  const sorted = sortPublishedEntries(await getPublishedGrimoireEntries());
+  return paginate(sorted, { pageSize: EDITORIAL_PAGE_SIZE })
+    .filter(({ params }) => Number(params.page) >= 2);
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<CollectionEntry<"grimoire">>;
+}
+
+const { page } = Astro.props;
+const articles = page.data.flatMap((entry) => {
+  const article = toPublishedArticle({ collection: "grimoire", entry });
+  return article ? [article] : [];
+});
+---
+
+<BaseLayout
+  title={`The Grimoire — Page ${page.currentPage}`}
+  description={`Browse page ${page.currentPage} of Mystagogia's published Grimoire writings.`}
+>
+  <GrimoireArchive
+    articles={articles}
+    currentPage={page.currentPage}
+    totalPages={page.lastPage}
+    totalItems={page.total}
+  />
+</BaseLayout>

@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GrimoireArchive from "../../components/editorial/GrimoireArchive.astro";
+import { getPublishedGrimoireEntries } from "../../lib/editorial-public";
+import { getArchivePage } from "../../lib/editorial-archive";
+import { toPublishedArticle } from "../../lib/editorial-presentation";
+
+export const prerender = true;
+
+const page = getArchivePage(await getPublishedGrimoireEntries());
+const articles = page.entries.flatMap((entry) => {
+  const article = toPublishedArticle({ collection: "grimoire", entry });
+  return article ? [article] : [];
+});
+---
+
+<BaseLayout
+  title="The Grimoire"
+  description={page.totalItems === 0
+    ? "Meet Mystagogia's Grimoire, a space reserved for original methods, experiments and practitioner observations."
+    : "Browse Mystagogia's published Grimoire methods, experiments and practitioner observations."}
+  noindex={page.totalItems === 0}
+>
+  <GrimoireArchive
+    articles={articles}
+    currentPage={page.currentPage}
+    totalPages={page.totalPages}
+    totalItems={page.totalItems}
+  />
+</BaseLayout>
