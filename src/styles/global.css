@@ -1,1 +1,2 @@
-@import "tailwindcss";
+/* Single app entry: Starwind's configured stylesheet owns all Tailwind imports and tokens. */
+@import "./starwind.css";

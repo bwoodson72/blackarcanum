@@ -58,3 +58,7 @@ Confirm tokens rather than hardcoded brand values; typography roles; responsive 
 ## Visual reference files
 
 The six approved, optimized preview images and their approval hierarchy are catalogued in [docs/design-references/README.md](./design-references/README.md). Inspect the applicable image before building visual components. The apparel-inclusive Shop mockup supersedes the earlier books-first concept for current merchandising. Images are references only, not production artwork.
+
+## Canonical token contract
+
+See [TOKENS.md](./TOKENS.md) for the approved raw palette, semantic roles, complete Starwind variable mappings, Tailwind utility families, measured contrast pairs and verification procedure. The tokens are implemented in `src/styles/starwind.css`; `src/styles/global.css` is only the app import entry point. Do not fork this palette into other stylesheets.
