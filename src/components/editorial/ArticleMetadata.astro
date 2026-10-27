@@ -1,0 +1,56 @@
+---
+type Section = "library" | "grimoire";
+
+interface Props {
+  collection: Section;
+  publishedAt?: Date;
+  updatedAt?: Date;
+  /** Display only if supplied from measured reading metadata. */
+  readingMinutes?: number;
+  class?: string;
+}
+
+const { collection, publishedAt, updatedAt, readingMinutes, class: className } = Astro.props;
+const valid = (date?: Date): date is Date =>
+  date instanceof Date && !Number.isNaN(date.valueOf());
+const dateFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short", day: "numeric", year: "numeric", timeZone: "UTC",
+});
+const publication = valid(publishedAt) ? publishedAt : undefined;
+const update = valid(updatedAt) && (!publication || updatedAt.valueOf() > publication.valueOf())
+  ? updatedAt : undefined;
+const reading = readingMinutes !== undefined && Number.isInteger(readingMinutes) && readingMinutes > 0
+  ? readingMinutes
+  : undefined;
+---
+
+<div class:list={["article-meta", className]}>
+  <span class="article-meta__section">{collection === "library" ? "The Library" : "The Grimoire"}</span>
+  {publication && <span class="article-meta__detail"><time datetime={publication.toISOString().slice(0, 10)}>{dateFormat.format(publication)}</time></span>}
+  {update && <span class="article-meta__detail">Updated <time datetime={update.toISOString().slice(0, 10)}>{dateFormat.format(update)}</time></span>}
+  {reading && <span class="article-meta__detail">{reading} min read</span>}
+</div>
+
+<style>
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.65rem;
+    color: var(--text-muted);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    line-height: 1.5;
+  }
+  .article-meta__section {
+    color: var(--color-sage-ink);
+    font-weight: 700;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+  }
+  .article-meta__detail::before {
+    content: "·";
+    padding-right: 0.65rem;
+    color: var(--text-muted);
+  }
+</style>
