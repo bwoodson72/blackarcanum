@@ -1,6 +1,6 @@
 # Mystagogia — Sequential Implementation Prompts
 
-**Version:** 1.1 (revised from v1.0; 41 executable steps)  
+**Version:** 1.2 (adds Prompt 06A; 42 executable steps total)  
 **Date:** October 27, 2026  
 **Authority:** [Specification v1.2](./SPECIFICATION.md) · [Design system](./DESIGN_SYSTEM.md) · [Approved visual references](./design-references/README.md)  
 **Repository:** `bwoodson72/blackarcanum` — Astro frontend, `master` branch  
@@ -8,7 +8,7 @@
 
 ## Usage and scope contract
 
-Complete **exactly one** numbered prompt per coding session or explicit user authorization. Treat the completion of all lower-numbered prompts as a dependency, not as permission to continue. Use the global execution contract below and the entirety of the selected numbered prompt. Prompt 32 onward requires separate approval of the commerce phase; prompt 41 requires explicit production-launch permission. The actual data source or production host must be verified during its assigned step. Each prompt defines a deliverable, excluded work, and specific acceptance checks. Do not silently skip validation; report genuinely impossible tests as blockers.
+Complete **exactly one** numbered or suffixed prompt (including 06A) per coding session or explicit user authorization. Treat the completion of all lower-numbered prompts as a dependency, not as permission to continue. Use the global execution contract below and the entirety of the selected numbered prompt. Prompt 32 onward requires separate approval of the commerce phase; prompt 41 requires explicit production-launch permission. The actual data source or production host must be verified during its assigned step. Each prompt defines a deliverable, excluded work, and specific acceptance checks. Do not silently skip validation; report genuinely impossible tests as blockers.
 
 ### Change-control and precedence
 
@@ -156,10 +156,51 @@ Do not create destination pages or enable unfinished shop/search/newsletter acti
 
 ---
 
+### Prompt 06A — Native cross-document fade transitions
+
+**Phase:** Site shell (inserted between Prompts 06 and 07)  
+**Requires:** accepted Prompt 06  
+**Objective:** Add subtle page-to-page fades without changing Astro's file-based routing, normal navigation, or JavaScript page-load lifecycle.
+
+**Approved architecture:**
+
+Use the browser-native cross-document View Transitions API, with the CSS opt-in `@view-transition { navigation: auto; }` on both the outgoing and incoming pages. Keep ordinary multi-page browser navigation and the existing Astro/Vercel routing. This is progressive enhancement: browsers that do not support the API must continue to navigate normally, without an animated fallback. **Do not add `<ClientRouter />`, `<ViewTransitions />`, or SPA navigation.**
+
+**Execute (this prompt only):**
+
+1. Consult Astro 7's current view-transition guide and MDN's cross-document guidance (links below). Inspect `BaseLayout.astro`, `src/styles/global.css`, the one-entry-point Tailwind/Starwind CSS system, and Prompt 06's mobile `<dialog>`. Introduce the transition rules once, globally, either in the existing stylesheet or one dedicated stylesheet imported by it.
+2. Use an **opacity-only root crossfade**, applying `::view-transition-old(root)` and `::view-transition-new(root)` animations of approximately **250 ms** (acceptable range 200–300 ms). Avoid movement, scaling, flashing, overlays, artwork, or new dependencies. Initially fade the whole document, including the header; keeping the masthead stationary is not part of this prompt.
+3. Under `@media (prefers-reduced-motion: reduce)`, explicitly **disable the root animations**. Preserve fully usable navigation when a browser lacks the feature or skips a transition. No polyfill merely to force animation parity.
+4. Preserve ordinary internal link destinations, page history/Back/Forward, titles and metadata, skip-to-main, keyboard focus, and scroll behavior. Confirm Prompt 06's dialog still opens, closes, handles Escape/Tab, and restores focus after real navigations; avoid carrying an open dialog/backdrop between pages. Do not introduce script reinitialization hooks unless a reproduced fault makes one necessary.
+5. Since the live site has only the homepage, generate **two temporary, non-indexed internal routes** that share `BaseLayout` and link to one another. Build and exercise real cross-document navigation and browser Back/Forward. Remove those fixtures from the final commit; do not invent Library, Grimoire, About, Shop, or newsletter content.
+
+**Required deliverables and acceptance evidence:**
+
+- Minimal centralized transition CSS, reduced-motion override, and a concise document explaining native browser support/fallback, unchanged routing, and why `ClientRouter` is intentionally not used.
+- `npm ci`, `npm run typecheck`, `npm run build`, and `npm audit --audit-level=high` pass.
+- Compiled CSS contains the expected `@view-transition` opt-in, **200–300 ms opacity fades**, and reduced-motion rules; both temporary documents opt in. Validate route URLs, `noindex` markers, and correct document titles.
+- Use a compatible real browser to verify that a transition actually occurred on a **same-origin link click**, rather than inferring success from CSS alone. `pageswap` / `pagereveal` event instrumentation or equivalent is preferred. Test Back/Forward, and confirm no horizontal overflow at **375 and 1440px**.
+- Verify mobile menu open/close, Escape, keyboard focus/Tab containment and focus return after navigating. Emulate reduced motion and confirm **no fade**. Check unsupported-browser normal navigation when test facilities permit; otherwise report the exact compatibility-testing limitation. Do not claim cross-browser animation parity.
+- Record actual commands, results, limitations, changed files and a review PR. Remove test routes and temporary validation workflow from the final diff.
+
+**Explicitly out of scope:**
+
+No client router, SPA, click interception, prefetching, persistent-element transitions, additional public pages, new content, header/footer redesign, branding or image generation, ecommerce, Kit, search, domain changes, Vercel configuration changes, or adapter changes.
+
+**Technical references:**
+
+- Astro: https://docs.astro.build/en/guides/view-transitions/
+- MDN: https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using
+- MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40view-transition
+
+**Handoff:** Use the mandatory format and end with “Stopped after Prompt 06A.”
+
+---
+
 ### Prompt 07 — Footer and breadcrumbs
 
 **Phase:** Site shell  
-**Requires:** accepted Prompt 06  
+**Requires:** accepted Prompt 06A  
 **Objective:** Complete reusable site chrome.
 
 **Execute (this prompt only):**
