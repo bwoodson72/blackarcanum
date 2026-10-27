@@ -49,9 +49,11 @@ Execute exactly **one approved numbered prompt** at a time, verify the changes, 
 
 ## Vercel deployment and dependency security
 
-The current frontend is **fully static**. Vercel deploys static Astro sites without `@astrojs/vercel`; the adapter was removed to eliminate an unused vulnerable dependency tree. The Vercel project is already linked to the GitHub repository. No production domain has been chosen.
+The Astro frontend includes `@astrojs/vercel@11.0.16` (compatible with Astro 7). The existing site builds as static pages by default, but future approved on-demand API endpoints can use `export const prerender = false` without switching adapters. The Vercel project is linked to this GitHub repository. The public domain has not been chosen.
 
-When a later authorized prompt introduces on-demand API routes or server rendering (for example, secure Kit form submission), reassess the **latest compatible, security-patched** Vercel adapter and rerun `npm ci`, `npm run build`, `npm run typecheck` and `npm audit --audit-level=high` before enabling those routes. Do **not** reinstall vulnerable adapter versions or rely on a forced downgrade.
+The current Vercel adapter's transitive dependency tree pins vulnerable versions of `path-to-regexp@6.1.0` and `zod@4.1.11`. The root `package.json` uses **narrow overrides** to select patched releases within the same major version specifically for `@vercel/routing-utils` and `@vercel/cli-config`. These overrides are deliberately temporary compatibility maintenance; review them when Vercel upstream updates its pinned dependencies, rather than leaving them indefinitely or applying `npm audit fix --force` (which proposed an incompatible adapter downgrade).
+
+CI checks a clean install, Astro build, typecheck and `npm audit --audit-level=high`. Revalidate the on-demand build whenever the adapter, Vercel dependencies, or server endpoints change.
 
 ## Environment configuration
 

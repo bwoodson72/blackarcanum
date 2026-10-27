@@ -1,4 +1,4 @@
-name: Test secure Vercel adapter resolution (temporary)
+name: Verify Vercel server route (temporary)
 
 on:
   push:
@@ -8,28 +8,26 @@ permissions:
   contents: read
 
 jobs:
-  resolution:
+  adapter-on-demand:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22.23.4
-      - name: Resolve adapter against npm registry
-        run: npm install --package-lock-only --ignore-scripts
-      - name: Clean install
+      - name: Install committed lockfile
         run: npm ci
-      - name: Installed adapter and dependency versions
-        run: npm ls astro @astrojs/vercel zod path-to-regexp @vercel/functions @vercel/cli-config || true
-      - name: Astro static build
-        run: npm run build
-      - name: Astro check
-        run: npm run typecheck
-      - name: Audit security
+      - name: Confirm no high-severity vulnerabilities
         run: npm audit --audit-level=high
-      - name: Export resolved lockfile
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: vercel-adapter-lockfile-candidate
-          path: package-lock.json
+      - name: Compile current static site
+        run: npm run build
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Verify adapter can compile an opt-in on-demand route
+        run: |
+          mkdir -p src/pages/api
+          printf 'export const prerender = false;\nexport function GET() { return new Response("adapter-ready"); }\n' > src/pages/api/__adapter_smoke.ts
+          npm run build
+          echo 'Vercel-generated function directories:'
+          find . -maxdepth 6 -name '*.func' -type d -print | head -20
+          rm src/pages/api/__adapter_smoke.ts
