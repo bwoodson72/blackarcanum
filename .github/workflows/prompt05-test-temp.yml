@@ -137,9 +137,14 @@ jobs:
                 const ids=['wide','reading','full'];
                 const elements=ids.map(id=>document.getElementById(id));
                 if(elements.some(x=>!x))return null;
+                const bodyMargin=parseFloat(getComputedStyle(document.body).marginLeft);
+                const padding=parseFloat(getComputedStyle(elements[0]).paddingLeft);
+                // Wait for Astro/Tailwind stylesheet, not just parsed DOM.
+                if(bodyMargin!==0 || padding<18)return null;
                 return {
                   width:innerWidth,
                   scroll:document.documentElement.scrollWidth,
+                  bodyMargin,padding,
                   widths:elements.map(el=>Math.round(el.getBoundingClientRect().width)),
                   rights:elements.map(el=>el.getBoundingClientRect().right),
                   focusCss:getComputedStyle(document.querySelector('#primary-link')).outlineStyle,
