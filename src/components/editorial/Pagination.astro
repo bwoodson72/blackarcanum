@@ -1,0 +1,116 @@
+---
+import { archivePath, getPaginationModel } from "../../lib/editorial-pagination";
+import type { EditorialSection } from "../../lib/editorial-qa";
+
+interface Props {
+  collection: EditorialSection;
+  currentPage: number;
+  totalPages: number;
+  class?: string;
+}
+const { collection, currentPage, totalPages, class: className } = Astro.props;
+const model = getPaginationModel(collection, currentPage, totalPages);
+---
+
+{model && (
+  <nav class:list={["pagination", className]} aria-label="Article pagination">
+    {model.previous
+      ? <a class="pagination__control" rel="prev" href={model.previous} aria-label="Previous page">← Previous</a>
+      : <span class="pagination__control pagination__control--inactive" aria-disabled="true">← Previous</span>
+    }
+
+    <span class="pagination__summary" aria-live="off">Page {model.current} of {model.total}</span>
+
+    <ol class="pagination__pages">
+      {model.parts.map((part) => (
+        <li>
+          {part.kind === "ellipsis"
+            ? <span class="pagination__ellipsis" aria-hidden="true">…</span>
+            : part.page === model.current
+              ? <span class="pagination__page pagination__page--current" aria-current="page" aria-label={`Page ${part.page}, current page`}>{part.page}</span>
+              : <a class="pagination__page" href={archivePath(collection, part.page)} aria-label={`Go to page ${part.page}`}>{part.page}</a>
+          }
+        </li>
+      ))}
+    </ol>
+
+    {model.next
+      ? <a class="pagination__control" rel="next" href={model.next} aria-label="Next page">Next →</a>
+      : <span class="pagination__control pagination__control--inactive" aria-disabled="true">Next →</span>
+    }
+  </nav>
+)}
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    margin-block: var(--spacing-article-gap);
+    color: var(--text-primary);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+  }
+  .pagination__control,
+  .pagination__page {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  a.pagination__control:hover,
+  a.pagination__page:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-secondary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .pagination a:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+  .pagination__control--inactive {
+    opacity: 0.55;
+    cursor: default;
+  }
+  .pagination__summary {
+    flex: 1 1 auto;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--text-muted);
+  }
+  .pagination__pages { display: none; }
+  @media (min-width: 640px) {
+    .pagination__summary { display: none; }
+    .pagination__pages {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .pagination__page--current {
+      border-color: var(--border-strong);
+      background: var(--surface-secondary);
+      color: var(--text-primary);
+    }
+    .pagination__ellipsis {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 1.5rem;
+      min-height: 2.75rem;
+    }
+  }
+</style>
