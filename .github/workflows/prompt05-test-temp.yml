@@ -1,0 +1,174 @@
+name: Prompt 05 foundation component verification (temporary)
+
+on:
+  push:
+    branches: [feature/prompt-05-foundation-components]
+    paths: [.github/workflows/prompt05-test-temp.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.4
+          cache: npm
+      - name: Verify reproducible baseline
+        run: |
+          npm ci
+          npm run typecheck
+          npm audit --audit-level=high
+      - name: Build temporary noindex component fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > src/pages/foundation-fixture.astro <<'ASTRO'
+          ---
+          import BaseLayout from "../layouts/BaseLayout.astro";
+          import Container from "../components/foundation/Container.astro";
+          import SectionHeading from "../components/foundation/SectionHeading.astro";
+          import Ornament from "../components/foundation/Ornament.astro";
+          import ActionLink from "../components/foundation/ActionLink.astro";
+          import ActionButton from "../components/foundation/ActionButton.astro";
+          ---
+          <BaseLayout title="Foundation test only" noindex>
+            <Container width="wide" as="section" id="wide">
+              <SectionHeading title="Wide section" id="wide-title" eyebrow="Editorial" description="Accessible, responsive test." ornament />
+              <ActionLink href="/foundation-fixture/" id="primary-link" variant="primary">Primary link</ActionLink>
+              <ActionLink href="https://example.org/" target="_blank" id="secondary-link" variant="secondary" size="compact">Secondary link</ActionLink>
+            </Container>
+            <Container width="reading" as="article" id="reading">
+              <SectionHeading as="h3" title="Reading heading" align="center" />
+              <ActionButton id="primary-button">Primary button</ActionButton>
+              <ActionButton id="secondary-button" variant="secondary" type="submit" size="compact">Secondary button</ActionButton>
+              <ActionButton id="disabled-button" disabled>Disabled button</ActionButton>
+            </Container>
+            <Container width="full" id="full"><Ornament variant="diamond" /></Container>
+          </BaseLayout>
+          ASTRO
+          npm run build
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          class Inspector(HTMLParser):
+              def __init__(self): super().__init__();self.tags=[]
+              def handle_starttag(self,tag,attrs): self.tags.append((tag,dict(attrs)))
+              def matching(self,tag,**attrs):
+                  return [a for t,a in self.tags if t==tag and all(a.get(k)==v for k,v in attrs.items())]
+          p=Path('.vercel/output/static/foundation-fixture/index.html')
+          assert p.exists(),'Temporary fixture did not build'
+          d=Inspector();d.feed(p.read_text())
+          for key,element,width in [('wide','section','wide'),('reading','article','reading'),('full','div','full')]:
+              assert d.matching(element,id=key,**{'data-container-width':width}), (key, element)
+          assert d.matching('h2',id='wide-title')
+          assert d.matching('h3')
+          assert d.matching('meta',name='robots',content='noindex, nofollow')
+          assert d.matching('a',id='secondary-link',target='_blank')
+          assert 'noopener' in d.matching('a',id='secondary-link')[0].get('rel','')
+          assert d.matching('button',id='primary-button',type='button')
+          assert d.matching('button',id='secondary-button',type='submit')
+          assert 'disabled' in d.matching('button',id='disabled-button')[0]
+          assert len([1 for t,a in d.tags if t=='span' and a.get('aria-hidden')=='true'])>=2
+          css='\n'.join(f.read_text() for f in Path('.vercel/output/static').rglob('*.css'))
+          for rule in ['foundation-action--primary','foundation-action--secondary','foundation-action:focus-visible',
+                       'max-w-wide','max-w-reading','px-gutter','section-heading__title','ornament--rule']:
+              assert rule in css,rule
+          assert 'font-display' in css and 'text-muted' in css
+          print('FOUNDATION_HTML_CSS_PASS: variants, semantics, props, noindex fixture, focus-visible rules')
+          PY
+          test "$(find .vercel/output/static -name 'index.html' | wc -l)" -eq 2
+      - name: Test 375/768/1280 viewports and keyboard focus in Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -x "$(command -v google-chrome)"
+          node -p 'typeof WebSocket' | grep '^function$'
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory .vercel/output/static >/tmp/foundation-server.log 2>&1 &
+          site=$!
+          google-chrome --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --remote-debugging-port=9222 --remote-allow-origins='*' --user-data-dir=/tmp/foundation-chrome about:blank >/tmp/foundation-chrome.log 2>&1 &
+          chrome=$!
+          trap 'kill "$site" "$chrome" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:8765/foundation-fixture/ -o /tmp/foundation.html && curl -sf http://127.0.0.1:9222/json -o /tmp/tabs.json; then break; fi
+            sleep 0.25
+          done
+          test -s /tmp/foundation.html
+          test -s /tmp/tabs.json
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          const tabs = await (await fetch('http://127.0.0.1:9222/json')).json();
+          const target = tabs.find(t => t.type === 'page');
+          assert(target?.webSocketDebuggerUrl, 'Chrome CDP endpoint missing');
+          const ws = new WebSocket(target.webSocketDebuggerUrl);
+          await new Promise((resolve,reject)=>{ws.onopen=resolve;ws.onerror=reject});
+          let seq=0;const pending=new Map();
+          ws.onmessage=(event)=>{
+            const msg=JSON.parse(event.data);
+            if(!msg.id)return;
+            const item=pending.get(msg.id);if(!item)return;
+            pending.delete(msg.id);
+            msg.error?item.reject(new Error(JSON.stringify(msg.error))):item.resolve(msg.result);
+          };
+          function send(method,params={}){
+            const id=++seq;
+            return new Promise((resolve,reject)=>{
+              pending.set(id,{resolve,reject});
+              ws.send(JSON.stringify({id,method,params}));
+              setTimeout(()=>{if(pending.has(id)){pending.delete(id);reject(new Error(method+' timeout'))}},10000);
+            });
+          }
+          await send('Page.enable');
+          await send('Runtime.enable');
+          for(const width of [375,768,1280]){
+            await send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width===375});
+            await send('Page.navigate',{url:'http://127.0.0.1:8765/foundation-fixture/'});
+            let v;
+            for(let attempt=0;attempt<45;attempt++){
+              const r=await send('Runtime.evaluate',{expression:`(() => {
+                const ids=['wide','reading','full'];
+                const elements=ids.map(id=>document.getElementById(id));
+                if(elements.some(x=>!x))return null;
+                return {
+                  width:innerWidth,
+                  scroll:document.documentElement.scrollWidth,
+                  widths:elements.map(el=>Math.round(el.getBoundingClientRect().width)),
+                  rights:elements.map(el=>el.getBoundingClientRect().right),
+                  focusCss:getComputedStyle(document.querySelector('#primary-link')).outlineStyle,
+                };
+              })()`,returnByValue:true});
+              v=r.result?.value;
+              if(v)break;
+              await new Promise(resolve=>setTimeout(resolve,100));
+            }
+            assert(v,'Probe elements missing at '+width);
+            assert.equal(v.width,width,'CDP viewport mismatch');
+            assert(v.scroll<=width+1,'Horizontal overflow at '+width+': '+v.scroll);
+            assert(v.widths[0]<=1281,'Wide exceeds 1280px limit');
+            assert(v.widths[1]<=721,'Reading exceeds 720px limit');
+            assert(v.widths[2]<=width+1,'Full exceeds viewport');
+            assert(v.widths.every(x=>x>0),'Zero-width component at '+width);
+            assert(v.rights.every(x=>x<=width+1),'Content exceeds right viewport at '+width);
+            console.log('RESPONSIVE_PASS',JSON.stringify(v));
+            if(width===768){
+              await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9,nativeVirtualKeyCode:9});
+              await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9,nativeVirtualKeyCode:9});
+              await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9,nativeVirtualKeyCode:9});
+              await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9,nativeVirtualKeyCode:9});
+              const k=await send('Runtime.evaluate',{expression:`(() => {
+                const el=document.activeElement;
+                const css=getComputedStyle(el);
+                return {id:el.id,outline:css.outlineStyle,width:css.outlineWidth};
+              })()`,returnByValue:true});
+              const focus=k.result.value;
+              assert.equal(focus.id,'primary-link','Keyboard tab did not reach primary link');
+              assert.notEqual(focus.outline,'none','Focus outline missing');
+              assert(parseFloat(focus.width)>=3,'Focus outline should be >=3px');
+              console.log('KEYBOARD_FOCUS_PASS',JSON.stringify(focus));
+            }
+          }
+          ws.close();
+          JS
