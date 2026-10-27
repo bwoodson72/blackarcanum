@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArticleCard from "../components/editorial/ArticleCard.astro";
+import ArticleGrid from "../components/editorial/ArticleGrid.astro";
+import ArticleMetadata from "../components/editorial/ArticleMetadata.astro";
+import Pagination from "../components/editorial/Pagination.astro";
+import Container from "../components/foundation/Container.astro";
+
+const cards = Array.from({ length: 6 }, (_, index) => ({
+  id: `fixture-${index + 1}`,
+  collection: index % 2 ? "grimoire" as const : "library" as const,
+  title: `Fixture headline number ${index + 1}`,
+  href: `/library/fixture-${index + 1}/`,
+  ...(index % 2 ? {} : { excerpt: "Source-led dummy summary created only inside a temporary automated test." }),
+  ...(index === 0 ? {} : { publishedAt: new Date("2026-10-01T00:00:00Z") }),
+}));
+const single = cards[0];
+---
+
+<BaseLayout title="Temporary QA" noindex>
+  <section class="py-section" aria-labelledby="qa-title">
+    <Container>
+      <h1 id="qa-title">Internal editorial component fixture</h1>
+      <div id="qa-variants" class="grid gap-6 mt-8">
+        <ArticleCard article={single} variant="standard" />
+        <ArticleCard article={single} variant="featured" />
+        <ArticleCard article={single} variant="editorial" />
+        <ArticleCard article={single} variant="compact" />
+      </div>
+
+      <div class="mt-12" id="qa-metadata">
+        <ArticleMetadata collection="grimoire" readingMinutes={4}
+          publishedAt={new Date("2026-10-01T00:00:00Z")}
+          updatedAt={new Date("2026-10-02T00:00:00Z")} />
+      </div>
+
+      <h2 id="qa-grid-heading" class="mt-12">Article grid</h2>
+      <div id="qa-grid">
+        <ArticleGrid articles={cards} />
+      </div>
+      <div id="qa-empty-grid">
+        <ArticleGrid articles={[]} />
+      </div>
+
+      <div id="qa-pager"><Pagination collection="library" currentPage={5} totalPages={10} /></div>
+      <div id="qa-first"><Pagination collection="library" currentPage={1} totalPages={10} /></div>
+      <div id="qa-last"><Pagination collection="grimoire" currentPage={10} totalPages={10} /></div>
+      <div id="qa-one"><Pagination collection="library" currentPage={1} totalPages={1} /></div>
+      <div id="qa-zero"><Pagination collection="library" currentPage={1} totalPages={0} /></div>
+    </Container>
+  </section>
+</BaseLayout>
