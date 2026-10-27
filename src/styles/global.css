@@ -1,2 +1,5 @@
 /* Single app entry: Starwind's configured stylesheet owns all Tailwind imports and tokens. */
 @import "./starwind.css";
+
+/* Local @font-face rules and semantic typographic roles. */
+@import "./fonts.css";

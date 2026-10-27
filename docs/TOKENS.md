@@ -1,7 +1,7 @@
 # Mystagogia — Design Token Contract (Prompt 02)
 
 **Authority:** [Specification v1.2](./SPECIFICATION.md), [design system](./DESIGN_SYSTEM.md).  
-**Source:** `src/styles/starwind.css` is the **only stylesheet importing Tailwind**; `src/styles/global.css` imports it as the sole app CSS entry. Starwind's configured stylesheet remains `src/styles/starwind.css`. No fonts, pages or UI components were implemented in this prompt.
+**Source:** `src/styles/starwind.css` is the **only stylesheet importing Tailwind**; `src/styles/global.css` imports it as the sole app CSS entry. Starwind's configured stylesheet remains `src/styles/starwind.css`. This Prompt 02 contract is retained; Prompt 03 subsequently added self-hosted fonts documented in [FONTS.md](./FONTS.md).
 
 ## Approved palette — immutable source values
 
@@ -50,7 +50,7 @@ Other Starwind tokens (`card-foreground`, `popover-foreground`, `accent-foregrou
 
 ## Typography, spacing and elevation
 
-The **typeface tokens are placeholders**, not remotely loaded fonts. Prompt 03 will self-host Cormorant Garamond, Source Serif 4 and Inter.
+The typeface tokens are now backed by **self-hosted WOFF2 files** from Prompt 03. Refer to [FONTS.md](./FONTS.md) for license notices, loading, coverage, and fallback verification.
 
 | Role | Token / utility | Defined behavior |
 | --- | --- | --- |

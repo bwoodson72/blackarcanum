@@ -6,7 +6,7 @@
 
 /*
  * Foundation tokens are defined here, not in page components.
- * Fonts are fallback stacks only until Prompt 03 self-hosts the files.
+ * The font stacks below resolve to self-hosted WOFF2 families (see fonts.css).
  */
 @theme {
   /* Approved source palette — never change these to solve contrast issues. */

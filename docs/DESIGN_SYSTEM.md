@@ -14,7 +14,7 @@
 | Reading | Source Serif 4 | Long-form articles |
 | Interface | Inter | Navigation, controls, metadata |
 
-Fonts have **not** been installed. Source and self-host them during the appropriate execution prompt, including licensing, font-display behavior, subsets/weights as needed, fallback stacks, and layout-shift checks. Avoid committing unnecessary weights or external font dependencies.
+The three families are now **self-hosted as licensed WOFF2 variable subsets** from verified Fontsource distributions of the Google Fonts projects (Prompt 03). Consult [FONTS.md](./FONTS.md) for exact weights/scripts, license and source provenance, fallbacks, preload policy, and validation. The CSS declarations live in `src/styles/fonts.css`; no runtime third-party font services are used.
 
 ## Approved starting palette
 | Token role | Proposed color | Hex |
