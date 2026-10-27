@@ -35,9 +35,9 @@ Source and topic schema correctness and bibliographic metadata rules remain thos
 
 ## Acceptance evidence — October 27, 2026
 
-Verified using temporary GitHub Actions workflow [run LINK_PENDING]. The temporary workflow and its in-run MDX fixtures are not part of the reviewed PR.
+**PASS — [GitHub Actions run 40594776670](https://github.com/bwoodson72/blackarcanum/actions/runs/40594776670).** The temporary workflow and its in-run MDX fixtures are not part of the reviewed PR.
 
-The checks cover a clean install, `npm run qa:content`, `npm run typecheck`, `npm audit --audit-level=high`, exactly two generated existing public routes, no feature placeholders in the empty homepage, and both positive and negative build tests. Positive fixtures create real temporary Library/Grimoire MDX entries selected in ordered features; negative fixtures must fail production builds for unpublished featured entries, missing featured IDs, unknown related IDs, and dates with `updatedAt` preceding `publishedAt`.
+The checks passed: clean `npm ci`; `npm run qa:content` (both unit suites and Astro production build); `npm run typecheck` (**30 files, 0 errors, 0 warnings, 0 hints**); `npm audit --audit-level=high` (**0 vulnerabilities**); exactly two generated existing routes; and no feature placeholders in the homepage. Temporary published Library/Grimoire MDX fixtures selected in both feature lists compiled successfully **without generating article routes**. Negative fixture builds correctly failed for a feature pointing to an unpublished review entry, a missing featured ID, an unknown related ID, and `updatedAt` preceding `publishedAt`.
 
 Browser visual QA is not applicable: this prompt adds no new rendered UI or artwork.
 
