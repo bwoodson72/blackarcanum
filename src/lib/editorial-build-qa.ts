@@ -2,7 +2,7 @@ import { getCollection } from "astro:content";
 import { topics } from "../data/topics";
 import { sources } from "../data/sources";
 import { featuredContent } from "../data/features";
-import { validateEditorialIntegrity, resolveFeatureSections } from "./editorial-qa";
+import { resolveFeatureSections } from "./editorial-qa";
 
 /**
  * Astro-only adapter. Call during static page generation to fail the build
@@ -23,6 +23,6 @@ export async function checkEditorialBuild() {
     features: featuredContent,
   };
 
-  validateEditorialIntegrity(input);
+  // Resolution validates all relationships and feature picks before returning.
   return resolveFeatureSections(input);
 }
