@@ -3,3 +3,6 @@
 
 /* Local @font-face rules and semantic typographic roles. */
 @import "./fonts.css";
+
+/* Shared semantic action/link styles for foundation controls. */
+@import "./foundation.css";

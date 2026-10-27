@@ -1,0 +1,36 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Variant = "primary" | "secondary";
+type Size = "default" | "compact";
+
+interface Props extends HTMLAttributes<"a"> {
+  /** Required destination makes this a real navigable link. */
+  href: string;
+  variant?: Variant;
+  size?: Size;
+}
+
+const {
+  href,
+  variant = "primary",
+  size = "default",
+  class: className,
+  target,
+  rel,
+  ...attrs
+} = Astro.props;
+const safeRel = target === "_blank"
+  ? [...new Set([...(rel?.split(/\s+/).filter(Boolean) ?? []), "noopener", "noreferrer"])].join(" ")
+  : rel;
+---
+
+<a
+  {...attrs}
+  href={href}
+  target={target}
+  rel={safeRel}
+  class:list={["foundation-action", `foundation-action--${variant}`, `foundation-action--${size}`, className]}
+>
+  <slot />
+</a>

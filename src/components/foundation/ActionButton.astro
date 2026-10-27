@@ -1,0 +1,29 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Variant = "primary" | "secondary";
+type Size = "default" | "compact";
+
+interface Props extends HTMLAttributes<"button"> {
+  variant?: Variant;
+  size?: Size;
+  /** Safe default prevents accidental submission inside future forms. */
+  type?: "button" | "submit" | "reset";
+}
+
+const {
+  variant = "primary",
+  size = "default",
+  type = "button",
+  class: className,
+  ...attrs
+} = Astro.props;
+---
+
+<button
+  {...attrs}
+  type={type}
+  class:list={["foundation-action", `foundation-action--${variant}`, `foundation-action--${size}`, className]}
+>
+  <slot />
+</button>
