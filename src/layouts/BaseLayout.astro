@@ -1,0 +1,125 @@
+---
+import "@/styles/global.css";
+
+interface Props {
+  /** Page-specific heading/title. The brand-only title is used by default. */
+  title?: string;
+  /** Brief summary of this actual page, for standard and social metadata. */
+  description?: string;
+  /**
+   * Social preview image. Absolute HTTP(S) URLs work directly; root-relative
+   * image paths require a configured Astro.site to become absolute.
+   */
+  image?: string;
+  /** Exclude unpublished/temporary pages from search indices. */
+  noindex?: boolean;
+  /**
+   * Optional canonical override. If omitted, a canonical is generated ONLY
+   * when astro.config.mjs has a real, approved `site` value.
+   */
+  canonical?: string;
+}
+
+const SITE_NAME = "Mystagogia";
+const DEFAULT_DESCRIPTION =
+  "Mystagogia is an editorial project exploring esoteric history and practice.";
+
+const {
+  title = SITE_NAME,
+  description = DEFAULT_DESCRIPTION,
+  image,
+  noindex = false,
+  canonical,
+} = Astro.props;
+
+const pageTitle = title === SITE_NAME ? SITE_NAME : `${title} | ${SITE_NAME}`;
+
+/** A Vercel preview URL is not an approved canonical or OG base URL. */
+function absoluteWebUrl(value?: string): string | undefined {
+  if (!value) return undefined;
+
+  try {
+    const url = new URL(value);
+    if (url.protocol === "https:" || url.protocol === "http:") return url.href;
+  } catch {
+    if (Astro.site && value.startsWith("/")) {
+      return new URL(value, Astro.site).href;
+    }
+  }
+
+  return undefined;
+}
+
+const canonicalUrl = canonical
+  ? absoluteWebUrl(canonical)
+  : Astro.site
+    ? new URL(Astro.url.pathname, Astro.site).href
+    : undefined;
+
+const socialImage = absoluteWebUrl(image);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    {socialImage && <meta property="og:image" content={socialImage} />}
+
+    <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
+
+    <!-- Until an approved Mystagogia favicon exists, suppress Astro's starter icon. -->
+    <link rel="icon" href="data:," />
+
+    <!-- Local Latin subsets only; the reading face loads when needed. -->
+    <link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="/fonts/cormorant-garamond-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: var(--spacing-gutter);
+    left: var(--spacing-gutter);
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-control);
+    background: var(--button-primary);
+    color: var(--button-primary-foreground);
+    font-family: var(--font-interface);
+    font-weight: 600;
+    text-decoration: underline;
+    transform: translateY(-250%);
+  }
+
+  .skip-link:focus {
+    transform: none;
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skip-link { transition: none; }
+  }
+</style>
