@@ -11,3 +11,15 @@ The browser takes a snapshot of the outgoing document and fades it out while the
 **Implementation checks:** `npm ci`, `npm run typecheck`, `npm run build`, `npm audit --audit-level=high`. In a temporary local test build, add **two non-indexed BaseLayout pages** and exercise same-origin user-click navigation with `pageswap`/`pagereveal` instrumentation; test Back/Forward, 375px/1440px widths, reduced-motion disabled animation and no horizontal overflow. Remove temporary test pages and workflow before review. Final site still has only its approved public routes.
 
 **Technical references:** [Astro guide](https://docs.astro.build/en/guides/view-transitions/) · [MDN MPA view transitions](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using) · [MDN `@view-transition`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40view-transition).
+
+## Prompt 06A verification record — October 27, 2026
+
+GitHub Actions [run 40588791972](https://github.com/bwoodson72/blackarcanum/actions/runs/40588791972) used two temporary `noindex` pages, created **only in the test runner**; they are not repository routes. Results:
+
+- `npm ci`, `npm run typecheck` (0 errors / 0 warnings), `npm run build` (3 static routes including the two temporary fixtures), `npm audit --audit-level=high` (0 vulnerabilities): **passed**.
+- Compiled CSS: one `@view-transition` opt-in; a 250ms opacity-only crossfade (CSS minifier may serialize `250ms` as `.25s`); explicit root reduced-motion overrides; matched metadata and functioning internal fixture links: **passed**.
+- Headless **Google Chrome** at 375px and 1440px: actual clicked A→B navigation emitted `pageswap` and `pagereveal` with `viewTransition: true`; destination `animationName: mystagogia-page-fade-in`; no horizontal overflow: **passed**.
+- Browser Back/Forward from both viewports, fresh page initialization, and mobile menu after a transition (focus transfer, Tab containment, Escape, focus restoration, Close): **passed**.
+- Chrome reduced-motion emulation: `prefers-reduced-motion: reduce` matched; both root snapshot pseudo-elements had `animationName: none`; ordinary page navigation continued: **passed**.
+
+**Limitation:** This run exercised Chrome's supported native transition implementation. Safari, Firefox, and older/unsupported browsers were not available in the CI test runner, so their runtime fallback was not directly exercised. They receive standard document navigation by browser design; no guarantee is made that every browser animates.
