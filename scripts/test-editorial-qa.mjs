@@ -1,8 +1,5 @@
 // Permanent regression suite for curated feature and cross-article QA.
 import assert from "node:assert/strict";
-import { featuredContent } from "../src/data/features.ts";
-import { topics } from "../src/data/topics.ts";
-import { sources } from "../src/data/sources.ts";
 import { validateEditorialIntegrity, resolveFeatureSections } from "../src/lib/editorial-qa.ts";
 
 const date = (value) => new Date(value);
@@ -38,8 +35,8 @@ const fail = (value, message) => assert.throws(() => validate(value), new RegExp
 
 // Test an artificial empty selection without asserting real approved registries
 // will always be empty after the editorial launch.
-assert.doesNotThrow(() => validate({ entries: [], topics, sources, features: featuredContent }));
-assert.deepEqual(resolveFeatureSections({ entries: [], topics, sources, features: featuredContent }), {},
+assert.doesNotThrow(() => validate({ entries: [], topics: [], sources: [], features: base.features }));
+assert.deepEqual(resolveFeatureSections({ entries: [], topics: [], sources: [], features: base.features }), {},
   "Nothing to feature must render no sections, not fake latest entries");
 
 assert.doesNotThrow(() => validate(input), "Valid cross-section reference allowed");
