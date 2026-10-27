@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import SiteHeader from "../components/site/SiteHeader.astro";
 
 interface Props {
   /** Page-specific heading/title. The brand-only title is used by default. */
@@ -91,6 +92,7 @@ const socialImage = absoluteWebUrl(image);
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
+    <SiteHeader />
     <main id="main-content" tabindex="-1">
       <slot />
     </main>

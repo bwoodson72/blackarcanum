@@ -1,0 +1,88 @@
+---
+import type { NavigationLink } from "../../lib/site-navigation";
+interface Props { links: NavigationLink[]; pathname?: string; }
+const { links, pathname = "/" } = Astro.props;
+---
+<div class="mobile-navigation" data-mobile-navigation>
+  <button type="button" data-menu-trigger class="menu-trigger" aria-label="Open navigation menu" aria-haspopup="dialog" aria-controls="mobile-navigation-dialog" aria-expanded="false">
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+  </button>
+  <dialog id="mobile-navigation-dialog" class="mobile-dialog" data-menu-dialog aria-labelledby="mobile-navigation-title">
+    <div class="mobile-dialog__top">
+      <p id="mobile-navigation-title">Navigation</p>
+      <button type="button" data-menu-close class="menu-close" aria-label="Close navigation menu">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19" /></svg>
+      </button>
+    </div>
+    <nav aria-label="Mobile primary navigation">
+      <ul>{links.map(({ label, href }) => (
+        <li><a href={href} aria-current={pathname === href ? "page" : undefined}>{label}</a></li>
+      ))}</ul>
+    </nav>
+  </dialog>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-mobile-navigation]");
+  const trigger = root?.querySelector<HTMLButtonElement>("[data-menu-trigger]");
+  const dialog = root?.querySelector<HTMLDialogElement>("[data-menu-dialog]");
+  const closeButton = root?.querySelector<HTMLButtonElement>("[data-menu-close]");
+  const desktop = window.matchMedia("(min-width: 1024px)");
+
+  if (trigger && dialog && closeButton) {
+    const open = () => {
+      if (dialog.open) return;
+      dialog.showModal();
+      trigger.setAttribute("aria-expanded", "true");
+      closeButton.focus();
+    };
+    const close = () => { if (dialog.open) dialog.close(); };
+    trigger.addEventListener("click", open);
+    closeButton.addEventListener("click", close);
+    dialog.addEventListener("close", () => {
+      trigger.setAttribute("aria-expanded", "false");
+      if (!desktop.matches) trigger.focus({ preventScroll: true });
+    });
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) close();
+    });
+    desktop.addEventListener("change", (event) => {
+      if (event.matches) close();
+    });
+    // Escape, focus confinement and background inertness are native dialog behavior.
+  }
+</script>
+
+<style>
+  .mobile-navigation { display: block; margin-left: auto; }
+  .menu-trigger, .menu-close {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border: 1px solid transparent;
+    border-radius: var(--radius-control); background: transparent;
+    color: var(--color-antique-gold); cursor: pointer;
+  }
+  .menu-trigger:hover, .menu-close:hover { border-color: var(--color-antique-gold); }
+  .menu-trigger:focus-visible, .menu-close:focus-visible, .mobile-dialog a:focus-visible {
+    outline: 3px solid var(--color-antique-gold); outline-offset: 3px;
+  }
+  .mobile-dialog {
+    position: fixed; inset: 0 0 0 auto; box-sizing: border-box;
+    margin: 0 0 0 auto; padding: 1.25rem var(--spacing-gutter) 2rem;
+    width: min(22rem, 100%); min-width: 0; max-width: 100%;
+    height: 100dvh; max-height: 100dvh; overflow: auto;
+    border: 0; border-left: 1px solid var(--color-antique-gold);
+    background: var(--color-charcoal); color: var(--color-parchment);
+    box-shadow: var(--shadow-elevated);
+  }
+  .mobile-dialog::backdrop { background: rgb(0 0 0 / 65%); }
+  .mobile-dialog__top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--color-antique-gold); }
+  .mobile-dialog__top p { margin: 0; color: var(--color-antique-gold); font-family: var(--font-display); font-size: var(--text-lead); }
+  .mobile-dialog nav ul { display: grid; gap: 0.25rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+  .mobile-dialog nav a {
+    display: flex; align-items: center; min-height: 48px; padding: 0.5rem 0.25rem;
+    border-bottom: 1px solid var(--color-deep-brown); color: var(--color-parchment);
+    font-family: var(--font-interface); text-decoration: none;
+  }
+  .mobile-dialog nav a:hover, .mobile-dialog nav a[aria-current="page"] { color: var(--color-antique-gold); }
+  @media (min-width: 1024px) { .mobile-navigation { display: none; } }
+</style>
