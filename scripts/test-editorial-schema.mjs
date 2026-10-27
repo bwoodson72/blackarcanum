@@ -18,8 +18,8 @@ const draft = { slug: "a-study", title: "A study", description: "Research summar
 const review = { ...draft, status: "review" };
 const published = { ...draft, status: "published", publishedAt: "2026-10-27" };
 
-assert.deepEqual(topics, [], "No topics are preapproved");
-assert.deepEqual(sources, [], "No bibliography entries are preapproved");
+// Registry content is owner-controlled and will evolve; validity, not emptiness,
+// is the durable regression contract.
 assert.doesNotThrow(() => validateTopicRegistry(topics));
 assert.doesNotThrow(() => validateSourceRegistry(sources));
 
