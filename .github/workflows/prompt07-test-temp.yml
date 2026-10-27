@@ -182,7 +182,7 @@ jobs:
           await send('Page.navigate',{url});
           await waitFor(async()=>await js("!!document.querySelector('nav[aria-label=Breadcrumb]')"),'breadcrumb route');
           // Focus is visibly available for breadcrumb links, too.
-          await js("document.querySelector('nav[aria-label=Breadcrumb] a[href="/chrome-parent/"]').focus()");
+          await js(`document.querySelector('nav[aria-label="Breadcrumb"] a[href="/chrome-parent/"]').focus()`);
           const crumb=await js(`(() => {
             const a=document.querySelector('nav[aria-label="Breadcrumb"] a[href="/chrome-parent/"]');
             return {text:a.textContent,href:a.getAttribute('href'),focus:document.activeElement===a};
