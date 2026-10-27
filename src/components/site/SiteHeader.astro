@@ -1,0 +1,40 @@
+---
+import Container from "../foundation/Container.astro";
+import DesktopNavigation from "./DesktopNavigation.astro";
+import MobileNavigation from "./MobileNavigation.astro";
+import { primaryNavigation, headerActions, mobileNavigation } from "../../lib/site-navigation";
+
+const pathname = Astro.url.pathname;
+---
+<header class="site-header">
+  <Container width="wide" class="flex min-h-16 items-center justify-between gap-4">
+    <a class="brand" href="/" aria-label="Mystagogia — Home" aria-current={pathname === "/" ? "page" : undefined}>Mystagogia</a>
+    <DesktopNavigation links={primaryNavigation} pathname={pathname} />
+    {headerActions.length > 0 && (
+      <nav class="header-actions" aria-label="Header actions">
+        {headerActions.map(({ label, href }) => <a href={href}>{label}</a>)}
+      </nav>
+    )}
+    <MobileNavigation links={mobileNavigation} pathname={pathname} />
+  </Container>
+</header>
+<style>
+  .site-header { position: relative; z-index: 20; width: 100%; border-bottom: 1px solid var(--color-antique-gold); background: var(--color-charcoal); color: var(--color-parchment); }
+  .brand {
+    display: inline-flex; align-items: center; min-height: 44px; min-width: 0;
+    color: var(--color-antique-gold); font-family: var(--font-display);
+    font-size: clamp(1.5rem,1.15rem + 1.2vw,2rem); font-weight: 600;
+    letter-spacing: clamp(0.1em,0.5vw,0.18em);
+    line-height: 1.2; text-decoration: none; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .brand:hover { color: var(--color-parchment); }
+  .brand:focus-visible { outline: 3px solid var(--color-antique-gold); outline-offset: 3px; }
+  .header-actions { display: none; }
+  @media (min-width: 1024px) {
+    .header-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .header-actions a { display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1rem; color: var(--color-antique-gold); border: 1px solid var(--color-antique-gold); border-radius: var(--radius-control); font-family: var(--font-interface); font-size: var(--text-ui); text-decoration: none; }
+    .header-actions a:hover { color: var(--color-charcoal); background: var(--color-antique-gold); }
+    .header-actions a:focus-visible { outline: 3px solid var(--color-antique-gold); outline-offset: 3px; }
+  }
+</style>
