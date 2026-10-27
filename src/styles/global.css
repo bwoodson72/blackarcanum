@@ -6,3 +6,6 @@
 
 /* Shared semantic action/link styles for foundation controls. */
 @import "./foundation.css";
+
+/* Native cross-document fades, without a client-side router. */
+@import "./page-transitions.css";
