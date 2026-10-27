@@ -3,11 +3,16 @@ export interface NavigationLink {
   href: string;
 }
 
-// These arrays must only contain reviewed, working routes.
-// Library, Grimoire, About, Shop, Search and Subscribe are not live yet.
-export const primaryNavigation: NavigationLink[] = [];
+// Only reviewed routes appear in navigation. Library, Grimoire, Shop,
+// Search and Subscribe stay hidden until their destinations are active.
+export const primaryNavigation: NavigationLink[] = [
+  { label: "About", href: "/about/" },
+];
 export const headerActions: NavigationLink[] = [];
-export const mobileNavigation: NavigationLink[] = [{ label: "Home", href: "/" }];
+export const mobileNavigation: NavigationLink[] = [
+  { label: "Home", href: "/" },
+  ...primaryNavigation,
+];
 
 // Footer-only contact and legal links. Enable only when their real routes and
 // approved policy/contact details have been published; no placeholders.
