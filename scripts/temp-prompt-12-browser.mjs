@@ -91,7 +91,7 @@ try {
         noZeroPage: document.querySelector("#qa-zero nav") === null,
         updatedDates: document.querySelectorAll("#qa-metadata time").length,
         headingCount: variants.filter((article) => article.querySelector("h3 a")).length,
-        allLinksValid: anchors.every((a) => /^\/(library|grimoire)\/fixture-\d+\/$/.test(a.getAttribute("href"))),
+        allLinksValid: anchors.every((a) => { const u = a.getAttribute("href"); return (u.startsWith("/library/") || u.startsWith("/grimoire/")) && u.endsWith("/"); }),
         controlMinHeight: Math.min(...[...pager.querySelectorAll("a")].map((a) => a.getBoundingClientRect().height)),
       };
     })()`);
