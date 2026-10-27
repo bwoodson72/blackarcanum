@@ -52,11 +52,11 @@ if (!(await getPublishedGrimoireEntry("public-library"))) throw new Error("Publi
 <html lang="en"><head><meta name="robots" content="noindex,nofollow" /></head>
 <body><p id="qa-ok">Public collection helper tests passed</p></body></html>
 `;
-fs.writeFileSync("src/pages/__prompt09-qa.astro", qa);
+fs.writeFileSync("src/pages/prompt09-qa.astro", qa);
 console.log("Created temporary MDX and internal-only QA route.");
 
 if (process.argv.includes("--verify")) {
-const expected = ["dist/index.html", "dist/about/index.html", "dist/__prompt09-qa/index.html"];
+const expected = ["dist/index.html", "dist/about/index.html", "dist/prompt09-qa/index.html"];
 for (const f of expected) assert.ok(fs.existsSync(f), "Expected generated page " + f);
 const generated = [];
 function walk(dir) {
@@ -68,7 +68,7 @@ function walk(dir) {
 }
 walk("dist");
 assert.deepEqual(generated.sort(), expected.sort(), "Unexpected public article/index route generated");
-const rendered = fs.readFileSync("dist/__prompt09-qa/index.html", "utf8");
+const rendered = fs.readFileSync("dist/prompt09-qa/index.html", "utf8");
 assert.match(rendered, /Public collection helper tests passed/);
 assert.match(rendered, /noindex/);
 console.log("PASS: draft/review withheld, published entries allowed, stable IDs, no extra routes.");
