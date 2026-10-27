@@ -1,0 +1,35 @@
+name: Test secure Vercel adapter resolution (temporary)
+
+on:
+  push:
+    branches: [chore/prompt-01-baseline]
+
+permissions:
+  contents: read
+
+jobs:
+  resolution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.4
+      - name: Resolve adapter against npm registry
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Clean install
+        run: npm ci
+      - name: Installed adapter and dependency versions
+        run: npm ls astro @astrojs/vercel zod path-to-regexp @vercel/functions @vercel/cli-config || true
+      - name: Astro static build
+        run: npm run build
+      - name: Astro check
+        run: npm run typecheck
+      - name: Audit security
+        run: npm audit --audit-level=high
+      - name: Export resolved lockfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-adapter-lockfile-candidate
+          path: package-lock.json
