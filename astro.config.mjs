@@ -1,19 +1,16 @@
-import tailwindcss from "@tailwindcss/vite";
 // @ts-check
 import { defineConfig } from 'astro/config';
+import tailwindcss from '@tailwindcss/vite';
+import svelte from '@astrojs/svelte';
+import mdx from '@astrojs/mdx';
+import vercel from '@astrojs/vercel';
 
-import svelte from "@astrojs/svelte";
-
-import vercel from "@astrojs/vercel";
-
-import mdx from "@astrojs/mdx";
-
-// https://astro.build/config
+// Keep the Vercel adapter for future on-demand routes while allowing
+// approved editorial routes to remain prerendered as static HTML.
 export default defineConfig({
   vite: {
-      plugins: [tailwindcss()],
-    },
-
+    plugins: [tailwindcss()],
+  },
   integrations: [svelte(), mdx()],
   adapter: vercel(),
 });
