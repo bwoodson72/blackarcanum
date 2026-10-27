@@ -1,0 +1,44 @@
+---
+import type { GetStaticPaths, Page } from "astro";
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import LibraryArchive from "../../../components/editorial/LibraryArchive.astro";
+import { getPublishedLibraryEntries } from "../../../lib/editorial-public";
+import { EDITORIAL_PAGE_SIZE, sortPublishedEntries } from "../../../lib/editorial-archive";
+import { toPublishedArticle } from "../../../lib/editorial-presentation";
+
+export const prerender = true;
+
+/**
+ * Astro generates candidate pages from published, deterministic data.
+ * Page 1 is served ONLY by /library/; page/1 and empty/overflow pages
+ * are never emitted.
+ */
+export const getStaticPaths = (async ({ paginate }) => {
+  const sorted = sortPublishedEntries(await getPublishedLibraryEntries());
+  const paths = paginate(sorted, { pageSize: EDITORIAL_PAGE_SIZE });
+  return paths.filter(({ params }) => Number(params.page) >= 2);
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<CollectionEntry<"library">>;
+}
+
+const { page } = Astro.props;
+const articles = page.data.flatMap((entry) => {
+  const article = toPublishedArticle({ collection: "library", entry });
+  return article ? [article] : [];
+});
+---
+
+<BaseLayout
+  title={`The Library — Page ${page.currentPage}`}
+  description={`Browse page ${page.currentPage} of Mystagogia's published Library research archive.`}
+>
+  <LibraryArchive
+    articles={articles}
+    currentPage={page.currentPage}
+    totalPages={page.lastPage}
+    totalItems={page.total}
+  />
+</BaseLayout>

@@ -1,0 +1,220 @@
+---
+import Container from "../foundation/Container.astro";
+import Ornament from "../foundation/Ornament.astro";
+import ArticleGrid from "./ArticleGrid.astro";
+import Pagination from "./Pagination.astro";
+import type { PublishedArticleView } from "../../lib/editorial-presentation";
+import { EDITORIAL_PAGE_SIZE } from "../../lib/editorial-archive";
+
+interface Props {
+  articles: readonly PublishedArticleView[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+}
+
+const { articles, currentPage, totalPages, totalItems } = Astro.props;
+const isEmpty = totalItems === 0;
+const isFirstPage = currentPage === 1;
+const startItem = (currentPage - 1) * EDITORIAL_PAGE_SIZE + 1;
+const endItem = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
+---
+
+<header class="library-hero">
+  <Container width="wide" class="library-hero__inner">
+    <p class="library-hero__eyebrow">Mystagogia <span aria-hidden="true">·</span> Source-led inquiry</p>
+    <h1>The Library</h1>
+    <p class="library-hero__lead">
+      Historical texts, esoteric traditions, and the ideas that travel between
+      them—explored through sources, context, and careful interpretation.
+    </p>
+    <Ornament variant="rule" />
+  </Container>
+</header>
+
+<section class="library-content" aria-labelledby="library-listing-heading">
+  <Container width="wide">
+    {isEmpty ? (
+      <div class="library-empty">
+        <div class="library-empty__header">
+          <p class="library-empty__eyebrow">Research archive</p>
+          <h2 id="library-listing-heading">The first studies are being prepared.</h2>
+          <Ornament variant="rule" />
+        </div>
+        <div class="library-empty__body">
+          <p>
+            There are no published Library articles yet. As research is reviewed
+            and ready to share, it will appear here with its sources and context.
+          </p>
+          <p>
+            The Library approaches historical evidence and later interpretation
+            as distinct kinds of material, giving each room to speak clearly.
+          </p>
+          <a href="/about/" class="library-empty__link">
+            Read about the project <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    ) : (
+      <div class="library-listing">
+        <div class="library-listing__heading">
+          <div>
+            <p class="library-listing__eyebrow">Published research</p>
+            <h2 id="library-listing-heading">{isFirstPage ? "Research archive" : `Research archive · Page ${currentPage}`}</h2>
+          </div>
+          <p class="library-listing__count" aria-label={`Showing articles ${startItem} through ${endItem} of ${totalItems}`}>
+            {startItem}–{endItem} of {totalItems}
+          </p>
+        </div>
+        <ArticleGrid articles={articles} headingLevel="h3" />
+        <Pagination collection="library" currentPage={currentPage} totalPages={totalPages} />
+      </div>
+    )}
+  </Container>
+</section>
+
+<style>
+  .library-hero {
+    padding-block: var(--spacing-section);
+    background: var(--color-charcoal);
+    border-bottom: 1px solid var(--color-antique-gold);
+    color: var(--color-parchment);
+  }
+  .library-hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(1rem, 2.5vw, 1.65rem);
+    max-width: 72rem;
+  }
+  .library-hero__eyebrow,
+  .library-empty__eyebrow,
+  .library-listing__eyebrow {
+    margin: 0;
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+  .library-hero__eyebrow { color: var(--color-antique-gold); }
+  .library-hero h1 {
+    margin: 0;
+    color: var(--color-parchment);
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 600;
+    line-height: 1.02;
+  }
+  .library-hero__lead {
+    max-width: 55ch;
+    margin: 0;
+    color: var(--color-aged-paper);
+    font-family: var(--font-reading);
+    font-size: var(--text-lead);
+    line-height: 1.5;
+  }
+  .library-content {
+    min-height: 45vh;
+    padding-block: var(--spacing-section);
+    background: var(--color-parchment);
+    color: var(--color-charcoal);
+  }
+  .library-empty {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    border: 1px solid var(--color-border-paper);
+    border-top: 3px solid var(--color-sage-ink);
+    background: var(--color-aged-paper);
+    padding: clamp(1.5rem, 4vw, 3.5rem);
+  }
+  .library-empty__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+    min-width: 0;
+  }
+  .library-empty__eyebrow,
+  .library-listing__eyebrow { color: var(--color-sage-ink); }
+  .library-empty h2,
+  .library-listing h2 {
+    margin: 0;
+    color: var(--color-charcoal);
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: 1.14;
+    overflow-wrap: anywhere;
+  }
+  .library-empty__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 0;
+    border-top: 1px solid var(--color-border-paper);
+    padding-top: 1.25rem;
+  }
+  .library-empty__body p {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--color-charcoal);
+    font-family: var(--font-reading);
+    font-size: var(--text-body);
+    line-height: 1.65;
+  }
+  .library-empty__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    margin-top: 0.25rem;
+    color: var(--color-oxide-red);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    font-weight: 650;
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+  .library-empty__link:hover { text-decoration-thickness: 2px; }
+  .library-empty__link:focus-visible {
+    border-radius: var(--radius-control);
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+  .library-listing__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border-paper);
+  }
+  .library-listing__heading > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .library-listing__count {
+    margin: 0;
+    color: var(--color-muted-ink);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+  }
+  @media (min-width: 768px) {
+    .library-empty {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      align-items: start;
+    }
+    .library-empty__body {
+      border-top: 0;
+      border-left: 1px solid var(--color-border-paper);
+      padding-top: 0;
+      padding-left: clamp(1.5rem, 3vw, 3rem);
+    }
+  }
+</style>
