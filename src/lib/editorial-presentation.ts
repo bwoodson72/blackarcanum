@@ -1,5 +1,5 @@
 import type { CollectionEntry } from "astro:content";
-import { EDITORIAL_SLUG_PATTERN } from "./editorial-identifiers";
+import { EDITORIAL_SLUG_PATTERN } from "./editorial-identifiers.ts";
 import type { EditorialSection } from "./editorial-qa";
 
 /**
