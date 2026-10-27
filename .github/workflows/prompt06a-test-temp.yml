@@ -1,0 +1,202 @@
+name: Verify native cross-document transitions (temporary)
+
+on:
+  push:
+    branches: [feature/prompt-06a-native-fade-transitions]
+    paths: [.github/workflows/prompt06a-test-temp.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  transitions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.4
+          cache: npm
+      - name: Create two temporary non-indexed linked pages
+        shell: bash
+        run: |
+          cat > src/pages/transition-a.astro <<'ASTRO'
+          ---
+          import BaseLayout from "../layouts/BaseLayout.astro";
+          ---
+          <BaseLayout title="Transition fixture A" noindex>
+            <section class="mx-auto max-w-reading px-gutter py-section">
+              <h1>Transition fixture A</h1>
+              <a id="fixture-link" href="/transition-b/">Go to B</a>
+            </section>
+            <script is:inline>
+              addEventListener("pageswap", event => {
+                const events = JSON.parse(sessionStorage.getItem("transition-events") || "[]");
+                events.push({ event: "pageswap", page: location.pathname, viewTransition: Boolean(event.viewTransition) });
+                sessionStorage.setItem("transition-events", JSON.stringify(events));
+              });
+              addEventListener("pagereveal", event => {
+                const events = JSON.parse(sessionStorage.getItem("transition-events") || "[]");
+                events.push({ event: "pagereveal", page: location.pathname, viewTransition: Boolean(event.viewTransition),
+                  reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+                  fadeName: getComputedStyle(document.documentElement, "::view-transition-new(root)").animationName });
+                sessionStorage.setItem("transition-events", JSON.stringify(events));
+              });
+            </script>
+          </BaseLayout>
+          ASTRO
+          cat > src/pages/transition-b.astro <<'ASTRO'
+          ---
+          import BaseLayout from "../layouts/BaseLayout.astro";
+          ---
+          <BaseLayout title="Transition fixture B" noindex>
+            <section class="mx-auto max-w-reading px-gutter py-section">
+              <h1>Transition fixture B</h1>
+              <a id="fixture-link" href="/transition-a/">Go to A</a>
+            </section>
+            <script is:inline>
+              addEventListener("pageswap", event => {
+                const events = JSON.parse(sessionStorage.getItem("transition-events") || "[]");
+                events.push({ event: "pageswap", page: location.pathname, viewTransition: Boolean(event.viewTransition) });
+                sessionStorage.setItem("transition-events", JSON.stringify(events));
+              });
+              addEventListener("pagereveal", event => {
+                const events = JSON.parse(sessionStorage.getItem("transition-events") || "[]");
+                events.push({ event: "pagereveal", page: location.pathname, viewTransition: Boolean(event.viewTransition),
+                  reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+                  fadeName: getComputedStyle(document.documentElement, "::view-transition-new(root)").animationName });
+                sessionStorage.setItem("transition-events", JSON.stringify(events));
+              });
+            </script>
+          </BaseLayout>
+          ASTRO
+      - name: Build and verify static HTML, CSS, types and security
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run typecheck
+          npm run build
+          npm audit --audit-level=high
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          cssfiles=list(Path('.vercel/output/static').rglob('*.css'))
+          assert cssfiles
+          css='\n'.join(f.read_text() for f in cssfiles)
+          assert len(re.findall(r'@view-transition\s*\{',css)) == 1,'Expected exactly one navigation opt-in'
+          assert re.search(r'@view-transition\s*\{\s*navigation:\s*auto',css)
+          assert '::view-transition-old(root)' in css and '::view-transition-new(root)' in css
+          assert 'mystagogia-page-fade-out' in css and 'mystagogia-page-fade-in' in css
+          assert re.search(r'250ms\s+ease',css),'250ms duration not found'
+          assert 'prefers-reduced-motion' in css and 'animation:none!important' in css.replace(' ','')
+          assert '@keyframes' in css and 'opacity:0' in css.replace(' ','')
+          for name in ['a','b']:
+              html=Path(f'.vercel/output/static/transition-{name}/index.html').read_text()
+              assert f'Transition fixture {name.upper()} | Mystagogia' in html
+              assert 'name="robots" content="noindex, nofollow"' in html
+              assert f'href="/transition-{"b" if name=="a" else "a"}/"' in html
+              assert 'href="#main-content"' in html
+              assert '/_astro/' in html
+          assert not any('ClientRouter' in f.read_text() for f in cssfiles)
+          print('TRANSITION_BUILD_PASS: 1 opt-in, 250ms opacity fades, reduced-motion CSS, 2 private fixtures')
+          PY
+      - name: Exercise real Chrome cross-document navigation and fallback settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory .vercel/output/static >/tmp/fade-http.log 2>&1 &
+          site=$!
+          google-chrome --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-extensions --disable-background-networking --remote-debugging-port=9333 --remote-allow-origins='*' --user-data-dir=/tmp/fade-chrome about:blank >/tmp/fade-chrome.log 2>&1 &
+          chrome=$!
+          trap 'kill "$site" "$chrome" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 80); do
+            if curl -sf http://127.0.0.1:8765/transition-a/ -o /tmp/fade-a.html && curl -sf http://127.0.0.1:9333/json -o /tmp/fade-tabs.json; then break; fi
+            sleep 0.25
+          done
+          test -s /tmp/fade-a.html
+          test -s /tmp/fade-tabs.json
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          const tabs=await (await fetch('http://127.0.0.1:9333/json')).json();
+          const page=tabs.find(x=>x.type==='page');
+          assert(page?.webSocketDebuggerUrl);
+          const ws=new WebSocket(page.webSocketDebuggerUrl);
+          await new Promise((ok,bad)=>{ws.onopen=ok;ws.onerror=bad});
+          let seq=0;const pending=new Map();
+          ws.onmessage=e=>{const x=JSON.parse(e.data);if(!x.id)return;const p=pending.get(x.id);if(!p)return;pending.delete(x.id);x.error?p.reject(new Error(JSON.stringify(x.error))):p.resolve(x.result)};
+          const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params}));setTimeout(()=>{if(pending.has(id)){pending.delete(id);reject(new Error(method+' timed out'))}},12000)});
+          const evaluate=async expression=>(await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true})).result?.value;
+          const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+          const waitFor=async (fn,message)=>{for(let i=0;i<100;i++){let x;try{x=await fn()}catch{}if(x)return x;await sleep(100)}throw new Error('Timed out: '+message)};
+          await send('Page.enable');await send('Runtime.enable');
+          const base='http://127.0.0.1:8765';
+          const go=async path=>{await send('Page.navigate',{url:base+path});await waitFor(async()=>await evaluate('location.pathname')===path&&await evaluate('!!document.querySelector("#fixture-link")'),'load '+path)};
+          const state=()=>evaluate(`(() => ({
+            path: location.pathname,
+            title:document.title,
+            width:innerWidth,
+            scrollWidth:document.documentElement.scrollWidth,
+            header:!!document.querySelector('.site-header'),
+            events:JSON.parse(sessionStorage.getItem('transition-events')||'[]'),
+            menuOpen:document.querySelector('[data-menu-dialog]').open
+          }))()`);
+          const userClick=async()=>{const r=await evaluate(`(() => {const x=document.querySelector('#fixture-link').getBoundingClientRect();return {x:x.left+x.width/2,y:x.top+x.height/2};})()`);assert(r?.x>0&&r?.y>0,'Link not visible');await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:r.x,y:r.y});await send('Input.dispatchMouseEvent',{type:'mousePressed',x:r.x,y:r.y,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',x:r.x,y:r.y,button:'left',clickCount:1});};
+          const waitPath=path=>waitFor(async()=>{const x=await evaluate('location.pathname');return x===path&&await evaluate('document.readyState==="complete"')},path);
+          for(const width of [375,1440]){
+            await send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false});
+            await go('/transition-a/');
+            await waitFor(async()=>{const x=await state();return x.width===width&&x.header&&!x.menuOpen},'viewport ready');
+            await evaluate('sessionStorage.removeItem("transition-events")');
+            await userClick();
+            await waitPath('/transition-b/');
+            await sleep(450);
+            const b=await state();
+            assert.equal(b.title,'Transition fixture B | Mystagogia');
+            assert(b.scrollWidth<=width+1,'Horizontal overflow at '+width);
+            const outgoing=b.events.find(x=>x.event==='pageswap'&&x.page==='/transition-a/');
+            const incoming=b.events.find(x=>x.event==='pagereveal'&&x.page==='/transition-b/');
+            assert(outgoing,'Missing outgoing pageswap event');
+            assert(incoming,'Missing incoming pagereveal event');
+            assert(outgoing.viewTransition&&incoming.viewTransition,'Native cross-document transition did not occur');
+            console.log('FADE_BROWSER_PASS',JSON.stringify({width,outgoing,incoming,scroll:b.scrollWidth}));
+            if(width===375){
+              await waitFor(async()=>await evaluate('!!document.querySelector("[data-menu-trigger]")'),'mobile trigger');
+              await evaluate('document.querySelector("[data-menu-trigger]").click()');
+              await waitFor(async()=>await evaluate('document.querySelector("[data-menu-dialog]").open'),'dialog open');
+              const menu=await evaluate(`(() => ({expanded:document.querySelector('[data-menu-trigger]').getAttribute('aria-expanded'),focus:document.activeElement===document.querySelector('[data-menu-close]')}))()`);
+              assert.deepEqual(menu,{expanded:'true',focus:true});
+              await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9,nativeVirtualKeyCode:9});
+              await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9,nativeVirtualKeyCode:9});
+              assert(await evaluate('document.querySelector("[data-menu-dialog]").contains(document.activeElement)'));
+              await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27,nativeVirtualKeyCode:27});
+              await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27,nativeVirtualKeyCode:27});
+              await waitFor(async()=>await evaluate('!document.querySelector("[data-menu-dialog]").open'),'Escape closed dialog');
+              assert(await evaluate('document.activeElement===document.querySelector("[data-menu-trigger]")'));
+              await evaluate('document.querySelector("[data-menu-trigger]").click()');
+              await evaluate('document.querySelector("[data-menu-close]").click()');
+              await waitFor(async()=>await evaluate('!document.querySelector("[data-menu-dialog]").open'),'Close button');
+              console.log('MENU_AFTER_FADE_PASS: open, Tab confinement, Escape, focus return, Close');
+            }
+            await evaluate('history.back()');
+            await waitPath('/transition-a/');
+            assert((await state()).events.some(x=>x.event==='pagereveal'&&x.page==='/transition-a/'));
+            await evaluate('history.forward()');
+            await waitPath('/transition-b/');
+            assert((await state()).events.some(x=>x.event==='pagereveal'&&x.page==='/transition-b/'));
+            console.log('HISTORY_PASS',width);
+          }
+          await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+          await go('/transition-a/');
+          assert(await evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"));
+          const reduced=await evaluate(`(() => {
+            const old=getComputedStyle(document.documentElement,'::view-transition-old(root)').animationName;
+            const next=getComputedStyle(document.documentElement,'::view-transition-new(root)').animationName;
+            return {old,next};
+          })()`);
+          assert.equal(reduced.old,'none');assert.equal(reduced.next,'none');
+          await userClick();await waitPath('/transition-b/');
+          assert.equal((await state()).path,'/transition-b/');
+          console.log('REDUCED_MOTION_PASS',JSON.stringify(reduced));
+          ws.close();
+          JS
