@@ -35,3 +35,12 @@ jobs:
       - name: Published archive responsive and accessibility QA (Prompt 13 only)
         if: github.ref == 'refs/heads/feature/prompt-13-library-hub'
         run: node scripts/test-library-browser.mjs --full
+      - name: Empty Grimoire mobile and desktop QA (Prompt 14 only)
+        if: github.ref == 'refs/heads/feature/prompt-14-grimoire-hub'
+        run: node scripts/test-grimoire-browser.mjs --empty
+      - name: Isolated Grimoire 0/1/12/13/25-entry MDX builds (Prompt 14 only)
+        if: github.ref == 'refs/heads/feature/prompt-14-grimoire-hub'
+        run: node scripts/test-grimoire-build-fixtures.mjs
+      - name: Published Grimoire responsive and pagination QA (Prompt 14 only)
+        if: github.ref == 'refs/heads/feature/prompt-14-grimoire-hub'
+        run: node scripts/test-grimoire-browser.mjs --full
