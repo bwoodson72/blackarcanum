@@ -88,7 +88,7 @@ jobs:
           assert re.search(r'@view-transition\s*\{\s*navigation:\s*auto',css)
           assert '::view-transition-old(root)' in css and '::view-transition-new(root)' in css
           assert 'mystagogia-page-fade-out' in css and 'mystagogia-page-fade-in' in css
-          assert re.search(r'250ms\s+ease',css),'250ms duration not found'
+          assert re.search(r'(?:250ms|0?\.25s)\s+ease',css),'250ms equivalent duration not found'
           assert 'prefers-reduced-motion' in css and 'animation:none!important' in css.replace(' ','')
           assert '@keyframes' in css and 'opacity:0' in css.replace(' ','')
           for name in ['a','b']:
