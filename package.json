@@ -17,7 +17,6 @@
     "@astrojs/mdx": "^8.1.1",
     "@astrojs/sitemap": "^3.7.4",
     "@astrojs/svelte": "^9.1.1",
-    "@astrojs/vercel": "^11.0.16",
     "@starwind-ui/astro": "^1.4.0",
     "@tabler/icons": "^3.50.0",
     "@tailwindcss/forms": "^0.5.11",
