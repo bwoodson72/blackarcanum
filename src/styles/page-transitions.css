@@ -1,0 +1,33 @@
+/*
+ * Native cross-document view transitions for eligible same-origin navigations.
+ * Both the outgoing and incoming pages must opt in. No client-side router.
+ * Browsers without cross-document support use ordinary full-page navigation.
+ */
+@view-transition {
+  navigation: auto;
+}
+
+@keyframes mystagogia-page-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes mystagogia-page-fade-in {
+  from { opacity: 0; }
+}
+
+/* Root snapshots crossfade for 250ms; no transform or position animation. */
+::view-transition-old(root) {
+  animation: 250ms ease-in both mystagogia-page-fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 250ms ease-out both mystagogia-page-fade-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
