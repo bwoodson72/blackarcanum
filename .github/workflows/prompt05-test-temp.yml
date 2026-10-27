@@ -129,7 +129,7 @@ jobs:
           await send('Page.enable');
           await send('Runtime.enable');
           for(const width of [375,768,1280]){
-            await send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width===375});
+            await send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false});
             await send('Page.navigate',{url:'http://127.0.0.1:8765/foundation-fixture/'});
             let v;
             for(let attempt=0;attempt<45;attempt++){
@@ -140,7 +140,7 @@ jobs:
                 const bodyMargin=parseFloat(getComputedStyle(document.body).marginLeft);
                 const padding=parseFloat(getComputedStyle(elements[0]).paddingLeft);
                 // Wait for Astro/Tailwind stylesheet, not just parsed DOM.
-                if(bodyMargin!==0 || padding<18)return null;
+                if(bodyMargin!==0 || padding<18){return {loading:true,width:innerWidth,bodyMargin,padding};}
                 return {
                   width:innerWidth,
                   scroll:document.documentElement.scrollWidth,
@@ -151,10 +151,10 @@ jobs:
                 };
               })()`,returnByValue:true});
               v=r.result?.value;
-              if(v)break;
+              if(v && !v.loading)break;
               await new Promise(resolve=>setTimeout(resolve,100));
             }
-            assert(v,'Probe elements missing at '+width);
+            assert(v && !v.loading,'Computed stylesheet did not load at '+width+': '+JSON.stringify(v));
             assert.equal(v.width,width,'CDP viewport mismatch');
             assert(v.scroll<=width+1,'Horizontal overflow at '+width+': '+v.scroll);
             assert(v.widths[0]<=1281,'Wide exceeds 1280px limit');
