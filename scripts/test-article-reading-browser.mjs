@@ -185,6 +185,28 @@ try {
     fs.writeFileSync(shotDir + "/homepage-" + width + ".png",
       Buffer.from(png.result.data, "base64"));
     console.log("PASS: homepage " + width + "px responsive gateway, real links, no overflow; screenshot captured");
+    // Header remains at viewport top after scrolling, without covering the
+    // initial hero or changing its dimensions. Reuses the existing Chrome tab.
+    const headerResult = await evaluate(`(() => {
+      const header = document.querySelector(".site-header");
+      const main = document.querySelector("#main-content");
+      const initial = { position: getComputedStyle(header).position,
+        headerHeight: header.getBoundingClientRect().height,
+        mainTop: main.getBoundingClientRect().top };
+      window.scrollTo(0, 480);
+      return { ...initial, scrollY: window.scrollY,
+        headerTop: header.getBoundingClientRect().top,
+        scrollPadding: getComputedStyle(document.documentElement).scrollPaddingTop };
+    })()`);
+    assert.equal(headerResult.position, "sticky", "Navigation bar must remain sticky");
+    assert.ok(Math.abs(headerResult.mainTop - headerResult.headerHeight) <= 2,
+      "Header stays in document flow without overlapping the hero");
+    assert.ok(headerResult.scrollY > 100 && Math.abs(headerResult.headerTop) <= 1,
+      "Header remains at top of viewport while scrolling");
+    assert.ok(parseFloat(headerResult.scrollPadding) >= headerResult.headerHeight,
+      "Anchor scrolling leaves room for the persistent header");
+    console.log("PASS: persistent header " + width +
+      "px: visible on scroll, hero not overlapped, anchors offset");
   }
 
 } finally {

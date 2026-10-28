@@ -212,3 +212,13 @@ for (const collection of ["library", "grimoire"]) {
 }
 console.log("PASS: homepage height preserved; matching celestial/hub heroes and working archive links");
 
+
+const headerSource = fs.readFileSync("src/components/site/SiteHeader.astro", "utf8");
+assert.match(headerSource, /position:\s*sticky;/, "Site navigation must remain visible on scroll");
+assert.match(headerSource, /top:\s*0;/, "Sticky header anchors to viewport top");
+assert.match(headerSource, /scroll-padding-top:\s*5rem;/,
+  "Anchor targets must not disappear behind sticky navigation");
+for (const html of [homepage, archive.library, archive.grimoire]) {
+  assert.ok(html.includes('class="site-header"'), "All main routes share persistent navigation");
+}
+console.log("PASS: persistent header and anchor offset are shared by all main routes");
