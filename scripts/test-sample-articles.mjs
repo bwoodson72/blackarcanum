@@ -109,3 +109,25 @@ for (const { collection, slug, title } of expected) {
 }
 
 console.log("PASS: three Greek-deity samples visible, clearly temporary and excluded from indexing");
+
+// Prompt 25: honest homepage in the absence of any curated feature IDs.
+const homepage = fs.readFileSync("dist/index.html", "utf8");
+assert.ok(homepage.includes('id="home-title"') && homepage.includes("The Study and Practice of Hidden Arts"));
+assert.equal((homepage.match(/<h1\b/g) ?? []).length, 1, "Homepage has a single H1");
+for (const id of ["home-paths-heading", "home-research-heading", "home-practice-heading", "home-newsletter-heading"]) {
+  assert.ok(homepage.includes('id="' + id + '"'), "Homepage section exists: " + id);
+}
+for (const href of ["/library/", "/grimoire/"]) {
+  assert.ok(homepage.includes('href="' + href + '"'), "Homepage links to live archive: " + href);
+}
+assert.ok(homepage.includes("data-home-features-empty"),
+  "Empty curated registry must not cause a newest-article fallback");
+assert.ok(!homepage.includes('class="article-card'),
+  "Uncurated layout previews must not appear as featured research");
+assert.ok(!homepage.includes('href="/shop/"') && !homepage.includes('href="/newsletter/"'),
+  "Unimplemented Shop and newsletter routes must not be exposed");
+assert.ok(!/<form\b/.test(homepage), "No pretend subscription form");
+assert.ok(homepage.includes("Newsletter in preparation"), "Newsletter slot is honest");
+assert.ok(homepage.includes('name="robots" content="noindex, nofollow"'),
+  "Homepage remains noindex until real editorial features are curated");
+console.log("PASS: Prompt 25 homepage gateway, intentional empty-state, newsletter and noindex");

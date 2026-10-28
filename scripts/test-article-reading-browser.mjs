@@ -1,6 +1,7 @@
 // Check real static MDX article pages in the temporary fixture build across
 // mobile, tablet, laptop and wide desktop using headless Chrome.
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { spawn } from "node:child_process";
 import { setTimeout as pause } from "node:timers/promises";
 
@@ -146,6 +147,46 @@ try {
     }
   }
   console.log("PASS: real MDX article routes at 375/768/1024/1440, correct 720px reading width and safe media");
+
+  // Prompt 25 reuses the same Chrome session and static build.
+  // Capture full-page screenshots for a human comparison with the approved
+  // desktop and responsive references, never as production assets.
+  const shotDir = "qa-artifacts/homepage";
+  fs.mkdirSync(shotDir, { recursive: true });
+  for (const width of [375, 768, 1024, 1440]) {
+    await send("Emulation.setDeviceMetricsOverride", {
+      width, height: 900, deviceScaleFactor: 1, mobile: false,
+    });
+    await send("Page.navigate", { url: origin + "/" });
+    await waitFor(async () => evaluate(
+      'document.readyState === "complete" && !!document.querySelector("#home-title")'
+    ), "homepage at " + width);
+    const snapshot = await evaluate('(() => { const cards = [...document.querySelectorAll(".home-path")]; const grid = document.querySelector(".home-paths__grid"); return { width: innerWidth, scrollWidth: document.documentElement.scrollWidth, h1: document.querySelectorAll("main h1").length, gatewayCount: cards.length, gatewayColumns: getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length, cards: cards.map((x) => { const r=x.getBoundingClientRect(); return { left:r.left,right:r.right,width:r.width }; }), links: [...document.querySelectorAll("main a[href]")].map((x) => ({ href:x.getAttribute("href"), height:x.getBoundingClientRect().height })), featureCards: document.querySelectorAll(".home-research .article-card").length, featureEmpty: !!document.querySelector("[data-home-features-empty]"), newsletterForm: !!document.querySelector(".home-newsletter form") }; })()');
+    assert.equal(snapshot.width, width);
+    assert.ok(snapshot.scrollWidth <= width + 1, "Homepage must not overflow at " + width);
+    assert.equal(snapshot.h1, 1);
+    assert.equal(snapshot.gatewayCount, 2);
+    assert.equal(snapshot.gatewayColumns, width >= 768 ? 2 : 1);
+    assert.equal(snapshot.featureCards, 0, "No auto-curated sample articles");
+    assert.equal(snapshot.featureEmpty, true);
+    assert.equal(snapshot.newsletterForm, false, "No unimplemented signup");
+    for (const rect of snapshot.cards) {
+      assert.ok(rect.width > 0 && rect.left >= -1 && rect.right <= width + 1,
+        "Gateway card cannot overflow viewport");
+    }
+    for (const link of snapshot.links) {
+      assert.ok(["/library/", "/grimoire/"].includes(link.href),
+        "Only implemented homepage links are used: " + link.href);
+      assert.ok(link.height >= 32, "Navigation affordance must be large enough to interact");
+    }
+    const png = await send("Page.captureScreenshot", {
+      format: "png", captureBeyondViewport: true, fromSurface: true,
+    });
+    fs.writeFileSync(shotDir + "/homepage-" + width + ".png",
+      Buffer.from(png.result.data, "base64"));
+    console.log("PASS: homepage " + width + "px responsive gateway, real links, no overflow; screenshot captured");
+  }
+
 } finally {
   socket?.close();
   chrome.kill("SIGTERM");

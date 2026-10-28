@@ -1,15 +1,188 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/foundation/Container.astro";
+import Ornament from "../components/foundation/Ornament.astro";
+import ArticleGrid from "../components/editorial/ArticleGrid.astro";
 import { checkEditorialBuild } from "../lib/editorial-build-qa";
+import { getPublishedLibraryEntries, getPublishedGrimoireEntry } from "../lib/editorial-public";
+import { toPublishedArticle } from "../lib/editorial-presentation";
+import "../styles/homepage.css";
 
-// Every production build validates all editorial references and curated IDs.
-// The homepage stays a noindex project shell until its own implementation step.
-await checkEditorialBuild();
+export const prerender = true;
+
+// The homepage uses only explicitly curated IDs, never newest-article fallback.
+const selected = await checkEditorialBuild();
+const libraryEntries = await getPublishedLibraryEntries();
+const libraryById = new Map(libraryEntries.map((entry) => [entry.id, entry]));
+const featuredLibrary = (selected.homepageLibrary ?? []).map(({ id }) => {
+  const entry = libraryById.get(id);
+  if (!entry) throw new Error('Homepage Library feature not published: ' + id);
+  const article = toPublishedArticle({ collection: "library", entry });
+  if (!article) throw new Error('Homepage feature not cleared: ' + id);
+  return article;
+});
+const spotlightEntry = selected.primaryGrimoire
+  ? await getPublishedGrimoireEntry(selected.primaryGrimoire.id)
+  : undefined;
+if (selected.primaryGrimoire && !spotlightEntry) {
+  throw new Error("Homepage Grimoire spotlight is not published.");
+}
+const spotlight = spotlightEntry
+  ? toPublishedArticle({ collection: "grimoire", entry: spotlightEntry })
+  : undefined;
+const launched = featuredLibrary.some((article) => !article.preview) ||
+  (spotlight !== undefined && !spotlight.preview);
 ---
 
-<BaseLayout noindex>
-  <section aria-labelledby="site-title" class="mx-auto max-w-reading px-gutter py-section">
-    <h1 id="site-title">Mystagogia</h1>
-    <p class="mt-4 text-text-muted">Editorial site in development.</p>
+<BaseLayout
+  title="Mystagogia"
+  description="Discover the hidden arts through historical sources, living traditions, and original practical exploration."
+  noindex={!launched}
+>
+  <section class="home-hero" aria-labelledby="home-title">
+    <div class="home-hero__sky" aria-hidden="true">
+      <span class="home-hero__orbit"><span class="home-hero__star">✦</span></span>
+      <span class="home-hero__spark home-hero__spark--one">✧</span>
+      <span class="home-hero__spark home-hero__spark--two">✦</span>
+    </div>
+    <Container width="wide" class="home-hero__inner">
+      <div class="home-hero__copy">
+        <p class="home-eyebrow">Research <span aria-hidden="true">·</span> Tradition <span aria-hidden="true">·</span> Practice</p>
+        <h1 id="home-title">Mystagogia</h1>
+        <p class="home-hero__subtitle">The Study and Practice of Hidden Arts</p>
+        <Ornament variant="rule" />
+        <p class="home-hero__lead">
+          Historical research, living traditions, and practical exploration of the esoteric arts.
+          Two distinct paths through questions that have endured for centuries.
+        </p>
+        <div class="home-hero__actions">
+          <a class="home-button home-button--gold" href="/library/">Explore the Library <span aria-hidden="true">→</span></a>
+          <a class="home-button home-button--outline" href="/grimoire/">The Grimoire <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <section class="home-paths" aria-labelledby="home-paths-heading">
+    <Container width="wide">
+      <div class="home-section-heading home-section-heading--center">
+        <Ornament variant="rule" />
+        <h2 id="home-paths-heading">Two Paths of Exploration</h2>
+        <Ornament variant="rule" />
+      </div>
+      <div class="home-paths__grid">
+        <article class="home-path">
+          <div class="home-path__art home-path__art--library" aria-hidden="true">
+            <span class="home-path__books"><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="home-path__disc"></span>
+          </div>
+          <div class="home-path__body">
+            <p class="home-eyebrow">Sources &amp; traditions</p>
+            <h3>The Library</h3>
+            <p>
+              Historical texts, established traditions, and the evidence behind esoteric ideas.
+              Follow the sources and distinguish what is recorded from what is interpreted.
+            </p>
+            <a class="home-text-link" href="/library/">Explore the Library <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+        <article class="home-path">
+          <div class="home-path__art home-path__art--grimoire" aria-hidden="true">
+            <span class="home-path__sigil"></span>
+            <span class="home-path__vessel"></span>
+            <span class="home-path__flame"></span>
+          </div>
+          <div class="home-path__body">
+            <p class="home-eyebrow">Methods &amp; observations</p>
+            <h3>The Grimoire</h3>
+            <p>
+              Original methods, experiments, adaptations, and firsthand observations.
+              Examine the work of practice without confusing experience with proof.
+            </p>
+            <a class="home-text-link" href="/grimoire/">Explore the Grimoire <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      </div>
+    </Container>
+  </section>
+
+  <section class="home-research" aria-labelledby="home-research-heading">
+    <Container width="wide">
+      <div class="home-section-heading home-section-heading--split">
+        <div>
+          <p class="home-eyebrow">From the Library</p>
+          <h2 id="home-research-heading">Featured Research</h2>
+        </div>
+        <a class="home-text-link" href="/library/">View the Library <span aria-hidden="true">→</span></a>
+      </div>
+      {featuredLibrary.length > 0 ? (
+        <ArticleGrid articles={featuredLibrary} headingLevel="h3" />
+      ) : (
+        <div class="home-research__empty" data-home-features-empty>
+          <span class="home-research__mark" aria-hidden="true">✧</span>
+          <div>
+            <h3>Research worth returning to.</h3>
+            <p>
+              The featured shelf is reserved for selected, source-led work.
+              Explore the Library to see the current archive and its clearly labeled layout previews.
+            </p>
+          </div>
+          <a class="home-text-link" href="/library/">Visit the research archive <span aria-hidden="true">→</span></a>
+        </div>
+      )}
+    </Container>
+  </section>
+
+  <section class="home-practice" aria-labelledby="home-practice-heading">
+    <Container width="wide" class="home-practice__inner">
+      <div class="home-practice__art" aria-hidden="true">
+        <span class="home-practice__seal"></span>
+        <span class="home-practice__star">✦</span>
+      </div>
+      <div class="home-practice__copy">
+        <p class="home-eyebrow">From the Grimoire</p>
+        {spotlight ? (
+          <>
+            <h2 id="home-practice-heading">{spotlight.title}</h2>
+            {spotlight.preview && <p class="home-practice__preview">Layout preview — not a finished account</p>}
+            {spotlight.excerpt && <p>{spotlight.excerpt}</p>}
+            <a class="home-text-link home-text-link--gold" href={spotlight.href}>
+              Read the selected entry <span aria-hidden="true">→</span>
+            </a>
+          </>
+        ) : (
+          <>
+            <h2 id="home-practice-heading">Inquiry becomes practice.</h2>
+            <p>
+              The Grimoire is devoted to methods, experiments, and careful observation.
+              Its spotlight is selected deliberately, not filled automatically from the latest entry.
+            </p>
+            <a class="home-text-link home-text-link--gold" href="/grimoire/">
+              Enter the Grimoire <span aria-hidden="true">→</span>
+            </a>
+          </>
+        )}
+      </div>
+      <div class="home-practice__aside">
+        <p class="home-eyebrow">Explore further</p>
+        <p>Techniques, firsthand accounts, and the ideas connecting practice to historical sources.</p>
+        <a class="home-text-link home-text-link--gold" href="/grimoire/">All Grimoire entries <span aria-hidden="true">→</span></a>
+      </div>
+    </Container>
+  </section>
+
+  <section class="home-newsletter" aria-labelledby="home-newsletter-heading">
+    <Container width="wide" class="home-newsletter__inner">
+      <div class="home-newsletter__symbol" aria-hidden="true">✦</div>
+      <div class="home-newsletter__copy">
+        <p class="home-eyebrow">Dispatches from the study</p>
+        <h2 id="home-newsletter-heading">Letters from Mystagogia</h2>
+        <p>
+          Future notes on research, practice, and new writing.
+          Subscriptions will open when the newsletter has a working signup.
+        </p>
+      </div>
+      <p class="home-newsletter__status">Newsletter in preparation</p>
+    </Container>
   </section>
 </BaseLayout>
