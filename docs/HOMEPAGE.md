@@ -21,3 +21,11 @@ The primary visual limitation is deliberate: the approved mockup's painted figur
 ## Approved hero CTA frame
 
 The owner approved the antique-gold engraved corner treatment from the generated Mystagogia artwork. The two homepage hero CTAs use genuine links with a thin outer gold frame, inset border, small ornamental corners, and book/botanical SVG line icons. Titles and arrows remain accessible HTML, not baked into an image. They stack full-width on narrow screens, preserve visible keyboard focus, and maintain dark/gold contrast. All other homepage artwork is unchanged by this focused styling update.
+
+## Approved artwork implementation (October 28, 2026)
+
+Replaced the four geometric illustrations with a **real generated engraving atlas** at `public/images/homepage/mystagogia-editorial-atlas.avif` (1400 × 739, 28.5 KB). The top 1400 × 560 region is the panoramic, artwork-only torch-bearing goddess hero; the bottom row contains three image regions: Library still life, Grimoire ritual desk and Grimoire spotlight.
+
+Each region is cropped at display time through a semantic-free inline SVG `viewBox` sharing one compressed AVIF asset. The hero image is absolutely positioned behind the live heading and two live ornate gold-frame buttons and fills the section edge-to-edge; the gateways and spotlight replace the former fake CSS drawings. CSS only adjusts gradients for text contrast, especially on phones. All illustration regions are decorative and hidden from screen readers. The existing curated-feature gate, responsive layout, accessible links and honest newsletter state are untouched. The artwork is original AI-generated editorial decoration, **not an authenticated historical source**.
+
+The former note that mockup-equivalent imagery was still absent is superseded by this implementation. Mobile and desktop visual acceptance should still be confirmed on live browser screens.
