@@ -1,0 +1,36 @@
+---
+import MediaFigure from "./MediaFigure.astro";
+import { resolveMdxMediaItem } from "../../lib/mdx-media-items";
+import type { MdxComparisonItem } from "../../lib/mdx-media-items";
+
+interface Props {
+  left: MdxComparisonItem;
+  right: MdxComparisonItem;
+  /** Context for why these two images are being compared. */
+  title?: string;
+}
+const { left, right, title = "Image comparison" } = Astro.props;
+if (typeof title !== "string" || !title.trim()) throw new Error("CompareImages title must not be blank.");
+for (const [side, item] of [["left", left], ["right", right]] as const) {
+  if (!item || typeof item.label !== "string" || !item.label.trim()) {
+    throw new Error("CompareImages " + side + " requires a meaningful label.");
+  }
+}
+const first = resolveMdxMediaItem(left);
+const second = resolveMdxMediaItem(right);
+if (first.id === second.id) throw new Error("CompareImages requires two distinct media IDs.");
+const sizes = "(min-width: 760px) 350px, calc(100vw - 40px)";
+---
+
+<section class="mdx-compare" data-mdx-multi="compare" aria-label={title}>
+  <div class="mdx-compare__grid">
+    <div class="mdx-compare__item" role="group" aria-label={left.label} data-compare-side="left">
+      <p class="mdx-compare__label">{left.label}</p>
+      <MediaFigure id={first.id} kind={first.kind} caption={first.caption} lightbox={first.lightbox} sizes={sizes} />
+    </div>
+    <div class="mdx-compare__item" role="group" aria-label={right.label} data-compare-side="right">
+      <p class="mdx-compare__label">{right.label}</p>
+      <MediaFigure id={second.id} kind={second.kind} caption={second.caption} lightbox={second.lightbox} sizes={sizes} />
+    </div>
+  </div>
+</section>

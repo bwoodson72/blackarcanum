@@ -10,8 +10,10 @@ interface Props {
   /** Optional contextual caption for editorial art only. */
   caption?: string;
   lightbox?: boolean;
+  /** Slot-accurate image sizes for gallery/comparison columns. */
+  sizes?: string;
 }
-const { id, kind, caption, lightbox = false } = Astro.props;
+const { id, kind, caption, lightbox = false, sizes } = Astro.props;
 if (typeof lightbox !== "boolean" || (lightbox && kind !== "reference")) {
   throw new Error("Lightbox is only supported for reference figures.");
 }
@@ -31,9 +33,9 @@ const captionText = kind === "reference" ? record.caption : caption ?? record.ca
 if (kind === "reference" && !captionText?.trim()) {
   throw new Error(`Reference figure "${id}" requires the registry's verified caption.`);
 }
-const imageSizes = kind === "wide"
+const imageSizes = sizes ?? (kind === "wide"
   ? "(min-width: 1440px) 720px, (min-width: 1024px) min(960px, calc(100vw - 40px)), (min-width: 760px) 720px, calc(100vw - 40px)"
-  : undefined;
+  : undefined);
 const provenance = [
   record.creator,
   record.date || record.period,

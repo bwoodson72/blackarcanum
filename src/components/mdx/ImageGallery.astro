@@ -1,0 +1,40 @@
+---
+import MediaFigure from "./MediaFigure.astro";
+import { resolveMdxMediaItem } from "../../lib/mdx-media-items";
+import type { MdxMediaItem } from "../../lib/mdx-media-items";
+
+interface Props {
+  /** Two or more approved media IDs in the intended reading order. */
+  items: readonly MdxMediaItem[];
+  /** Describes the group for assistive technology. */
+  label?: string;
+}
+const { items, label = "Image gallery" } = Astro.props;
+if (!Array.isArray(items) || items.length < 2 || items.length > 12) {
+  throw new Error("ImageGallery requires between 2 and 12 ordered media items.");
+}
+if (typeof label !== "string" || !label.trim()) {
+  throw new Error("ImageGallery label must not be blank.");
+}
+const entries = items.map(resolveMdxMediaItem);
+if (new Set(entries.map((entry) => entry.id)).size !== entries.length) {
+  throw new Error("ImageGallery cannot repeat the same registered image ID.");
+}
+const sizes = "(min-width: 960px) 215px, (min-width: 640px) 350px, calc(100vw - 40px)";
+---
+
+<div class:list={["mdx-gallery", items.length === 2 && "mdx-gallery--two"]} data-mdx-multi="gallery">
+  <ol class="mdx-gallery__list" aria-label={label}>
+    {entries.map((entry) => (
+      <li class="mdx-gallery__item" data-gallery-id={entry.id}>
+        <MediaFigure
+          id={entry.id}
+          kind={entry.kind}
+          caption={entry.caption}
+          lightbox={entry.lightbox}
+          sizes={sizes}
+        />
+      </li>
+    ))}
+  </ol>
+</div>

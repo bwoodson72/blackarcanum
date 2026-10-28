@@ -193,11 +193,13 @@ try {
         url: origin + "/" + section + "/qa-mdx-media-" + section + "/",
       });
       await waitFor(async () => evaluate(
-        'document.readyState === "complete" && document.querySelectorAll("[data-mdx-figure]").length === 4'
+        'document.readyState === "complete" && document.querySelectorAll("[data-mdx-figure]").length === 11'
       ), section + " MDX figures at " + width);
       const metrics = await evaluate(`(() => {
         const article = document.querySelector(".article-reading__article");
-        const figures = [...document.querySelectorAll("[data-mdx-figure]")];
+        const figures = [...document.querySelectorAll("[data-mdx-figure]")].filter(
+          (figure) => !figure.closest("[data-mdx-multi]")
+        );
         return {
           viewport: innerWidth,
           scrollWidth: document.documentElement.scrollWidth,
@@ -295,6 +297,82 @@ try {
       })()`);
       assert.equal(focusable, true, "Source and CTA links receive keyboard focus");
       console.log("PASS: " + section + " textual MDX blocks " + width + "px: fit, semantics and links");
+
+      // Prompt 24: reuse this same document and browser session. DOM order is
+      // the meaningful reading order; layout changes only the visual columns.
+      const multi = await evaluate(`(() => {
+        const galleries = [...document.querySelectorAll('[data-mdx-multi="gallery"]')];
+        const compare = document.querySelector('[data-mdx-multi="compare"]');
+        return {
+          gallery: galleries.map((el) => {
+            const list = el.querySelector('ol');
+            return {
+              listLabel: list.getAttribute("aria-label"),
+              columns: getComputedStyle(list).gridTemplateColumns.split(" ").filter(Boolean).length,
+              ids: [...list.children].map((li) => li.getAttribute("data-gallery-id")),
+              items: [...list.children].map((li) => {
+                const f = li.querySelector("[data-mdx-figure]");
+                const img = f.querySelector("img");
+                const rect = img.getBoundingClientRect();
+                const wrap = f.getBoundingClientRect();
+                return {
+                  caption: f.querySelector("figcaption")?.textContent,
+                  alt: img.alt, fit: getComputedStyle(img).objectFit,
+                  ratio: rect.width / rect.height, sizes: img.getAttribute("sizes"),
+                  left: wrap.left, right: wrap.right, width: wrap.width,
+                  reference: f.querySelector('[data-media-variant="reference"]') !== null,
+                };
+              }),
+            };
+          }),
+          compare: {
+            label: compare.getAttribute("aria-label"),
+            columns: getComputedStyle(compare.querySelector(".mdx-compare__grid")).gridTemplateColumns.split(" ").filter(Boolean).length,
+            sides: [...compare.querySelectorAll("[data-compare-side]")].map((side) => {
+              const r = side.getBoundingClientRect();
+              const img = side.querySelector("img");
+              const ir = img.getBoundingClientRect();
+              return {
+                side: side.getAttribute("data-compare-side"),
+                label: side.getAttribute("aria-label"),
+                caption: side.querySelector("figcaption")?.textContent,
+                alt: img.alt, fit: getComputedStyle(img).objectFit,
+                ratio: ir.width / ir.height,
+                left: r.left, right: r.right, width: r.width,
+              };
+            }),
+          },
+        };
+      })()`);
+      assert.equal(multi.gallery.length, 2);
+      assert.deepEqual(multi.gallery[0].ids,
+        ["ci-test-raster", "ci-test-reference", "ci-test-vector"],
+        "DOM and screen-reader order matches the authored gallery");
+      assert.deepEqual(multi.gallery[1].ids, ["ci-test-vector", "ci-test-raster"]);
+      assert.equal(multi.gallery[0].columns, width < 640 ? 1 : 3);
+      assert.equal(multi.gallery[1].columns, width < 640 ? 1 : 2);
+      assert.equal(multi.compare.columns, width < 760 ? 1 : 2);
+      assert.deepEqual(multi.compare.sides.map((s) => s.side), ["left", "right"]);
+      assert.deepEqual(multi.compare.sides.map((s) => s.label),
+        ["Left editorial view", "Right reference view"]);
+      assert.ok(multi.gallery[0].items[0].caption?.includes("First blank technical raster"));
+      assert.ok(multi.gallery[0].items[1].caption?.includes("CI-only synthetic raster"));
+      assert.ok(multi.compare.sides[0].caption?.includes("Left uncropped comparison"));
+      for (const img of [...multi.gallery.flatMap((g) => g.items), ...multi.compare.sides]) {
+        assert.ok(img.alt.length > 10, "Every meaningful image retains registered alt text");
+        assert.equal(img.fit, "contain", "Every gallery and comparison image remains uncropped");
+        assert.ok(img.width > 0 && img.left >= -1 && img.right <= width + 1,
+          "Every multi-image element stays within the viewport");
+      }
+      assert.ok(Math.abs(multi.gallery[0].items[1].ratio - 2 / 3) < 0.03,
+        "Reference photographs retain portrait aspect ratio");
+      assert.ok(Math.abs(multi.gallery[0].items[2].ratio - 2 / 3) < 0.03,
+        "Reference vector images retain intrinsic aspect ratio");
+      assert.ok(Math.abs(multi.compare.sides[1].ratio - 2 / 3) < 0.03,
+        "Comparison references are never cropped");
+      console.log("PASS: " + section + " galleries/comparison " + width +
+        "px: meaningful order, 1/2/3 columns, captions, original aspect and no overflow");
+
 
     }
   }

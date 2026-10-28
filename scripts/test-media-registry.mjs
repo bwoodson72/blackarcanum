@@ -7,6 +7,7 @@ import {
   validateMediaRegistry,
 } from "../src/lib/media-registry.ts";
 import { media } from "../src/data/media.ts";
+import { resolveMdxMediaItem } from "../src/lib/mdx-media-items.ts";
 import { createEditorialSchema } from "../src/lib/editorial-schema.ts";
 import { validateEditorialIntegrity } from "../src/lib/editorial-qa.ts";
 
@@ -176,4 +177,18 @@ assert.throws(() => validateEditorialIntegrity({
 assert.throws(() => validateEditorialIntegrity({
   ...input, entries: [{ ...input.entries[0], data: { ...input.entries[0].data, mediaIds: ["missing-media"] } }],
 }), /unknown media ID/, "QA rejects broken media references");
+// Prompt 24: the same registered media IDs are safely reused in image groups.
+const approvedArt = media.find((entry) => entry.role === "editorial");
+if (approvedArt) {
+  assert.equal(resolveMdxMediaItem({ id: approvedArt.id }).kind, "article");
+  assert.equal(resolveMdxMediaItem({ id: approvedArt.id, caption: "Editorial context" }).caption,
+    "Editorial context");
+  assert.throws(() => resolveMdxMediaItem({ id: approvedArt.id, lightbox: true }),
+    /Only approved reference figures/);
+  assert.throws(() => resolveMdxMediaItem({ id: approvedArt.id, caption: " " }),
+    /nonempty contextual caption/);
+}
+assert.throws(() => resolveMdxMediaItem({ id: "not-registered" }), /Unknown media ID/);
+assert.throws(() => resolveMdxMediaItem(null), /registered media ID/);
+console.log("PASS: MDX multi-image registry ID, captions and reference-only lightbox gate");
 console.log("PASS: empty registry, local source files, private masters, IDs, captions, decorative alt, historical provenance, clearance, article mediaIds reuse, pending/draft vs published gates");

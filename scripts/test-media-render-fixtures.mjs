@@ -182,6 +182,25 @@ function writeMdxFixture(section, filepath) {
     "",
     "<FullWidthImage id=\"ci-test-raster\" caption=\"Wider composition on permitted desktop widths.\" />",
     "",
+    "## Multi-image layouts",
+    "",
+    "<ImageGallery label=\"Three technical images\" items={[",
+    "  { id: 'ci-test-raster', caption: 'First blank technical raster in gallery.' },",
+    "  { id: 'ci-test-reference' },",
+    "  { id: 'ci-test-vector' },",
+    "]} />",
+    "",
+    "<ImageGallery label=\"Two technical images\" items={[",
+    "  { id: 'ci-test-vector' },",
+    "  { id: 'ci-test-raster', caption: 'Second blank gallery raster.' },",
+    "]} />",
+    "",
+    "<CompareImages title=\"Portrait and raster comparison\" left={{",
+    "  id: 'ci-test-raster', label: 'Left editorial view', caption: 'Left uncropped comparison raster.'",
+    "}} right={{",
+    "  id: 'ci-test-reference', label: 'Right reference view'",
+    "}} />",
+    "",
     "## Textual blocks",
     "",
     "<Callout kind=\"note\" title=\"Reading context\">",
@@ -333,10 +352,10 @@ try {
     const body = fs.readFileSync(file, "utf8");
     assert.ok(body.includes('name="robots" content="noindex, nofollow"'),
       "Synthetic MDX pages must never be indexed");
-    assert.equal((body.match(/data-mdx-figure="/g) ?? []).length, 4,
-      "ArticleImage, two ReferenceFigures and FullWidthImage render in " + section);
-    assert.equal((body.match(/<figcaption\b/g) ?? []).length, 4,
-      "Each semantic figure has a properly associated figcaption");
+    assert.equal((body.match(/data-mdx-figure="/g) ?? []).length, 11,
+      "Four original figures, five gallery items and two comparison items render in " + section);
+    assert.equal((body.match(/<figcaption\b/g) ?? []).length, 12,
+      "Eleven image figures plus the attributed Prompt 23 quotation each have captions");
     assert.ok(body.includes('data-mdx-figure="article"'));
     assert.ok(body.includes('data-mdx-figure="reference"'));
     assert.ok(body.includes('data-mdx-figure="wide"'));
@@ -385,7 +404,25 @@ try {
       "Links are to implemented routes");
     assert.ok(!body.includes('href="/shop/"') && !body.includes('href="/newsletter/"'),
       "No invented product or newsletter destination is rendered");
-    console.log("PASS: " + section + " MDX figures and four editorial text components");
+    assert.equal((body.match(/data-mdx-multi="gallery"/g) ?? []).length, 2,
+      "Three-image and two-image galleries both compile without imports");
+    assert.equal((body.match(/data-mdx-multi="compare"/g) ?? []).length, 1,
+      "The comparison renders in both MDX collections");
+    for (const label of ["Left editorial view", "Right reference view",
+      "First blank technical raster in gallery.", "Second blank gallery raster.",
+      "CI-only synthetic raster; not a real historical reference."]) {
+      assert.ok(body.includes(label), "Labels, author captions, and verified registry captions remain visible");
+    }
+    for (const entry of ["ci-test-raster", "ci-test-reference", "ci-test-vector"]) {
+      assert.ok(body.includes('data-gallery-id="' + entry + '"'),
+        "The ordered gallery refers to registered images only: " + entry);
+    }
+    assert.ok(body.includes('aria-label="Three technical images"') &&
+      body.includes('aria-label="Portrait and raster comparison"'),
+      "Multi-image groups have accessible descriptions");
+    assert.ok(body.includes('data-media-variant="reference"'),
+      "Shared image renderer retains uncropped reference presentation");
+    console.log("PASS: " + section + " text blocks, two galleries and comparison, verified caption/rights metadata");
   }
 } finally {
   fs.writeFileSync(mediaRegistryPath, originalRegistry);
