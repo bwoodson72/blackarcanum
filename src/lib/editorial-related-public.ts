@@ -1,6 +1,5 @@
 import { getCollection } from "astro:content";
 import { resolveRelatedArticles } from "./editorial-related";
-import { canPublishEditorialEntry } from "./editorial-public";
 import type { RelatedArticleRequest, RelatedCandidate } from "./editorial-related";
 
 /**
@@ -15,8 +14,10 @@ export async function getPublishedRelatedArticles(request: RelatedArticleRequest
     getCollection("grimoire"),
   ]);
   const candidates: RelatedCandidate[] = [
-    ...library.filter(canPublishEditorialEntry).map((entry) => ({ collection: "library" as const, entry })),
-    ...grimoire.filter(canPublishEditorialEntry).map((entry) => ({ collection: "grimoire" as const, entry })),
+    // Include unpublished records for accurate error diagnosis. The pure
+    // resolver refuses to return links to drafts, reviews or previews.
+    ...library.map((entry) => ({ collection: "library" as const, entry })),
+    ...grimoire.map((entry) => ({ collection: "grimoire" as const, entry })),
   ];
 
   return resolveRelatedArticles(request, candidates);

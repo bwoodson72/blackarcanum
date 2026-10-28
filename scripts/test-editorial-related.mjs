@@ -24,7 +24,8 @@ function candidate(collection, id, status = "published", options = {}) {
 
 const published = [
   candidate("library", "shared", "published", { title: "Library shared" }),
-  candidate("grimoire", "shared", "published", { title: "Grimoire shared", preview: true }),
+  candidate("grimoire", "shared", "published", { title: "Grimoire shared" }),
+  candidate("grimoire", "preview-item", "published", { preview: true }),
   candidate("grimoire", "method"),
   candidate("library", "other"),
   candidate("grimoire", "draft-item", "draft"),
@@ -50,7 +51,7 @@ assert.deepEqual(
 );
 assert.deepEqual(selected.map(({ collection }) => collection), ["grimoire", "library", "grimoire"]);
 assert.equal(selected[0].title, "Grimoire shared", "Same slug in two collections resolves correctly");
-assert.equal(selected[0].preview, true, "Existing public layout-preview status stays intact");
+assert.equal(selected[0].preview, undefined, "Related articles must be finished, not layout previews");
 assert.equal(selected[1].preview, undefined, "Do not invent preview flags");
 assert.equal(selected[1].excerpt, "Description for other", "Use published editorial metadata");
 assert.equal(resolveRelatedArticles({
@@ -80,6 +81,7 @@ const rejected = [
   ["grimoire:draft-item", /unpublished related article/],
   ["library:review-item", /unpublished related article/],
   ["grimoire:bad-date", /unpublished related article/],
+  ["grimoire:preview-item", /unpublished related article/],
   ["library:shared", /cannot link to itself/],
 ];
 for (const [key, error] of rejected) {
@@ -92,4 +94,4 @@ assert.throws(() => resolveRelatedArticles({
 }, [...published, candidate("grimoire", "method")]), /Duplicate article entry/,
 "Ambiguous duplicate collection records are not rendered");
 
-console.log("PASS: explicit related IDs, order-preserving dedupe, cross-collection same-slug URLs, preview labels, empty state and missing/draft/review/self/invalid targets");
+console.log("PASS: related IDs, dedupe, same-slug URLs, preview exclusion and precise missing/draft/review errors");

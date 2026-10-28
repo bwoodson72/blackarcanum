@@ -66,7 +66,7 @@ export function resolveRelatedArticles(
 
     // Also verifies the publication date and constructs an approved local URL.
     const article = toPublishedArticle(candidate);
-    if (!article) {
+    if (!article || article.preview === true) {
       throw new Error(`Article "${origin}" links to unpublished related article "${key}".`);
     }
 
