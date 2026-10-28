@@ -40,3 +40,18 @@ Remaining differences for visual review: CSS/SVG engraving details are approxima
 - No public content or design asset was altered and no other prompts are authorized.
 
 **Stopped after Prompt 26.**
+
+## Hero component consolidation (October 28, 2026)
+
+The homepage, Library, Grimoire and About now use one `src/components/site/PageHero.astro`,
+with props for `mode`, title/id, tagline segments, description, full-bleed art,
+optional CTA actions and archive identity. All hero visual rules now live in
+`src/styles/page-hero.css`; the previous bespoke About and hub hero implementations
+have been retired. The homepage retains its previously approved minimum height
+`clamp(32rem, 45vw, 43rem)` and vertical padding exactly. The smaller hub
+hero size is shared with About. All actions remain real links with engraved
+borders and decorative artwork hidden from assistive technology.
+
+Build acceptance checks confirm four hero instances, live CTA targets, the
+central CSS source and one H1 per page. Browser screenshot review at 375, 768,
+1024, 1280 and 1440 remains valuable for matching the original mockup.

@@ -1,6 +1,6 @@
 ---
 import Container from "../foundation/Container.astro";
-import ArchiveHero from "./ArchiveHero.astro";
+import PageHero from "../site/PageHero.astro";
 import Ornament from "../foundation/Ornament.astro";
 import ArticleGrid from "./ArticleGrid.astro";
 import Pagination from "./Pagination.astro";
@@ -22,7 +22,15 @@ const startItem = (currentPage - 1) * EDITORIAL_PAGE_SIZE + 1;
 const endItem = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
 ---
 
-<ArchiveHero collection="library" />
+<PageHero
+  mode="archive"
+  archive="library"
+  title="The Library"
+  tagline={["Historical Sources","Academic Research","Cultural Context"]}
+  description="Historical texts, esoteric traditions, and the ideas that travel between them—explored through sources, context, and careful interpretation."
+  artSrc="/images/homepage/mystagogia-editorial-atlas.avif"
+  actions={[{ label: "Browse The Library", href: "#library-listing-heading" }]}
+/>
 
 <section class="library-content" aria-labelledby="library-listing-heading">
   <Container width="wide">

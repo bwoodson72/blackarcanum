@@ -341,3 +341,33 @@ assert.doesNotThrow(()=>verifyMarkers("dist",[]));
 assert.equal(fs.existsSync("dist/pagefind"),false,
   "Do not index noneditorial pages when only noindex previews exist");
 console.log("PASS: Pagefind empty-site indexing fails closed");
+
+
+// Shared hero refactor: all four routes render the SAME prop-driven component.
+const heroTemplates = [
+  ["/", homepage, "home-hero", "Mystagogia"],
+  ["/about/", fs.readFileSync("dist/about/index.html", "utf8"), "about-hero", "About Mystagogia"],
+  ["/library/", archive.library, "library-hero", "The Library"],
+  ["/grimoire/", archive.grimoire, "grimoire-hero", "The Grimoire"],
+];
+for (const [route, html, marker, heading] of heroTemplates) {
+  assert.equal((html.match(/class="page-hero /g) ?? []).length, 1,
+    "One shared prop-driven hero on " + route);
+  assert.ok(html.includes(marker), "Hero retains route identity " + route);
+  assert.ok(html.includes("<h1") && html.includes(heading),
+    "Hero shows the route's own title: " + route);
+  assert.ok(html.includes('class="celestial-divider"') &&
+    html.includes('class="page-hero__art"') &&
+    html.includes('class="page-hero__actions"'),
+    "Every hero has shared ornament, full-bleed artwork and framed actions: " + route);
+  assert.ok(html.includes('/images/homepage/mystagogia-editorial-atlas.avif'),
+    "Every hero uses the approved original art: " + route);
+}
+const heroCss = fs.readFileSync("src/styles/page-hero.css", "utf8");
+assert.ok(heroCss.includes("min-height: clamp(32rem, 45vw, 43rem)") &&
+  heroCss.includes("padding-block: clamp(3.75rem, 7vw, 6rem)"),
+  "Approved homepage hero height and spacing must not change");
+assert.ok(!fs.existsSync("src/components/editorial/ArchiveHero.astro") &&
+  !fs.existsSync("src/styles/archive-hero.css"),
+  "Legacy duplicate archive hero implementation must be removed");
+console.log("PASS: all four heroes use shared PageHero props and one stylesheet");

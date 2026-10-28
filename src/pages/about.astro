@@ -1,24 +1,25 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/foundation/Container.astro";
-import Ornament from "../components/foundation/Ornament.astro";
+import PageHero from "../components/site/PageHero.astro";
 ---
 
 <BaseLayout
   title="About"
   description="Discover Mystagogia's approach to source-led esoteric research in the Library and original methods and observations in the Grimoire."
 >
-  <section class="about-hero" aria-labelledby="about-title">
-    <Container width="wide" class="about-hero__inner">
-      <p class="about-eyebrow about-hero__eyebrow">Research · Tradition · Practice</p>
-      <h1 id="about-title">About Mystagogia</h1>
-      <p class="about-hero__lead">
-        An editorial project devoted to the study of esoteric traditions
-        and the thoughtful exploration of practical magic.
-      </p>
-      <Ornament variant="rule" />
-    </Container>
-  </section>
+  <PageHero
+    mode="about"
+    titleId="about-title"
+    title="About Mystagogia"
+    tagline={["Research", "Tradition", "Practice"]}
+    description="An editorial project devoted to the study of esoteric traditions and the thoughtful exploration of practical magic."
+    artSrc="/images/homepage/mystagogia-editorial-atlas.avif"
+    actions={[
+      { label: "Explore the Library", href: "/library/" },
+      { label: "Explore the Grimoire", href: "/grimoire/" },
+    ]}
+  />
 
   <section class="about-introduction" aria-labelledby="about-purpose">
     <Container width="reading">
@@ -88,21 +89,6 @@ import Ornament from "../components/foundation/Ornament.astro";
 </BaseLayout>
 
 <style>
-  .about-hero {
-    padding-block: var(--spacing-section);
-    background: var(--color-charcoal);
-    border-bottom: 1px solid var(--color-antique-gold);
-    color: var(--color-parchment);
-  }
-
-  .about-hero__inner {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: clamp(1.25rem, 3vw, 2rem);
-    max-width: 75rem;
-  }
-
   .about-eyebrow,
   .about-path__eyebrow {
     margin: 0;
@@ -112,29 +98,6 @@ import Ornament from "../components/foundation/Ornament.astro";
     letter-spacing: 0.12em;
     line-height: 1.5;
     text-transform: uppercase;
-  }
-
-  .about-hero__eyebrow {
-    color: var(--color-antique-gold);
-  }
-
-  .about-hero h1 {
-    max-width: 16ch;
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--text-display);
-    font-weight: 600;
-    line-height: 1.05;
-    overflow-wrap: anywhere;
-  }
-
-  .about-hero__lead {
-    max-width: 43ch;
-    margin: 0;
-    color: var(--color-aged-paper);
-    font-family: var(--font-reading);
-    font-size: var(--text-lead);
-    line-height: 1.5;
   }
 
   .about-introduction,

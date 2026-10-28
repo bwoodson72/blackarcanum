@@ -1,6 +1,6 @@
 ---
 import Container from "../foundation/Container.astro";
-import ArchiveHero from "./ArchiveHero.astro";
+import PageHero from "../site/PageHero.astro";
 import Ornament from "../foundation/Ornament.astro";
 import ArticleCard from "./ArticleCard.astro";
 import Pagination from "./Pagination.astro";
@@ -22,7 +22,15 @@ const end = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
 const [first, ...remaining] = articles;
 ---
 
-<ArchiveHero collection="grimoire" />
+<PageHero
+  mode="archive"
+  archive="grimoire"
+  title="The Grimoire"
+  tagline={["Ritual Practice","Techniques","Personal Work"]}
+  description="An editorial space for original methods, adaptations, experiments, and practitioner observations—where what was done is distinguished from what it might mean."
+  artSrc="/images/homepage/mystagogia-editorial-atlas.avif"
+  actions={[{ label: "Browse The Grimoire", href: "#grimoire-list-heading" }]}
+/>
 
 <section class="grimoire-content" aria-labelledby="grimoire-list-heading">
   <Container width="wide">
