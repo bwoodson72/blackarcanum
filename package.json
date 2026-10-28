@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/build-pagefind.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
@@ -37,7 +37,8 @@
     "test:toc-fixtures": "node scripts/test-article-toc-fixtures.mjs",
     "test:toc-browser": "node scripts/test-article-toc-browser.mjs",
     "test:archive": "node --experimental-strip-types scripts/test-editorial-archive.mjs",
-    "test:presentation": "node --experimental-strip-types scripts/test-editorial-presentation.mjs"
+    "test:presentation": "node --experimental-strip-types scripts/test-editorial-presentation.mjs",
+    "test:pagefind-build": "node scripts/test-pagefind-build.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.5",
@@ -58,7 +59,8 @@
     "@astrojs/vercel": "^11.0.16"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.12"
+    "@astrojs/check": "0.9.12",
+    "pagefind": "1.5.2"
   },
   "overrides": {
     "@vercel/routing-utils": {

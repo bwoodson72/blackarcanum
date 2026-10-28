@@ -332,3 +332,12 @@ for (const [, filename] of qaPages) {
     "No public Article structured data without an approved origin");
 }
 console.log("PASS: Prompt 27 no-domain robots, no sitemap/canonical, preview exclusion, site URL validation");
+
+
+// Prompt 28: current layout previews must not produce an accidental search index.
+const {eligibleArticles,verifyMarkers}=await import("../scripts/build-pagefind.mjs");
+assert.deepEqual(eligibleArticles(),[]);
+assert.doesNotThrow(()=>verifyMarkers("dist",[]));
+assert.equal(fs.existsSync("dist/pagefind"),false,
+  "Do not index noneditorial pages when only noindex previews exist");
+console.log("PASS: Pagefind empty-site indexing fails closed");

@@ -80,19 +80,21 @@ if (Astro.site && !article.preview && article.mediaId) {
         </aside>
       )}
 
-      <article class="article-reading__article" aria-labelledby="article-title">
+      <article class="article-reading__article" aria-labelledby="article-title" data-pagefind-body={article.preview ? undefined : ""}>
         <ArticleHeader article={article} />
         {hasToc && (
-          <div class="article-reading__mobile-toc">
+          <div class="article-reading__mobile-toc" data-pagefind-ignore>
             <ArticleTableOfContents entries={tocEntries} variant="disclosure" />
           </div>
         )}
         <div class="article-reading__content reading-content" data-reading-content>
           <slot />
         </div>
-        <ArticleReferences citations={citations} sourceIds={sourceIds} />
-        <RelatedArticles articles={relatedArticles} variant={relatedVariant} />
-        <footer class="article-reading__footer">
+        <div data-pagefind-ignore>
+          <ArticleReferences citations={citations} sourceIds={sourceIds} />
+          <RelatedArticles articles={relatedArticles} variant={relatedVariant} />
+        </div>
+        <footer class="article-reading__footer" data-pagefind-ignore>
           <a href={sectionHref}>
             <span aria-hidden="true">←</span> All {sectionLabel} entries
           </a>

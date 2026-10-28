@@ -25,8 +25,8 @@ const sectionLabel = article.collection === "library"
   {article.preview && (
     <p class="article-header__preview">LAYOUT PREVIEW <span aria-hidden="true">·</span> Temporary sample content for design review, not a finished article.</p>
   )}
-  <h1 id="article-title">{article.title}</h1>
-  {lead && <p class="article-header__lead">{lead}</p>}
+  <h1 id="article-title" data-pagefind-meta="title">{article.title}</h1>
+  {lead && <p class="article-header__lead" data-pagefind-meta="description">{lead}</p>}
   <ArticleMetadata
     collection={article.collection}
     publishedAt={article.publishedAt}

@@ -57,6 +57,9 @@ jobs:
         run: |
           npm run test:article-routes
           npm run test:article-responsive
+      - name: Pagefind indexing with published and hidden fixtures
+        if: ${{ env.QA_SUITE == 'all' || env.QA_SUITE == 'articles' }}
+        run: npm run test:pagefind-build
       - name: SEO approved-domain and published/draft build acceptance
         if: ${{ env.QA_SUITE == 'all' || env.QA_SUITE == 'articles' }}
         run: npm run test:seo-build
