@@ -1,0 +1,143 @@
+---
+import MediaImage from "../media/MediaImage.astro";
+import { media } from "../../data/media";
+import { getMediaRecord, mediaPublicationIssues } from "../../lib/media-registry";
+
+interface Props {
+  id: string;
+  kind: "article" | "reference" | "wide";
+  /** Optional contextual caption for editorial art only. */
+  caption?: string;
+}
+const { id, kind, caption } = Astro.props;
+const record = getMediaRecord(id, media);
+const expectedRole = kind === "reference" ? "reference" : "editorial";
+if (record.role !== expectedRole) {
+  throw new Error(`${kind} figure "${id}" requires an approved ${expectedRole} image.`);
+}
+const issues = mediaPublicationIssues(record);
+if (issues.length) {
+  throw new Error(`Figure "${id}" is not cleared for publication: ${issues.join("; ")}.`);
+}
+if (caption !== undefined && (!caption.trim() || kind === "reference")) {
+  throw new Error(`Figure "${id}": a caption override must be nonempty and is not allowed for reference figures.`);
+}
+const captionText = kind === "reference" ? record.caption : caption ?? record.caption;
+if (kind === "reference" && !captionText?.trim()) {
+  throw new Error(`Reference figure "${id}" requires the registry's verified caption.`);
+}
+const imageSizes = kind === "wide"
+  ? "(min-width: 1440px) 720px, (min-width: 1024px) min(960px, calc(100vw - 40px)), (min-width: 760px) 720px, calc(100vw - 40px)"
+  : undefined;
+const provenance = [
+  record.creator,
+  record.date || record.period,
+  record.repository,
+].filter((value): value is string => !!value?.trim());
+---
+
+<figure class:list={["mdx-figure", `mdx-figure--${kind}`]} data-mdx-figure={kind}>
+  <MediaImage
+    id={id}
+    variant={kind === "reference" ? "reference" : "hero"}
+    priority={false}
+    sizes={imageSizes}
+  />
+  <figcaption class="mdx-figure__caption">
+    {captionText && <span class="mdx-figure__description">{captionText}</span>}
+    {kind === "reference" && (
+      <span class="mdx-figure__origin">
+        {record.origin === "historical-reproduction" ? "Historical reproduction" : "Modern reference illustration"}
+      </span>
+    )}
+    {kind === "reference" && provenance.length > 0 && (
+      <span class="mdx-figure__provenance">{provenance.join(" · ")}</span>
+    )}
+    {kind === "reference" && record.sourceUrl && (
+      <a href={record.sourceUrl} rel="noopener noreferrer">Source record</a>
+    )}
+    <span class="mdx-figure__credit">{record.rights.creditLine}</span>
+    {kind === "reference" && record.rights.license && (
+      <span class="mdx-figure__rights">{record.rights.license}</span>
+    )}
+    {kind === "reference" && record.rights.evidenceUrl && (
+      <a href={record.rights.evidenceUrl} rel="noopener noreferrer">Reuse terms</a>
+    )}
+  </figcaption>
+</figure>
+
+<style>
+  .mdx-figure {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-block: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1px solid var(--color-border-paper);
+    border-radius: var(--radius-card);
+    background: var(--color-aged-paper);
+    overflow: hidden;
+    break-inside: avoid;
+  }
+  .mdx-figure__caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.85rem;
+    padding: 0.75rem clamp(0.75rem, 2vw, 1.25rem);
+    border-top: 1px solid var(--color-border-paper);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    line-height: 1.55;
+    color: var(--color-muted-ink);
+    overflow-wrap: anywhere;
+  }
+  .mdx-figure__description {
+    flex-basis: 100%;
+    color: var(--color-charcoal);
+    font-family: var(--font-reading);
+    font-size: 1.05em;
+    line-height: 1.5;
+  }
+  .mdx-figure__origin,
+  .mdx-figure__provenance,
+  .mdx-figure__rights,
+  .mdx-figure__credit {
+    display: inline-block;
+  }
+  .mdx-figure__origin { font-weight: 650; color: var(--color-sage-ink); }
+  .mdx-figure__rights { flex-basis: 100%; }
+  .mdx-figure__caption a {
+    color: var(--color-oxide-red);
+    text-decoration: underline;
+    text-underline-offset: 0.17em;
+  }
+  .mdx-figure__caption a:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-control);
+  }
+  /*
+   * The middle desktop width can use more of the viewport. On mobile the
+   * image stays in the article measure; at 1440+ it does not collide with
+   * the sticky contents rail or contextual sidebar.
+   */
+  @media (min-width: 1024px) and (max-width: 1439px) {
+    .mdx-figure--wide {
+      --figure-wide-width: min(960px, calc(100vw - var(--spacing-gutter) - var(--spacing-gutter)));
+      width: var(--figure-wide-width);
+      max-width: none;
+      margin-inline-start: calc((100% - var(--figure-wide-width)) / 2);
+    }
+  }
+  @media print {
+    .mdx-figure {
+      width: 100%;
+      max-width: 100%;
+      margin-inline: 0;
+      border-color: currentColor;
+      background: transparent;
+    }
+    .mdx-figure__caption { color: black; }
+    .mdx-figure__caption a { color: inherit; }
+  }
+</style>

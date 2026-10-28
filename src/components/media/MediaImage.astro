@@ -12,10 +12,12 @@ interface Props {
   variant: MediaDisplayVariant;
   /** Only the first, visible hero needs high priority. */
   priority?: boolean;
+  /** Optional viewport-accurate slot size, for approved full-width figures. */
+  sizes?: string;
   class?: string;
 }
 
-const { id, variant, priority, class: className } = Astro.props;
+const { id, variant, priority, sizes, class: className } = Astro.props;
 const record = getMediaRecord(id, media);
 const issues = mediaPublicationIssues(record);
 if (issues.length) {
@@ -30,5 +32,6 @@ const asset = resolveMediaAsset(record);
   alt={record.alt}
   variant={variant}
   priority={priority}
+  sizes={sizes}
   class={className}
 />

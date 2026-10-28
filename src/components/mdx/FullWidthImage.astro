@@ -1,0 +1,12 @@
+---
+import MediaFigure from "./MediaFigure.astro";
+
+interface Props {
+  /** Approved editorial image; never used for cropped historical evidence. */
+  id: string;
+  caption?: string;
+}
+const { id, caption } = Astro.props;
+---
+
+<MediaFigure id={id} kind="wide" caption={caption} />

@@ -26,7 +26,7 @@ import MediaImage from "../components/media/MediaImage.astro";
 <MediaImage id="approved-ornament-id" variant="decorative" />
 ```
 
-`mediaIds` declares approved media for an article but doesn't automatically create image markup. An explicit `featuredMediaId` (which must also be in `mediaIds` and have the editorial role) displays the registered image as the article hero and archive thumbnail. The Tyche preview is the first example. Existing raw `hero` fields are unchanged for legacy compatibility. Prompt 21 will implement MDX figure, caption and full-width composition components.
+`mediaIds` declares approved media for an article but doesn't automatically create image markup. An explicit `featuredMediaId` (which must also be in `mediaIds` and have the editorial role) displays the registered image as the article hero and archive thumbnail. The Tyche preview is the first example. Existing raw `hero` fields are unchanged for legacy compatibility. Prompt 21 now implements MDX figure, caption and full-width composition components (see [MDX_FIGURES.md](MDX_FIGURES.md)).
 
 ## Responsive behavior and variants
 

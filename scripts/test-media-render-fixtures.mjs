@@ -15,11 +15,15 @@ const imageFiles = [
   "src/assets/media/decorative/ci-test-ornament.svg",
 ];
 const testRoute = "src/pages/qa-media-render/index.astro";
+const mdxFixtures = [
+  "src/content/library/qa-mdx-media-library.mdx",
+  "src/content/grimoire/qa-mdx-media-grimoire.mdx",
+];
 const mediaRegistryPath = "src/data/media.ts";
 const originalRegistry = fs.readFileSync(mediaRegistryPath, "utf8");
 const marker = "export const media: readonly MediaRecord[] = ";
 assert.equal(originalRegistry.split(marker).length, 2, "Expected one registry export");
-for (const p of [...imageFiles, testRoute]) {
+for (const p of [...imageFiles, testRoute, ...mdxFixtures]) {
   assert.equal(fs.existsSync(p), false, "Refuse to overwrite a real media file: " + p);
 }
 
@@ -83,6 +87,9 @@ const records = [
     alt: "Tall black technical reference test raster without any historical subject",
     decorative: false,
     caption: "CI-only synthetic raster; not a real historical reference.",
+    creator: "CI fixture creator (not a historic artist)",
+    period: "Technical test data, not an actual historical period",
+    repository: "Local test fixture collection",
     sourceUrl: "https://example.org/ci-only-reference",
     rights: { ...testRights, evidenceUrl: "https://example.org/ci-only-rights" },
   },
@@ -144,6 +151,42 @@ export const prerender = true;
 </html>
 `;
 
+function writeMdxFixture(section, filepath) {
+  const fixture = [
+    "---",
+    "slug: qa-mdx-media-" + section,
+    "title: CI-only MDX figures for " + section,
+    "description: Isolated technical figures demonstrating accessible media components.",
+    "status: published",
+    "publishedAt: 2026-10-28",
+    "preview: true",
+    "mediaIds:",
+    "  - ci-test-raster",
+    "  - ci-test-reference",
+    "  - ci-test-vector",
+    "---",
+    "",
+    "## Ordinary editorial illustration",
+    "",
+    "<ArticleImage id=\"ci-test-raster\" caption=\"Contextual editorial caption for a blank technical fixture.\" />",
+    "",
+    "## Historical reference presentation test",
+    "",
+    "<ReferenceFigure id=\"ci-test-reference\" />",
+    "",
+    "## Intrinsic SVG reference",
+    "",
+    "<ReferenceFigure id=\"ci-test-vector\" />",
+    "",
+    "## Breakout without crop",
+    "",
+    "<FullWidthImage id=\"ci-test-raster\" caption=\"Wider composition on permitted desktop widths.\" />",
+    "",
+    "A test-only entry. No historic object or user artwork is represented here.",
+  ].join("\n");
+  fs.writeFileSync(filepath, fixture);
+}
+
 function build() {
   fs.rmSync("dist", { recursive: true, force: true });
   fs.rmSync(".astro", { recursive: true, force: true });
@@ -185,6 +228,9 @@ try {
     '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">' +
     '<rect width="80" height="80" fill="#000000"/></svg>');
   fs.writeFileSync(testRoute, testPage);
+  for (const filepath of mdxFixtures) {
+    writeMdxFixture(filepath.includes("/library/") ? "library" : "grimoire", filepath);
+  }
   fs.writeFileSync(mediaRegistryPath, fixtureRegistry);
 
   const result = build();
@@ -242,9 +288,47 @@ try {
     "Metadata captions are intentionally not rendered until Prompt 21");
   console.log("PASS: card/hero/reference responsive raster srcset, AVIF/WebP fallback, sizes/dimensions/alt/priority");
   console.log("PASS: uncropped reference SVG dimensions, decorative empty alt, registry ID reuse and local optimized URLs");
+
+  // Both real content collections compile the *same* global component mappings
+  // with no per-article import. This reuses the existing synthetic assets and
+  // one already-required build, rather than creating a new build/test harness.
+  for (const section of ["library", "grimoire"]) {
+    const file = `dist/${section}/qa-mdx-media-${section}/index.html`;
+    assert.ok(fs.existsSync(file), "Expected " + section + " MDX figure fixture output");
+    const body = fs.readFileSync(file, "utf8");
+    assert.ok(body.includes('name="robots" content="noindex, nofollow"'),
+      "Synthetic MDX pages must never be indexed");
+    assert.equal((body.match(/data-mdx-figure="/g) ?? []).length, 4,
+      "ArticleImage, two ReferenceFigures and FullWidthImage render in " + section);
+    assert.equal((body.match(/<figcaption\b/g) ?? []).length, 4,
+      "Each semantic figure has a properly associated figcaption");
+    assert.ok(body.includes('data-mdx-figure="article"'));
+    assert.ok(body.includes('data-mdx-figure="reference"'));
+    assert.ok(body.includes('data-mdx-figure="wide"'));
+    assert.ok(body.includes('href="https://example.org/ci-only-reference"'),
+      "The historical-reference presentation links to its source record");
+    assert.ok(body.includes('href="https://example.org/ci-only-rights"'),
+      "Reference rights evidence has a visible link");
+    assert.ok(body.includes("CI fixture creator (not a historic artist)") &&
+      body.includes("Technical test data, not an actual historical period"),
+      "Known creator and period provenance are represented honestly");
+    assert.ok(body.includes("Contextual editorial caption") &&
+      body.includes("Wider composition on permitted desktop widths."),
+      "MDX authors can caption editorial and wide images");
+    assert.ok(body.includes("CI-only synthetic raster; not a real historical reference."),
+      "Reference caption must come from the approved registry, not a fabricated override");
+    assert.ok(body.includes("Non-artwork CI-only blank fixture") &&
+      body.includes("Automated technical QA"),
+      "Reference figure shows rights description and actual registry credit");
+    assert.ok(body.includes('data-media-variant="reference"') &&
+      body.includes('data-media-variant="hero"'),
+      "MDX figures reuse existing Astro image variants");
+    console.log("PASS: " + section + " MDX figure components, captions, provenance, source/rights links");
+  }
 } finally {
   fs.writeFileSync(mediaRegistryPath, originalRegistry);
   for (const file of imageFiles) fs.rmSync(file, { force: true });
+  for (const file of mdxFixtures) fs.rmSync(file, { force: true });
   fs.rmSync(path.dirname(testRoute), { recursive: true, force: true });
 }
 console.log("PASS: media registry and fixture files restored; dist retained for isolated browser QA");

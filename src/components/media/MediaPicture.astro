@@ -11,6 +11,7 @@ interface Props {
   variant: MediaDisplayVariant;
   /** Only true for a primary, above-the-fold hero. */
   priority?: boolean;
+  sizes?: string;
   class?: string;
 }
 
@@ -19,6 +20,7 @@ const {
   alt,
   variant,
   priority = variant === "hero",
+  sizes,
   class: className,
 } = Astro.props;
 
@@ -57,7 +59,7 @@ const fallbackFormat = asset.format === "jpg" ? "jpeg" : asset.format;
       layout="constrained"
       width={plan.displayWidth}
       widths={plan.widths}
-      sizes={plan.sizes}
+      sizes={sizes ?? plan.sizes}
       fit="contain"
       loading={priority ? "eager" : "lazy"}
       decoding={priority ? "sync" : "async"}
@@ -72,7 +74,7 @@ const fallbackFormat = asset.format === "jpg" ? "jpeg" : asset.format;
       layout="constrained"
       width={plan.displayWidth}
       widths={plan.widths}
-      sizes={plan.sizes}
+      sizes={sizes ?? plan.sizes}
       fit={plan.preserveFullImage ? "contain" : "cover"}
       loading={priority ? "eager" : "lazy"}
       decoding={priority ? "sync" : "async"}

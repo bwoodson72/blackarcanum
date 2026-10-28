@@ -1,0 +1,11 @@
+---
+import MediaFigure from "./MediaFigure.astro";
+
+interface Props {
+  /** Approved reference media registry ID; provenance is never overridden. */
+  id: string;
+}
+const { id } = Astro.props;
+---
+
+<MediaFigure id={id} kind="reference" />

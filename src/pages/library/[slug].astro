@@ -3,6 +3,9 @@ import { render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import ArticleLayout from "../../layouts/ArticleLayout.astro";
+import ArticleImage from "../../components/mdx/ArticleImage.astro";
+import ReferenceFigure from "../../components/mdx/ReferenceFigure.astro";
+import FullWidthImage from "../../components/mdx/FullWidthImage.astro";
 import { getPublishedLibraryEntries } from "../../lib/editorial-public";
 import { sortPublishedEntries } from "../../lib/editorial-archive";
 import { toPublishedArticle } from "../../lib/editorial-presentation";
@@ -41,5 +44,5 @@ const { Content, headings } = await render(entry);
   relatedArticles={relatedArticles}
   relatedVariant="compact"
 >
-  <Content />
+  <Content components={{ ArticleImage, ReferenceFigure, FullWidthImage }} />
 </ArticleLayout>

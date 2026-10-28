@@ -3,7 +3,15 @@
 # Run just the affected suite manually; weekly 'all' retains broad coverage.
 name: Deep Regression
 
+# Rare component-level media changes also run the targeted deep suite.
+# Routine article text/images continue using only the fast master workflow.
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - "src/components/mdx/**"
+      - "src/components/media/**"
   workflow_dispatch:
     inputs:
       suite:
@@ -33,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      QA_SUITE: ${{ inputs.suite || 'all' }}
+      QA_SUITE: ${{ github.event_name == 'push' && 'media' || inputs.suite || 'all' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

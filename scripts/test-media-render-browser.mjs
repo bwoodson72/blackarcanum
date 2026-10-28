@@ -180,6 +180,87 @@ try {
     console.log("PASS: " + width + "px no overflow, five local image assets loaded, srcset, priority, cropping and reference ratios");
   }
   console.log("PASS: Prompt 20 real browser tests for 375px and 1440px");
+
+  // Prompt 21: reuse this Chrome session and the same temporary PNG/SVG
+  // fixtures to review *both real MDX collections* at phone, middle-desktop
+  // breakout, and wide three-column desktop widths.
+  for (const width of [375, 1024, 1440]) {
+    await send("Emulation.setDeviceMetricsOverride", {
+      width, height: 900, deviceScaleFactor: 1, mobile: false,
+    });
+    for (const section of ["library", "grimoire"]) {
+      await send("Page.navigate", {
+        url: origin + "/" + section + "/qa-mdx-media-" + section + "/",
+      });
+      await waitFor(async () => evaluate(
+        'document.readyState === "complete" && document.querySelectorAll("[data-mdx-figure]").length === 4'
+      ), section + " MDX figures at " + width);
+      const metrics = await evaluate(`(() => {
+        const article = document.querySelector(".article-reading__article");
+        const figures = [...document.querySelectorAll("[data-mdx-figure]")];
+        return {
+          viewport: innerWidth,
+          scrollWidth: document.documentElement.scrollWidth,
+          articleWidth: article?.getBoundingClientRect().width,
+          figures: figures.map((figure) => {
+            const rect = figure.getBoundingClientRect();
+            const img = figure.querySelector("img");
+            const caption = figure.querySelector("figcaption");
+            return {
+              kind: figure.getAttribute("data-mdx-figure"),
+              width: rect.width,
+              left: rect.left,
+              right: rect.right,
+              caption: caption?.textContent?.trim() || "",
+              source: caption?.querySelector('a[href="https://example.org/ci-only-reference"]')?.href,
+              rights: caption?.querySelector('a[href="https://example.org/ci-only-rights"]')?.href,
+              ratio: img?.getBoundingClientRect().width / img?.getBoundingClientRect().height,
+              fit: img ? getComputedStyle(img).objectFit : null,
+              alt: img?.alt,
+              mediaVariant: figure.querySelector("[data-media-variant]")?.getAttribute("data-media-variant"),
+            };
+          }),
+        };
+      })()`);
+      assert.equal(metrics.viewport, width);
+      assert.ok(metrics.scrollWidth <= width + 1,
+        "No horizontal overflow at " + section + " viewport " + width);
+      assert.ok(metrics.articleWidth <= 721,
+        "Main reading column must remain at most 720px");
+      assert.deepEqual(metrics.figures.map((f) => f.kind),
+        ["article", "reference", "reference", "wide"]);
+      const [articleImage, reference, svgReference, wide] = metrics.figures;
+      for (const figure of metrics.figures) {
+        assert.ok(figure.width > 0 && figure.left >= -1 && figure.right <= width + 1,
+          "Figure is within viewport bounds");
+        assert.ok(figure.caption.length > 15 && figure.alt.length > 10,
+          "Figure and caption must remain understandable to readers");
+        assert.equal(figure.fit, "contain",
+          "No MDX figure is cropped, including full-width and historic references");
+      }
+      assert.equal(reference.mediaVariant, "reference");
+      assert.equal(svgReference.mediaVariant, "reference");
+      assert.ok(Math.abs(reference.ratio - 2 / 3) < 0.03,
+        "Detailed portrait reference must preserve its natural aspect ratio");
+      assert.ok(Math.abs(svgReference.ratio - 2 / 3) < 0.03,
+        "Detailed vector reference must preserve its natural aspect ratio");
+      assert.equal(reference.source, "https://example.org/ci-only-reference");
+      assert.equal(reference.rights, "https://example.org/ci-only-rights");
+      assert.ok(articleImage.caption.includes("Contextual editorial caption"));
+      assert.ok(wide.caption.includes("Wider composition"));
+      if (width === 1024) {
+        assert.ok(wide.width > metrics.articleWidth + 100,
+          "FullWidthImage must break out only at a safe middle-desktop width");
+      } else {
+        assert.ok(wide.width <= metrics.articleWidth + 1,
+          "Mobile and three-column desktop figures stay in the reading measure");
+      }
+      console.log("PASS: " + section + " MDX figures at " + width +
+        "px: captions/links, uncropped details, safe breakout, no overflow");
+    }
+  }
+  console.log("PASS: Prompt 21 real MDX figure visual checks at 375px, 1024px and 1440px");
+
 } finally {
   socket?.close();
   chrome.kill("SIGTERM");

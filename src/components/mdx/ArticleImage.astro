@@ -1,0 +1,13 @@
+---
+import MediaFigure from "./MediaFigure.astro";
+
+interface Props {
+  /** Approved editorial media registry ID. */
+  id: string;
+  /** Optional article-specific context; original attribution stays intact. */
+  caption?: string;
+}
+const { id, caption } = Astro.props;
+---
+
+<MediaFigure id={id} kind="article" caption={caption} />
