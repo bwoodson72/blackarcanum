@@ -1,5 +1,6 @@
 ---
 import Container from "../foundation/Container.astro";
+import ArchiveHero from "./ArchiveHero.astro";
 import Ornament from "../foundation/Ornament.astro";
 import ArticleGrid from "./ArticleGrid.astro";
 import Pagination from "./Pagination.astro";
@@ -21,17 +22,7 @@ const startItem = (currentPage - 1) * EDITORIAL_PAGE_SIZE + 1;
 const endItem = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
 ---
 
-<header class="library-hero">
-  <Container width="wide" class="library-hero__inner">
-    <p class="library-hero__eyebrow">Mystagogia <span aria-hidden="true">·</span> Source-led inquiry</p>
-    <h1>The Library</h1>
-    <p class="library-hero__lead">
-      Historical texts, esoteric traditions, and the ideas that travel between
-      them—explored through sources, context, and careful interpretation.
-    </p>
-    <Ornament variant="rule" />
-  </Container>
-</header>
+<ArchiveHero collection="library" />
 
 <section class="library-content" aria-labelledby="library-listing-heading">
   <Container width="wide">
@@ -75,20 +66,6 @@ const endItem = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
 </section>
 
 <style>
-  .library-hero {
-    padding-block: var(--spacing-section);
-    background: var(--color-charcoal);
-    border-bottom: 1px solid var(--color-antique-gold);
-    color: var(--color-parchment);
-  }
-  .library-hero__inner {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: clamp(1rem, 2.5vw, 1.65rem);
-    max-width: 72rem;
-  }
-  .library-hero__eyebrow,
   .library-empty__eyebrow,
   .library-listing__eyebrow {
     margin: 0;
@@ -98,23 +75,7 @@ const endItem = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
     letter-spacing: 0.12em;
     line-height: 1.5;
     text-transform: uppercase;
-  }
-  .library-hero__eyebrow { color: var(--color-antique-gold); }
-  .library-hero h1 {
-    margin: 0;
-    color: var(--color-parchment);
-    font-family: var(--font-display);
-    font-size: var(--text-display);
-    font-weight: 600;
-    line-height: 1.02;
-  }
-  .library-hero__lead {
-    max-width: 55ch;
-    margin: 0;
-    color: var(--color-aged-paper);
-    font-family: var(--font-reading);
-    font-size: var(--text-lead);
-    line-height: 1.5;
+    color: var(--color-sage-ink);
   }
   .library-content {
     min-height: 45vh;

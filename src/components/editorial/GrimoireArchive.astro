@@ -1,5 +1,6 @@
 ---
 import Container from "../foundation/Container.astro";
+import ArchiveHero from "./ArchiveHero.astro";
 import Ornament from "../foundation/Ornament.astro";
 import ArticleCard from "./ArticleCard.astro";
 import Pagination from "./Pagination.astro";
@@ -21,18 +22,7 @@ const end = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
 const [first, ...remaining] = articles;
 ---
 
-<header class="grimoire-hero">
-  <Container width="wide" class="grimoire-hero__inner">
-    <p class="grimoire-eyebrow">Mystagogia <span aria-hidden="true">·</span> Methods &amp; observations</p>
-    <h1>The Grimoire</h1>
-    <p class="grimoire-hero__lead">
-      An editorial space for original methods, adaptations, experiments, and
-      practitioner observations—where what was done is distinguished from
-      what it might mean.
-    </p>
-    <Ornament variant="rule" />
-  </Container>
-</header>
+<ArchiveHero collection="grimoire" />
 
 <section class="grimoire-content" aria-labelledby="grimoire-list-heading">
   <Container width="wide">
@@ -99,19 +89,6 @@ const [first, ...remaining] = articles;
 </section>
 
 <style>
-  .grimoire-hero {
-    background: var(--color-deep-brown);
-    border-bottom: 1px solid var(--color-antique-gold);
-    color: var(--color-parchment);
-    padding-block: var(--spacing-section);
-  }
-  .grimoire-hero__inner {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: clamp(1rem, 2.5vw, 1.75rem);
-    max-width: 72rem;
-  }
   .grimoire-eyebrow,
   .grimoire-lead__label {
     margin: 0;
@@ -122,24 +99,6 @@ const [first, ...remaining] = articles;
     letter-spacing: 0.12em;
     line-height: 1.5;
     text-transform: uppercase;
-  }
-  .grimoire-hero .grimoire-eyebrow { color: var(--color-antique-gold); }
-  .grimoire-hero h1 {
-    margin: 0;
-    color: var(--color-parchment);
-    font-family: var(--font-display);
-    font-size: var(--text-display);
-    font-weight: 600;
-    line-height: 1.06;
-    overflow-wrap: anywhere;
-  }
-  .grimoire-hero__lead {
-    max-width: 58ch;
-    margin: 0;
-    color: var(--color-aged-paper);
-    font-family: var(--font-reading);
-    font-size: var(--text-lead);
-    line-height: 1.55;
   }
   .grimoire-content {
     min-height: 45vh;

@@ -183,3 +183,32 @@ assert.ok(!homepage.includes('home-path__books') && !homepage.includes('home-pat
   !homepage.includes('home-practice__seal') && !homepage.includes('home-hero__orbit'),
   "Decorative CSS placeholder shapes must no longer render");
 console.log("PASS: full-bleed hero and all three real engraved artwork panels, no placeholders");
+const homeCss = fs.readFileSync("src/styles/homepage.css", "utf8");
+assert.ok(homeCss.includes("min-height: clamp(32rem, 45vw, 43rem);"),
+  "The approved homepage hero height is unchanged");
+assert.ok(homeCss.includes("max-width: min(53vw, 51rem)") &&
+  homeCss.includes("white-space: nowrap"),
+  "Desktop homepage title and tagline get enough room to stay on one line");
+assert.ok(homepage.includes("celestial-divider"), "Homepage uses the shared ornate celestial rule");
+for (const collection of ["library", "grimoire"]) {
+  const html = archive[collection];
+  const name = collection === "library" ? "The Library" : "The Grimoire";
+  assert.ok(html.includes('data-archive-hero="' + collection + '"'), 
+    "Published hub uses shared editorial hero: " + collection);
+  assert.ok(html.includes('class="celestial-divider"'),
+    "Hub shares the homepage celestial ornament");
+  assert.ok(html.includes('<h1>' + name + '</h1>'),
+    "Hub retains exactly the expected accessible page title");
+  assert.ok(html.includes('class="archive-hero__tagline"') &&
+    html.includes('class="archive-hero__lead"'),
+    "Hub uses matching headline/tagline and italic lead typography");
+  const headingId = collection === "library" ? "library-listing-heading" : "grimoire-list-heading";
+  assert.ok(html.includes('href="#' + headingId + '"'),
+    "Framed archive CTA targets a real heading in the current page");
+  assert.ok(html.includes('id="' + headingId + '"'),
+    "Hub anchor destination exists in the real archive markup");
+  assert.ok(html.includes('/images/homepage/mystagogia-editorial-atlas.avif'),
+    "Hub reuses the approved full-bleed engraved artwork");
+}
+console.log("PASS: homepage height preserved; matching celestial/hub heroes and working archive links");
+

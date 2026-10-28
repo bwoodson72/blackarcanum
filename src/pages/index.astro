@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/foundation/Container.astro";
 import Ornament from "../components/foundation/Ornament.astro";
+import CelestialDivider from "../components/foundation/CelestialDivider.astro";
 import EngravedFrame from "../components/foundation/EngravedFrame.astro";
 import ArticleGrid from "../components/editorial/ArticleGrid.astro";
 import { checkEditorialBuild } from "../lib/editorial-build-qa";
@@ -46,9 +47,9 @@ const launched = featuredLibrary.some((article) => !article.preview) ||
               <image href="/images/homepage/mystagogia-editorial-atlas.avif" x="0" y="0" width="2000" height="1056" />
             </svg>
     </div>
-    <Container width="wide" class="home-hero__inner">
+    <Container width="full" class="home-hero__inner">
       <div class="home-hero__copy">
-        <Ornament variant="rule" class="home-hero__rule" />
+        <CelestialDivider />
         <h1 id="home-title">Mystagogia</h1>
         <p class="home-eyebrow home-hero__tagline">
           Historical Research <span aria-hidden="true">·</span>

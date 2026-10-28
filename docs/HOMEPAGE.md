@@ -37,3 +37,10 @@ The initial image atlas was inadvertently overcompressed to 28 KB and downsample
 ## Engraved cards and exact mockup editorial wording
 
 The two gateway panels are now single, image-backed navigation links with an original gold-etched double rule and four vector filigree corners. The shared `EngravedFrame` foundation component is also used on both hero buttons and the Grimoire artwork. Card headings and the Library/Grimoire taglines are HTML overlays on the illustrations, following the latest approved black-and-gold gateway mockup rather than separate pale cards. The hero's research/practice tagline and its introductory prose now match the later approved mockup. No image, commerce or article data was replaced.
+
+## Cohesive homepage and hub heroes
+
+The homepage hero retains its exact `min-height: clamp(32rem, 45vw, 43rem)` and padding. Its text container is wider and anchored closer to the left edge, ensuring the Mystagogia heading and three-part tagline stay on one line on wide screens; the two framed links also sit horizontally at desktop widths. A reusable `CelestialDivider` replaces the earlier small generic ornament above the title.
+
+Library and Grimoire hubs now use one `ArchiveHero` component with the same charcoal/gold full-bleed illustration, divider, gold display typography, uppercase gold strapline, italic reading lead and etched frame on a functional archive link. Each hub retains its own text, accessible H1 and collection-specific archive anchor. Hub heroes are intentionally shorter than the homepage: visual identity matches; homepage height was not changed. The existing article list/empty-state and pagination systems are untouched.
+
