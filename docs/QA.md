@@ -55,3 +55,7 @@ borders and decorative artwork hidden from assistive technology.
 Build acceptance checks confirm four hero instances, live CTA targets, the
 central CSS source and one H1 per page. Browser screenshot review at 375, 768,
 1024, 1280 and 1440 remains valuable for matching the original mockup.
+
+## Compact shared hero actions (October 28, 2026)
+
+The former branching home-only 5rem button and compact archive-only 3.25rem button are replaced with one `HeroAction.astro` component. Every action uses `src/styles/hero-action.css`, an identical 3.25rem minimum height, the shared `EngravedFrame` ornament and an optional inline icon. `PageHero.astro` now maps typed action props without a home/archive rendering conditional. The approved homepage hero height, artwork and other page sections are unchanged. Fast tests inspect all four routes and the compact CSS token. The existing five-width browser acceptance checks 44–65px CTA height on all four heroes.

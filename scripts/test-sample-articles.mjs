@@ -132,16 +132,17 @@ assert.ok(!/<form\b/.test(homepage), "No pretend subscription form");
 assert.ok(homepage.includes("Newsletter in preparation"), "Newsletter slot is honest");
 assert.ok(homepage.includes('name="robots" content="noindex, nofollow"'),
   "Homepage remains noindex until real editorial features are curated");
-const heroLinks = [...homepage.matchAll(/<a class="home-button" href="(\/(?:library|grimoire)\/)">([\s\S]*?)<\/a>/g)];
+const heroLinks = [...homepage.matchAll(/<a class="hero-action" href="(\/(?:library|grimoire)\/)">([\s\S]*?)<\/a>/g)];
 assert.deepEqual(heroLinks.map((link) => link[1]), ["/library/", "/grimoire/"],
-  "Ornate hero buttons are real links to the two published hubs");
+  "Both compact homepage actions point to real archive destinations");
 for (const [, href, body] of heroLinks) {
   assert.equal((body.match(/class="engraved-frame__corner /g) ?? []).length, 4,
-    "Every hero link shares the approved ornate four-corner engraved frame");
-  assert.ok(body.includes('class="home-button__icon"') && body.includes('aria-hidden="true"'),
-    "Decorative book or leaf artwork is hidden from assistive technology");
-  assert.ok(body.includes('class="home-button__label"') &&
-    body.includes('class="home-button__arrow"'), "Button label and arrow are readable HTML");
+    "Each reusable action renders four ornamental corners: " + href);
+  assert.ok(body.includes('class="hero-action__icon"') && body.includes('aria-hidden="true"'),
+    "Homepage decorative icon stays inline and hidden from assistive technology");
+  assert.ok(body.includes('class="hero-action__label"') &&
+    body.includes('class="hero-action__arrow"'),
+    "Action retains real text and a decorative arrow");
 }
 const gatewayLinks = [...homepage.matchAll(/<a class="home-path__link" href="(\/(?:library|grimoire)\/)"[\s\S]*?<\/a>/g)];
 assert.deepEqual(gatewayLinks.map((link) => link[1]), ["/library/", "/grimoire/"],
@@ -183,7 +184,7 @@ assert.ok(!homepage.includes('home-path__books') && !homepage.includes('home-pat
   !homepage.includes('home-practice__seal') && !homepage.includes('home-hero__orbit'),
   "Decorative CSS placeholder shapes must no longer render");
 console.log("PASS: full-bleed hero and all three real engraved artwork panels, no placeholders");
-const homeCss = fs.readFileSync("src/styles/homepage.css", "utf8");
+const homeCss = fs.readFileSync("src/styles/page-hero.css", "utf8");
 assert.ok(homeCss.includes("min-height: clamp(32rem, 45vw, 43rem);"),
   "The approved homepage hero height is unchanged");
 assert.ok(homeCss.includes("max-width: min(53vw, 51rem)") &&
@@ -371,3 +372,30 @@ assert.ok(!fs.existsSync("src/components/editorial/ArchiveHero.astro") &&
   !fs.existsSync("src/styles/archive-hero.css"),
   "Legacy duplicate archive hero implementation must be removed");
 console.log("PASS: all four heroes use shared PageHero props and one stylesheet");
+
+// Compact hero action component: same engraving, small icons and min-height
+// on Home, About, Library and Grimoire. No per-route tall button class.
+const heroActionCss = fs.readFileSync("src/styles/hero-action.css", "utf8");
+const heroActionSource = fs.readFileSync("src/components/site/HeroAction.astro", "utf8");
+const sharedHeroSource = fs.readFileSync("src/components/site/PageHero.astro", "utf8");
+assert.ok(heroActionCss.includes("min-height: 3.25rem;") &&
+  !heroActionCss.includes("min-height: 5rem;"),
+  "Hero CTA is the approved compact 3.25rem version");
+assert.ok(heroActionSource.includes('<a class="hero-action" href={href}>') &&
+  heroActionSource.includes("<EngravedFrame />"),
+  "Action markup and ornamental frame belong to one reusable component");
+assert.ok(sharedHeroSource.includes("<HeroAction {...action} />") &&
+  !sharedHeroSource.includes('class="home-button"') &&
+  !sharedHeroSource.includes('class="archive-hero__action"'),
+  "PageHero delegates all action rendering to the reusable component");
+for (const [route, html] of heroTemplates) {
+  const actions = [...html.matchAll(/<a class="hero-action" href="([^"]+)">([\s\S]*?)<\/a>/g)];
+  const expectedCount = route === "/library/" || route === "/grimoire/" ? 1 : 2;
+  assert.equal(actions.length, expectedCount, "All heroes render shared actions: " + route);
+  for (const [, href, body] of actions) {
+    assert.ok(href.startsWith("/") || href.startsWith("#"), "Action points to real route/anchor: " + route);
+    assert.equal((body.match(/class="engraved-frame__corner /g) ?? []).length, 4,
+      "Every hero action uses the exact same ornamental frame: " + route);
+  }
+}
+console.log("PASS: one compact HeroAction component shared by all four routes");

@@ -1,0 +1,56 @@
+/* One compact etched CTA for all hero variants. No per-page button heights. */
+.hero-action {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-width: 11rem;
+  min-height: 3.25rem;
+  padding: 0.75rem 1.25rem;
+  border: 0;
+  border-radius: 0;
+  color: var(--color-antique-gold);
+  background: linear-gradient(145deg, rgb(196 169 98 / 7%), transparent 65%), rgb(13 12 10 / 92%);
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.hero-action__icon {
+  display: block;
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 1.2rem;
+}
+.hero-action__label {
+  display: inline-block;
+  white-space: nowrap;
+}
+.hero-action__arrow {
+  flex: 0 0 auto;
+  font-family: var(--font-reading);
+  font-size: 1.2em;
+  letter-spacing: 0;
+  line-height: 1;
+}
+.hero-action:hover {
+  color: var(--color-parchment);
+  background: var(--color-deep-brown);
+}
+.hero-action:focus-visible {
+  outline: 3px solid var(--color-parchment);
+  outline-offset: 4px;
+}
+@media (max-width: 639px) {
+  .hero-action__label { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-action { transition: none; }
+}

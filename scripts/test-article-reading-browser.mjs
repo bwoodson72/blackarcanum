@@ -226,7 +226,7 @@ try {
         const main = document.querySelector("main");
         const header = document.querySelector(".site-header");
         const active = [...document.querySelectorAll(
-          ".brand,.desktop-navigation a,.menu-trigger,.home-button,.home-path__link,.archive-hero__action"
+          ".brand,.desktop-navigation a,.menu-trigger,.hero-action,.home-path__link"
         )].filter(el => el.getClientRects().length > 0);
         return {
           width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
@@ -243,6 +243,8 @@ try {
           missingAlt: [...main.querySelectorAll("img")].filter(x=>!x.hasAttribute("alt")).length,
           nestedLinks: document.querySelectorAll("a a").length,
           targets: active.map(x=>x.getBoundingClientRect().height),
+          heroActionHeights: [...document.querySelectorAll(".hero-action")]
+            .map(x=>x.getBoundingClientRect().height),
         };
       })()`);
       assert.equal(qa.width, width);
@@ -271,6 +273,12 @@ try {
           route.replace(/[^a-z0-9]+/gi, "-") + width + ".png",
           Buffer.from(capture.result.data, "base64"));
       }
+      const expectedActions = route==="/" || route==="/about/" ? 2
+        : route==="/library/" || route==="/grimoire/" ? 1 : 0;
+      assert.equal(qa.heroActionHeights.length, expectedActions,
+        "Hero CTA count matches each template: " + route);
+      assert.ok(qa.heroActionHeights.every(h => h>=43.5 && h<=65),
+        "All hero CTAs remain compact (44-65px), not the old 80px slabs: " + route + "@" + width);
       if(route==="/" && width===375) {
         const result=await evaluate(`(() => {
           const skip=document.querySelector(".skip-link");

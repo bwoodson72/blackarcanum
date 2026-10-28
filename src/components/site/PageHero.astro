@@ -2,21 +2,17 @@
 /** Shared, prop-driven hero for the homepage, both editorial hubs and About. */
 import Container from "../foundation/Container.astro";
 import CelestialDivider from "../foundation/CelestialDivider.astro";
-import EngravedFrame from "../foundation/EngravedFrame.astro";
+import HeroAction from "./HeroAction.astro";
 import "../../styles/page-hero.css";
 
-interface HeroAction {
-  label: string;
-  href: string;
-  icon?: "book" | "botanical";
-}
+type HeroActionProps = { label: string; href: string; icon?: "book" | "botanical" };
 interface Props {
   mode: "home" | "archive" | "about";
   title: string;
   titleId?: string;
   tagline: readonly string[];
   description: string;
-  actions?: readonly HeroAction[];
+  actions?: readonly HeroActionProps[];
   artSrc: string;
   artViewBox?: string;
   artWidth?: number;
@@ -55,31 +51,7 @@ const prefix = mode === "home" ? "home-hero" :
       <p class={prefix + "__lead"}>{description}</p>
       {actions.length > 0 && (
         <div class="page-hero__actions">
-          {actions.map((action) => (
-            mode === "home" ? (
-              <a class="home-button" href={action.href}>
-                <EngravedFrame />
-                {action.icon === "book" ? (
-                  <svg class="home-button__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                    <path d="M16 25.5c-3-2.4-7.4-3.7-12-3.2V6.5c5-.3 9 1 12 3.2 3-2.2 7-3.5 12-3.2v15.8c-4.6-.5-9 0.8-12 3.2Z" />
-                    <path d="M16 9.7v15.8M7.4 10.5c2.2.1 3.9.7 5.4 1.6M24.6 10.5c-2.2.1-3.9.7-5.4 1.6" />
-                  </svg>
-                ) : action.icon === "botanical" ? (
-                  <svg class="home-button__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                    <path d="M16 27V5M16 10c-4.7 0-6.8-2.9-6.7-5.2 4.1 0 6.7 2.4 6.7 5.2Zm0 5.5c4.9 0 7.2-3.2 7-5.5-4.3.1-7 2.5-7 5.5Zm0 5.3c-4.4 0-6.7-3.3-6.6-5.4 4.1 0 6.6 2.6 6.6 5.4Zm0 4.2c4.5 0 6.6-3.1 6.5-5.1-4 .1-6.5 2.5-6.5 5.1Z" />
-                    <path d="M11.5 27h9" />
-                  </svg>
-                ) : null}
-                <span class="home-button__label">{action.label} <span class="home-button__arrow" aria-hidden="true">→</span></span>
-              </a>
-            ) : (
-              <a class="archive-hero__action" href={action.href}>
-                <span>{action.label}</span>
-                <span class="archive-hero__arrow" aria-hidden="true">→</span>
-                <EngravedFrame />
-              </a>
-            )
-          ))}
+          {actions.map((action) => <HeroAction {...action} />)}
         </div>
       )}
     </div>

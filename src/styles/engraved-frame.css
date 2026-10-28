@@ -26,6 +26,6 @@
 .engraved-frame__corner--tr { top: 0; right: 0; transform: scaleX(-1); }
 .engraved-frame__corner--br { bottom: 0; right: 0; transform: rotate(180deg); }
 .engraved-frame__corner--bl { bottom: 0; left: 0; transform: scaleY(-1); }
-:is(.home-button, .home-path__link, .archive-hero__action):hover .engraved-frame {
+:is(.hero-action, .home-path__link):hover .engraved-frame {
   color: var(--color-parchment);
 }
