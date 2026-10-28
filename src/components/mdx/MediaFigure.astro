@@ -262,10 +262,19 @@ const originalAsset = lightbox ? resolveMediaAsset(record) : undefined;
       if (!close) continue;
       trigger.dataset.lightboxReady = "true";
       trigger.hidden = false;
-      trigger.addEventListener("click", () => {
+      const openDialog = () => {
         if (!dialog.open) {
           dialog.showModal();
           close.focus();
+        }
+      };
+      trigger.addEventListener("click", openDialog);
+      // Native button activation remains available; handle keyboard presses
+      // explicitly so focus transfer cannot race a later synthetic click.
+      trigger.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          if (!event.repeat) openDialog();
         }
       });
       close.addEventListener("click", () => dialog.close());
