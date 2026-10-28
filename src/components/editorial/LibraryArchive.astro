@@ -15,6 +15,7 @@ interface Props {
 
 const { articles, currentPage, totalPages, totalItems } = Astro.props;
 const isEmpty = totalItems === 0;
+const previewsOnly = articles.length > 0 && articles.every((article) => article.preview);
 const isFirstPage = currentPage === 1;
 const startItem = (currentPage - 1) * EDITORIAL_PAGE_SIZE + 1;
 const endItem = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
@@ -59,7 +60,7 @@ const endItem = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
       <div class="library-listing">
         <div class="library-listing__heading">
           <div>
-            <p class="library-listing__eyebrow">Published research</p>
+            <p class="library-listing__eyebrow">{previewsOnly ? "Layout previews" : "Published research"}</p>
             <h2 id="library-listing-heading">{isFirstPage ? "Research archive" : `Research archive · Page ${currentPage}`}</h2>
           </div>
           <p class="library-listing__count" aria-label={`Showing articles ${startItem} through ${endItem} of ${totalItems}`}>

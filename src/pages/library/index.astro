@@ -19,7 +19,7 @@ const articles = page.entries.flatMap((entry) => {
   description={page.totalItems === 0
     ? "An introduction to Mystagogia's Library and its approach to source-led esoteric research."
     : "Browse source-led research into esoteric texts, histories, and traditions in Mystagogia's Library."}
-  noindex={page.totalItems === 0}
+  noindex={page.totalItems === 0 || articles.every((article) => article.preview)}
 >
   <LibraryArchive
     articles={articles}

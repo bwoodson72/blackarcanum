@@ -18,6 +18,9 @@ const sectionLabel = article.collection === "library"
 
 <header class:list={["article-header", `article-header--${article.collection}`]}>
   <p class="article-header__eyebrow">{sectionLabel}</p>
+  {article.preview && (
+    <p class="article-header__preview">LAYOUT PREVIEW <span aria-hidden="true">·</span> Temporary sample content for design review, not a finished article.</p>
+  )}
   <h1 id="article-title">{article.title}</h1>
   {lead && <p class="article-header__lead">{lead}</p>}
   <ArticleMetadata
@@ -61,6 +64,17 @@ const sectionLabel = article.collection === "library"
   }
   .article-header--grimoire .article-header__eyebrow {
     color: var(--color-oxide-red);
+  }
+  .article-header__preview {
+    margin: 0;
+    max-width: 58ch;
+    padding: 0.65rem 0.85rem;
+    border-left: 3px solid var(--color-antique-gold);
+    background: var(--color-aged-paper);
+    color: var(--color-charcoal);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    line-height: 1.55;
   }
   .article-header h1 {
     margin: 0;

@@ -27,6 +27,8 @@ const sharedFields = z.object({
   title: z.string().trim().min(1),
   description: z.string().trim().min(1),
   status: z.enum(["draft", "review", "published"]),
+  /** Explicitly approved public design sample: visible in archives, noindex. */
+  preview: z.boolean().optional(),
   publishedAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   hero: z.object({

@@ -26,6 +26,8 @@ assert.doesNotThrow(() => validateSourceRegistry(sources));
 assert.equal(editorialSchema.safeParse(draft).success, true, "Draft without date is valid");
 assert.equal(editorialSchema.safeParse(review).success, true, "Review without date is valid");
 assert.equal(editorialSchema.safeParse(published).success, true, "Published with date is valid");
+assert.equal(editorialSchema.safeParse({ ...published, preview: true }).success, true, "Explicit layout previews are allowed");
+assert.equal(editorialSchema.safeParse({ ...published, preview: "yes" }).success, false, "Preview flag must be boolean");
 assert.equal(editorialSchema.safeParse({ ...draft, status: "published" }).success, false, "Published requires date");
 assert.equal(editorialSchema.safeParse({ ...draft, status: "unlisted" }).success, false, "Reject invalid status");
 

@@ -23,6 +23,11 @@ assert.deepEqual(library, {
   publishedAt: dt,
   image: { src: "/test-editorial.jpg", alt: "Actual artwork description" },
 });
+assert.equal(toPublishedArticle({
+  collection: "library", entry: { ...published, data: { ...published.data, preview: true } },
+})?.preview, true, "Public layout previews carry the noindex flag");
+assert.equal(toPublishedArticle({ collection: "library", entry: published })?.preview, undefined,
+  "Ordinary reviewed articles do not inherit preview status");
 assert.equal(toPublishedArticle({ collection: "grimoire", entry: { ...published, data: { ...published.data, status: "draft" } } }), undefined);
 assert.equal(toPublishedArticle({ collection: "library", entry: { ...published, data: { ...published.data, status: "review" } } }), undefined);
 assert.equal(toPublishedArticle({ collection: "library", entry: { ...published, data: { ...published.data, publishedAt: undefined } } }), undefined);

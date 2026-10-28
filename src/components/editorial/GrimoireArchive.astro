@@ -15,6 +15,7 @@ interface Props {
 
 const { articles, currentPage, totalPages, totalItems } = Astro.props;
 const empty = totalItems === 0;
+const previewsOnly = articles.length > 0 && articles.every((article) => article.preview);
 const start = (currentPage - 1) * EDITORIAL_PAGE_SIZE + 1;
 const end = Math.min(currentPage * EDITORIAL_PAGE_SIZE, totalItems);
 const [first, ...remaining] = articles;
@@ -60,7 +61,7 @@ const [first, ...remaining] = articles;
       <div class="grimoire-archive">
         <div class="grimoire-archive__heading">
           <div>
-            <p class="grimoire-eyebrow">Published Grimoire</p>
+            <p class="grimoire-eyebrow">{previewsOnly ? "Layout previews" : "Published Grimoire"}</p>
             <h2 id="grimoire-list-heading">{currentPage === 1 ? "Methods & observations" : `Methods & observations · Page ${currentPage}`}</h2>
           </div>
           <p class="grimoire-archive__count" aria-label={`Showing entries ${start} through ${end} of ${totalItems}`}>
@@ -72,7 +73,7 @@ const [first, ...remaining] = articles;
           <div class="grimoire-lead">
             <div class="grimoire-lead__aside">
               <p class="grimoire-lead__label">Entry {String(start).padStart(2, "0")}</p>
-              <p class="grimoire-lead__note">From the published Grimoire</p>
+              <p class="grimoire-lead__note">{previewsOnly ? "Sample entry for layout review" : "From the published Grimoire"}</p>
               <Ornament variant="diamond" />
             </div>
             <ArticleCard article={first} variant="editorial" headingLevel="h3" />

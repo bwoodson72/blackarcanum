@@ -13,6 +13,8 @@ export interface PublishedArticleView {
   href: string;
   excerpt?: string;
   publishedAt?: Date;
+  /** Temporary layout content, never presented as finished scholarship. */
+  preview?: boolean;
   updatedAt?: Date;
   image?: {
     src: string;
@@ -51,6 +53,7 @@ export function toPublishedArticle({ collection, entry }: EditorialEntry): Publi
     href: articlePath(collection, entry.id),
     excerpt: data.description,
     publishedAt: data.publishedAt,
+    ...(data.preview === true ? { preview: true } : {}),
     ...(data.updatedAt instanceof Date && !Number.isNaN(data.updatedAt.valueOf())
       ? { updatedAt: data.updatedAt }
       : {}),

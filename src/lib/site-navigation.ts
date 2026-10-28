@@ -3,9 +3,11 @@ export interface NavigationLink {
   href: string;
 }
 
-// Only reviewed routes appear in navigation. Library, Grimoire, Shop,
-// Search and Subscribe stay hidden until their destinations are active.
+// Library and Grimoire now have reviewed archive and article routes.
+// Shop, Search and Subscribe remain hidden until their destinations are active.
 export const primaryNavigation: NavigationLink[] = [
+  { label: "Library", href: "/library/" },
+  { label: "Grimoire", href: "/grimoire/" },
   { label: "About", href: "/about/" },
 ];
 export const headerActions: NavigationLink[] = [];

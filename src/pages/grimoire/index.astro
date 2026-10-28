@@ -19,7 +19,7 @@ const articles = page.entries.flatMap((entry) => {
   description={page.totalItems === 0
     ? "Meet Mystagogia's Grimoire, a space reserved for original methods, experiments and practitioner observations."
     : "Browse Mystagogia's published Grimoire methods, experiments and practitioner observations."}
-  noindex={page.totalItems === 0}
+  noindex={page.totalItems === 0 || articles.every((article) => article.preview)}
 >
   <GrimoireArchive
     articles={articles}

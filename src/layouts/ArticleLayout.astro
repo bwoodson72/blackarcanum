@@ -31,6 +31,7 @@ const hasContext = Astro.slots.has("context");
   title={article.title}
   description={article.excerpt ?? article.title}
   image={article.image?.src}
+  noindex={article.preview === true}
   breadcrumbs={breadcrumbs}
 >
   <div class:list={["article-reading", `article-reading--${article.collection}`]}>
