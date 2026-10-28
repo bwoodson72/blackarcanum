@@ -147,14 +147,19 @@ console.log("PASS: Prompt 25 homepage gateway, intentional empty-state, newslett
 const assetPath = "public/images/homepage/mystagogia-editorial-atlas.avif";
 assert.ok(fs.existsSync(assetPath), "Approved homepage artwork must ship with the site");
 const imageBytes = fs.readFileSync(assetPath);
-assert.ok(imageBytes.length > 20000 && imageBytes.subarray(4, 12).toString("latin1").startsWith("ftypavif"),
+assert.ok(imageBytes.length > 300000 && imageBytes.subarray(4, 12).toString("latin1").startsWith("ftypavif"),
   "Full image atlas must be a valid nonempty AVIF payload");
 assert.equal((homepage.match(/href="\/images\/homepage\/mystagogia-editorial-atlas\.avif"/g) ?? []).length, 4,
   "Hero, Library, Grimoire and spotlight must all use real raster artwork");
-for (const slice of ['viewBox="0 0 1400 560"', 'viewBox="0 560 466 179"',
-                    'viewBox="466 560 466 179"', 'viewBox="932 560 466 179"']) {
+for (const slice of ['viewBox="0 0 2000 800"', 'viewBox="0 800 667 256"',
+                    'viewBox="667 800 666 256"', 'viewBox="1333 800 667 256"']) {
   assert.ok(homepage.includes(slice), "The correct artwork-only viewport must render: " + slice);
 }
+
+assert.equal((homepage.match(/width="2000" height="1056"/g) ?? []).length, 4,
+  "All four illustrations reference the true high-resolution atlas dimensions");
+assert.ok(imageBytes.length < 1000000, "The sharp source stays below 1 MB");
+
 assert.ok(!homepage.includes('home-path__books') && !homepage.includes('home-path__sigil') &&
   !homepage.includes('home-practice__seal') && !homepage.includes('home-hero__orbit'),
   "Decorative CSS placeholder shapes must no longer render");
