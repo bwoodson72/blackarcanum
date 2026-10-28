@@ -1,8 +1,8 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Container from "../components/foundation/Container.astro";
-import PageHero from "../components/site/PageHero.astro";
-import "../styles/search-page.css";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/foundation/Container.astro";
+import PageHero from "../../components/site/PageHero.astro";
+import "../../styles/search-page.css";
 export const prerender = true;
 ---
 <BaseLayout
@@ -55,5 +55,5 @@ export const prerender = true;
   </section>
 </BaseLayout>
 <script>
-  import "../scripts/search-page";
+  import "../../scripts/search-page";
 </script>
