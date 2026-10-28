@@ -1,10 +1,8 @@
 name: Astro baseline checks
 
+# Only for proposed PR changes. Pushes to master are checked by the
+# Editorial Quality fast workflow, avoiding a duplicate npm ci/build/typecheck.
 on:
-  push:
-    branches:
-      - master
-      - chore/prompt-01-baseline
   pull_request:
     branches:
       - master

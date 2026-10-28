@@ -1,0 +1,72 @@
+# Destructive fixture builds and real-browser regressions are intentionally
+# kept separate from every master push. This avoids 10+ redundant site builds.
+# Run just the affected suite manually; weekly 'all' retains broad coverage.
+name: Deep Regression
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Choose the affected feature; all runs every suite"
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - articles
+          - toc
+          - citations
+          - related
+          - media
+  schedule:
+    - cron: "0 9 * * 0"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mystagogia-deep-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      QA_SUITE: ${{ inputs.suite || 'all' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.4"
+          cache: npm
+      - name: Install locked dependencies once
+        run: npm ci
+      - name: Verify current content before destructive fixture tests
+        run: npm run qa:content
+      - name: Article route fixtures and 4-viewport browser acceptance
+        if: ${{ env.QA_SUITE == 'all' || env.QA_SUITE == 'articles' }}
+        run: |
+          npm run test:article-routes
+          npm run test:article-responsive
+      - name: Generated table-of-contents fixtures and keyboard acceptance
+        if: ${{ env.QA_SUITE == 'all' || env.QA_SUITE == 'toc' }}
+        run: |
+          npm run test:toc-fixtures
+          npm run test:toc-browser
+      - name: Source citations, footnotes and print acceptance
+        if: ${{ env.QA_SUITE == 'all' || env.QA_SUITE == 'citations' }}
+        run: |
+          npm run test:references-fixtures
+          npm run test:references-browser
+      - name: Curated related-reading fixtures and keyboard acceptance
+        if: ${{ env.QA_SUITE == 'all' || env.QA_SUITE == 'related' }}
+        run: |
+          npm run test:related-fixtures
+          npm run test:related-browser
+      - name: Media missing-file build rejection and responsive image acceptance
+        if: ${{ env.QA_SUITE == 'all' || env.QA_SUITE == 'media' }}
+        run: |
+          npm run test:media-build
+          npm run test:media-render-fixtures
+          npm run test:media-render-browser
