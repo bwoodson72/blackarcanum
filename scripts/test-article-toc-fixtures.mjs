@@ -110,7 +110,7 @@ try {
     assert.ok(longHtml.includes('class="article-toc article-toc--disclosure"'));
     assert.equal(matchCount(longHtml, /aria-label="Article contents"/g), 2,
       "Rail and disclosure expose the same generated navigation, one responsive at a time");
-    assert.ok(longHtml.includes("<summary>"), "Native keyboard disclosure");
+    assert.ok(/<summary(?:\s|>)/.test(longHtml), "Native keyboard disclosure");
     for (const slug of slugs) {
       assert.ok(new RegExp('<h[23]\\b[^>]*\\bid="' + slug + '"').test(longHtml),
         "MDX renderer must produce visible heading #" + slug);
