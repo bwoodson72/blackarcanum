@@ -45,6 +45,8 @@ try {
       assert.doesNotMatch(html,/\bdata-pagefind-body(?:=|[\s>])/i);
     } else {
       assert.match(html,/\bdata-pagefind-body(?:=|[\s>])/i);
+      assert.ok(html.includes('data-pagefind-filter="collection:'+f.collection+'"'),
+        "Pagefind filter derives from published article collection");
       assert.ok(html.includes('data-pagefind-meta="title"') &&
         html.includes('data-pagefind-meta="description"'));
     }

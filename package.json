@@ -38,7 +38,8 @@
     "test:toc-browser": "node scripts/test-article-toc-browser.mjs",
     "test:archive": "node --experimental-strip-types scripts/test-editorial-archive.mjs",
     "test:presentation": "node --experimental-strip-types scripts/test-editorial-presentation.mjs",
-    "test:pagefind-build": "node scripts/test-pagefind-build.mjs"
+    "test:pagefind-build": "node scripts/test-pagefind-build.mjs",
+    "test:search-browser": "node scripts/test-search-browser.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.5",

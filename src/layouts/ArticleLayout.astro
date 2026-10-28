@@ -80,7 +80,8 @@ if (Astro.site && !article.preview && article.mediaId) {
         </aside>
       )}
 
-      <article class="article-reading__article" aria-labelledby="article-title" data-pagefind-body={article.preview ? undefined : ""}>
+      <article class="article-reading__article" aria-labelledby="article-title" data-pagefind-body={article.preview ? undefined : ""}
+        data-pagefind-filter={article.preview ? undefined : "collection:" + article.collection}>
         <ArticleHeader article={article} />
         {hasToc && (
           <div class="article-reading__mobile-toc" data-pagefind-ignore>

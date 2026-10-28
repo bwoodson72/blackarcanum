@@ -229,6 +229,7 @@ console.log("PASS: persistent header and anchor offset are shared by all main ro
 const qaPages = [
   ["/", "dist/index.html"],
   ["/about/", "dist/about/index.html"],
+  ["/search/", "dist/search/index.html"],
   ["/library/", "dist/library/index.html"],
   ["/grimoire/", "dist/grimoire/index.html"],
   ...expected.map(({ collection, slug }) => [
@@ -399,3 +400,38 @@ for (const [route, html] of heroTemplates) {
   }
 }
 console.log("PASS: one compact HeroAction component shared by all four routes");
+
+
+// Prompt 29: search is a real navigation destination with no Shop tab.
+const searchPage = fs.readFileSync("dist/search/index.html", "utf8");
+assert.ok(searchPage.includes('name="robots" content="noindex, nofollow"'),
+  "Search result pages must not appear in external search engines");
+assert.ok(searchPage.includes('data-search-page') &&
+  searchPage.includes('role="search"') &&
+  searchPage.includes('data-search-input') &&
+  searchPage.includes('data-search-results') &&
+  searchPage.includes('aria-live="polite"'),
+  "Accessible, shareable editorial search UI exists");
+for(const scope of ['value="all"', 'value="library"', 'value="grimoire"'])
+  assert.ok(searchPage.includes(scope), "Search scope exists: "+scope);
+assert.ok(!searchPage.includes('value="shop"') &&
+  !searchPage.includes('href="/shop/"'), "Shop search is not enabled");
+assert.ok(homepage.includes('href="/search/"') &&
+  archive.library.includes('href="/search/"') &&
+  archive.grimoire.includes('href="/search/"'),
+  "Search is reachable through shared global navigation");
+const searchClient = fs.readFileSync("src/scripts/search-page.ts","utf8");
+assert.ok(searchClient.includes('"/pagefind/pagefind.js"') &&
+  searchClient.includes('"/pagefind/indexed-routes.json"'),
+  "Search is lazy-loaded through static Pagefind API only");
+assert.ok(searchClient.includes("document.createElement") &&
+  !searchClient.includes(".innerHTML"), "Results are rendered as safe text, not HTML");
+assert.ok(searchClient.includes("history[method]") &&
+  searchClient.includes("popstate"), "Queries and scopes can be shared and navigated");
+for(const [section, slug] of [["library","tyche-fortune-and-the-city"],
+  ["grimoire","hermes-petition-template"]]) {
+  const sample=fs.readFileSync("dist/"+section+"/"+slug+"/index.html","utf8");
+  assert.ok(!sample.includes('data-pagefind-filter="collection:'),
+    "Preview articles do not expose Pagefind filters");
+}
+console.log("PASS: Prompt 29 search page, navigation, noindex, scopes, no Shop, lazy browser API and safe snippets");

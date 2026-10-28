@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/foundation/Container.astro";
+import PageHero from "../components/site/PageHero.astro";
+import "../styles/search-page.css";
+export const prerender = true;
+---
+<BaseLayout
+  title="Search"
+  description="Search Mystagogia's published historical research and practical Grimoire articles."
+  noindex
+>
+  <PageHero
+    mode="about"
+    titleId="search-title"
+    title="Search Mystagogia"
+    tagline={["Library", "Grimoire", "Discover"]}
+    description="Find a source, follow a tradition, or return to a method. Search only published research and practical writings."
+    artSrc="/images/homepage/mystagogia-editorial-atlas.avif"
+  />
+  <section class="editorial-search" aria-labelledby="search-form-title" data-search-page>
+    <Container width="wide">
+      <div class="editorial-search__inner">
+        <header class="editorial-search__heading">
+          <p class="editorial-search__eyebrow">Editorial archive</p>
+          <h2 id="search-form-title">Explore the collection</h2>
+          <p>Search titles, research notes, and practical methods from the Library and Grimoire.</p>
+        </header>
+        <form class="editorial-search__form" method="get" action="/search/" role="search" data-search-form>
+          <label for="search-query">Search the archives</label>
+          <div class="editorial-search__input-row">
+            <input id="search-query" name="q" type="search" enterkeyhint="search"
+              autocomplete="off" maxlength="150"
+              placeholder="A deity, tradition, ritual, or source" data-search-input />
+            <button type="submit">Search <span aria-hidden="true">→</span></button>
+          </div>
+          <fieldset class="editorial-search__scope">
+            <legend>Search in</legend>
+            <div class="editorial-search__scopes">
+              <label><input type="radio" name="scope" value="all" checked /><span>All</span></label>
+              <label><input type="radio" name="scope" value="library" /><span>The Library</span></label>
+              <label><input type="radio" name="scope" value="grimoire" /><span>The Grimoire</span></label>
+            </div>
+          </fieldset>
+        </form>
+        <div class="editorial-search__response">
+          <p class="editorial-search__status" role="status" aria-live="polite" aria-atomic="true" data-search-status>
+            Enter a search term to explore published articles.
+          </p>
+          <div data-search-results aria-label="Search results"></div>
+        </div>
+        <noscript><p>Search requires JavaScript. You can still browse the <a href="/library/">Library</a> and <a href="/grimoire/">Grimoire</a> directly.</p></noscript>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+<script>
+  import "../scripts/search-page";
+</script>
