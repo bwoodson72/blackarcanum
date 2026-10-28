@@ -1,64 +1,66 @@
-# Mystagogia — Astro Frontend
+# Mystagogia — Astro Editorial Frontend
 
-This repository (`blackarcanum`) contains the **Astro frontend starter** for **Mystagogia**, an editorial website with separate Library and Grimoire sections and a future Shop. The site has **not** been implemented yet. Mystagogia is the final public brand; the production domain is still undecided.
+Mystagogia is an **in-development** Astro 7 editorial site exploring historical sources and contemporary esoteric practice. Its two collections are **the Library** (source-led research) and **the Grimoire** (methods and observations). The future merchandise Shop uses a separate Medusa backend and is **not enabled** in this repository. The public domain is **not approved**; the current Vercel URL is a development/preview deployment, **not a public launch**.
 
-The Medusa v2 commerce backend is maintained as a **separate repository and deployment**. Do not add Medusa to this Astro project or create a monorepo.
+> **Release status:** NOT READY FOR PUBLIC LAUNCH. See [`docs/RELEASE_REVIEW.md`](docs/RELEASE_REVIEW.md) for the dated Prompt 31 pass/fail register and unresolved gates. Three visible article routes still contain noindex layout previews; do not represent them as finished scholarship or launch content.
 
-## Prerequisites
+## Run locally
 
-- Node.js **22.23.4 or later**, consistent with `package.json`.
-- npm (the project uses the committed npm lockfile).
-
-## Local development
-
-From the repository root:
+Required: Node.js **22.23.4+**, npm and the committed `package-lock.json`.
 
 ```sh
 npm ci
 npm run dev
+npm run qa:fast      # 11 unit suites + newsletter mocks, Astro build, sample route checks, typecheck and npm audit
+npm run build        # Astro production build, followed by guarded Pagefind post-build
+npm run typecheck
+npm run test:newsletter
 ```
 
-Astro's development server ordinarily runs at `http://localhost:4321`.
+The production build uses `@astrojs/vercel` with prerendered editorial pages and an on-demand newsletter API route. Static assets may live under `dist/client/` in the hybrid build; the Pagefind post-build step also prepares compatible QA paths and the Vercel static output. The index is **absent by design** when no finished, non-preview articles qualify.
 
-## Repeatable checks
+## Current architecture
 
-```sh
-npm ci            # Clean install using package-lock.json
-npm run build     # Production Astro build
-npm run typecheck # Astro diagnostics for .astro, TypeScript and framework files
-npm run preview   # Preview local production build
-```
+- `src/pages/index.astro`, `about.astro`, `library/`, `grimoire/`, `search/` — implemented editorial pages; `src/pages/api/newsletter.ts` — server-side Kit endpoint.
+- `src/components/site/PageHero.astro` and `HeroAction.astro` — shared illustrated heroes and compact engraved actions; `NewsletterSection.astro` / `NewsletterForm.astro` — consent-aware homepage signup.
+- `src/layouts/BaseLayout.astro` and `ArticleLayout.astro` — shared page, reading and metadata systems.
+- `src/content/library` and `src/content/grimoire` — MDX content gated by status, date, preview flag and rights/source registries.
+- `src/data/features.ts` and `src/data/topics.ts` — intentionally empty until specific editorial approval; no automatic 'latest' promotion.
+- `src/lib/seo-config.mjs` — approval-gated canonicals and sitemap; `scripts/build-pagefind.mjs` — approved-article-only search index.
+- `src/styles/starwind.css`, foundation and component styles — approved design tokens; `docs/design-references/` contains references, not production image sources.
+- `docs/SPECIFICATION.md`, `docs/DESIGN_SYSTEM.md`, `docs/DEVELOPMENT_WORKFLOW.md`, `docs/NEWSLETTER.md`, `docs/SEO.md`, `docs/PAGEFIND.md`, `docs/SEARCH.md` — implementation standards.
 
-The `typecheck` script uses `astro check` and requires the project's `@astrojs/check` development dependency. The lockfile must remain synchronized with `package.json`; use a clean `npm ci` when verifying changes.
+## GitHub Actions and acceptance
 
-## Current structure
+Every `master` push runs `.github/workflows/editorial-quality.yml` (`npm ci` → `npm run qa:fast`). The most recent clean-install, build, typecheck and high/critical audit passed for `9399aaf` at [Editorial Quality run 40779280270](https://github.com/bwoodson72/blackarcanum/actions/runs/40779280270). That is **fast CI**, not release approval.
 
-- `src/pages/index.astro` — untouched starter homepage (not the final Mystagogia design).
-- `src/layouts/Layout.astro` — starter HTML shell.
-- `src/styles/starwind.css` — currently contains Starwind's initial theme.
-- `starwind.config.json` — Starwind is initialized; no individual components are installed.
-- `docs/SPECIFICATION.md` — approved product/design/architecture requirements.
-- `docs/DESIGN_SYSTEM.md` — semantic token and typography standards.
-- `docs/design-references/` — approved visual previews; not production art assets.
-- `docs/IMPLEMENTATION_PROMPTS.md` — sequential, separately authorized development tasks.
-- `AGENTS.md` — coding-agent execution rules.
+For complete responsive/keyboard/content acceptance, use **GitHub → Actions → Deep Regression → Run workflow → `all`**. The `articles` suite includes published/draft fixtures, real Pagefind search queries, SEO and screenshot checks. Other suites cover TOC, citations, related content and media. These runs are destructive **test fixtures**, not live editorial uploads. No current-commit `all` run or manual screen-reader review was observed during Prompt 31; **do not mark either passed**. See [`docs/RELEASE_REVIEW.md`](docs/RELEASE_REVIEW.md).
 
-## Implementation process
+## Environment configuration (Vercel)
 
-Execute exactly **one approved numbered prompt** at a time, verify the changes, submit for review, and stop. Do not treat future prompts as authorization to implement their features. The project uses Astro 7, TypeScript, Tailwind CSS 4, Starwind UI, MDX, and optional Svelte islands. Styling must use centralized semantic design tokens; fonts and production art have not yet been installed.
+Do not check `.env` files, real IDs or API keys into Git, screenshots, browser JS or build logs. Set secrets in Vercel **Project → Settings → Environment Variables**, scoped to the intended environment. Never use `PUBLIC_`/`VITE_` for server secrets.
 
-## Vercel deployment and dependency security
+| Name | Use | State |
+| --- | --- | --- |
+| `MYSTAGOGIA_SITE_URL` | Exact owner-approved `https://` production origin; enables public canonicals, sitemap and robots invitation | **Not approved / unset** |
+| `KIT_V4_API_KEY` | Kit v4 server-only secret | **Not configured for Mystagogia** |
+| `KIT_NEWSLETTER_FORM_ID` | Numeric ID of an existing Kit form | **Not configured** |
+| `KIT_FORM_CONFIRMATION_VERIFIED` | Exact `true` only after double-opt-in form, approved sender, consent and privacy setup are verified | **Not verified / unset** |
 
-The Astro frontend includes `@astrojs/vercel@11.0.16` (compatible with Astro 7). The existing site builds in Astro's default static mode. When approved on-demand endpoints are added, configure the appropriate server output (for example, `output: 'server'`), use `export const prerender = false` for server routes, and explicitly prerender editorial pages as needed. A temporary on-demand endpoint was compiled successfully into a Vercel function in CI; **no server endpoint is currently deployed**. The Vercel project is linked to this GitHub repository. The public domain has not been chosen.
+`MYSTAGOGIA_SEO_TEST=1` is strictly for synthetic test-domain builds; never configure it in Vercel. Do not derive public canonicals from Vercel preview hostnames. With no approved domain, robots disallows crawlers and no sitemap or canonical is generated. With no verified Kit settings, the public newsletter remains visibly 'in preparation' and the server endpoint declines signup requests. Provider delivery and confirmation are **untested**; see `docs/NEWSLETTER.md`. The in-memory rate limiter is best-effort, not a distributed abuse defense.
 
-The current Vercel adapter's transitive dependency tree pins vulnerable versions of `path-to-regexp@6.1.0` and `zod@4.1.11`. The root `package.json` uses **narrow overrides** to select patched releases within the same major version specifically for `@vercel/routing-utils` and `@vercel/cli-config`. These overrides are deliberately temporary compatibility maintenance; review them when Vercel upstream updates its pinned dependencies, rather than leaving them indefinitely or applying `npm audit fix --force` (which proposed an incompatible adapter downgrade).
+## Unlaunched features and publication gates
 
-CI checks a clean install, Astro build, typecheck and `npm audit --audit-level=high`. Revalidate the on-demand build whenever the adapter, Vercel dependencies, or server endpoints change.
+Shop/Medusa/Printful/Stripe, a live newsletter signup, public domain, public SEO launch, and a finished article corpus are **not enabled**. No lead magnet, newsletter sender identity, store inventory, or author persona is implied. Search UI exists but correctly has no results when only previews are available. The three Tyche/Hekate/Hermes `preview: true` pages remain at public URLs and are marked `noindex`; **remove or fully gate these before announcing an editorial release**. The spec's contact/privacy/legal disclosure destinations are not yet implemented. Do not remove these blockers from the release checklist until actually resolved and retested.
 
-## Environment configuration
+## Controlled rollout and rollback
 
-No production domain or integration credentials are supplied for this starter. Do not commit secrets or invent service endpoints. Deployment configuration, newsletter API keys, commerce APIs, and other environment settings belong to their respective later prompts.
+Work directly on **`master`** as previously approved; do not create feature branches. Vercel **automatically deploys** pushes to that branch. No separate manual deployment, domain change, promotion, or commerce action is authorized by Prompt 31. A documentation-only commit may still trigger the existing automatic Vercel build; that is not a launch.
 
-## Baseline validation
+Before public launch: (1) clear every `BLOCKED` item in `docs/RELEASE_REVIEW.md`; (2) run `npm ci`, `npm run qa:fast`, and a complete passing `Deep Regression → all` against the exact intended commit; (3) inspect saved 375/768/1024/1280/1440 screenshots and manual keyboard/screen-reader checks; (4) verify domain/robots/sitemap/Kit consent settings and only explicitly approved real content; (5) obtain explicit launch approval.
 
-Prompt 01 establishes dependency reproducibility, a production build, and Astro diagnostics. The run results and any unresolved blockers should be recorded in the Prompt 01 review/PR; a README alone is **not** evidence that commands passed.
+To roll back a **source change** in this master-only workflow, identify the last tested good SHA from Actions and use `git revert <bad-sha>` on `master`; verify the resulting CI run and Vercel deployment before calling it recovered. An **urgent Vercel platform rollback** can change automatic promotion behavior; use it only deliberately and restore normal auto-assignment afterward. Never use `git reset --hard` + forced push as the default rollback for this shared repo.
+
+## Contribution and content safety
+
+Public editorial content must use approved sources, owned/cleared imagery, accurate labels for personal observation, and explicit status/date gates. The owner's legal identity must not be inserted into public bylines, author schema, metadata or frontend markup. See `AGENTS.md` and the sequential `docs/IMPLEMENTATION_PROMPTS.md`. Execute one authorized prompt at a time.
