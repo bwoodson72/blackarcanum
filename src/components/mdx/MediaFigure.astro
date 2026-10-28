@@ -1,5 +1,6 @@
 ---
 import MediaImage from "../media/MediaImage.astro";
+import { resolveMediaAsset } from "../../lib/media-assets";
 import { media } from "../../data/media";
 import { getMediaRecord, mediaPublicationIssues } from "../../lib/media-registry";
 
@@ -8,8 +9,12 @@ interface Props {
   kind: "article" | "reference" | "wide";
   /** Optional contextual caption for editorial art only. */
   caption?: string;
+  lightbox?: boolean;
 }
-const { id, kind, caption } = Astro.props;
+const { id, kind, caption, lightbox = false } = Astro.props;
+if (typeof lightbox !== "boolean" || (lightbox && kind !== "reference")) {
+  throw new Error("Lightbox is only supported for reference figures.");
+}
 const record = getMediaRecord(id, media);
 const expectedRole = kind === "reference" ? "reference" : "editorial";
 if (record.role !== expectedRole) {
@@ -34,6 +39,7 @@ const provenance = [
   record.date || record.period,
   record.repository,
 ].filter((value): value is string => !!value?.trim());
+const originalAsset = lightbox ? resolveMediaAsset(record) : undefined;
 ---
 
 <figure class:list={["mdx-figure", `mdx-figure--${kind}`]} data-mdx-figure={kind}>
@@ -43,6 +49,15 @@ const provenance = [
     priority={false}
     sizes={imageSizes}
   />
+  {originalAsset && (
+    <button
+      type="button"
+      class="mdx-figure__expand"
+      data-reference-lightbox-open
+      aria-label={`Enlarge reference image: ${captionText}`}
+      hidden
+    >Enlarge image</button>
+  )}
   <figcaption class="mdx-figure__caption">
     {captionText && <span class="mdx-figure__description">{captionText}</span>}
     {kind === "reference" && (
@@ -56,6 +71,9 @@ const provenance = [
     {kind === "reference" && record.sourceUrl && (
       <a href={record.sourceUrl} rel="noopener noreferrer">Source record</a>
     )}
+    {originalAsset && (
+      <a href={originalAsset.src} target="_blank" rel="noopener noreferrer">View original image</a>
+    )}
     <span class="mdx-figure__credit">{record.rights.creditLine}</span>
     {kind === "reference" && record.rights.license && (
       <span class="mdx-figure__rights">{record.rights.license}</span>
@@ -65,6 +83,32 @@ const provenance = [
     )}
   </figcaption>
 </figure>
+{originalAsset && (
+  <dialog
+    class="mdx-reference-dialog"
+    data-reference-lightbox
+    aria-label={`Enlarged reference image: ${captionText}`}
+  >
+    <div class="mdx-reference-dialog__toolbar">
+      <button type="button" class="mdx-reference-dialog__close" data-reference-lightbox-close>
+        Close enlarged image
+      </button>
+    </div>
+    <img
+      class="mdx-reference-dialog__image"
+      src={originalAsset.src}
+      alt={record.alt}
+      width={originalAsset.width}
+      height={originalAsset.height}
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="mdx-reference-dialog__caption">{captionText}</p>
+    <a class="mdx-reference-dialog__original" href={originalAsset.src} target="_blank" rel="noopener noreferrer">
+      View original image in new tab
+    </a>
+  </dialog>
+)}
 
 <style>
   .mdx-figure {
@@ -116,6 +160,67 @@ const provenance = [
     outline-offset: 3px;
     border-radius: var(--radius-control);
   }
+  .mdx-figure__expand {
+    display: block;
+    margin: 0.7rem 1rem 0.7rem auto;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--color-antique-gold);
+    border-radius: var(--radius-control);
+    background: var(--color-parchment);
+    color: var(--color-charcoal);
+    font: 600 var(--text-ui) / 1.4 var(--font-interface);
+    cursor: pointer;
+  }
+  .mdx-figure__expand[hidden] { display: none; }
+  .mdx-figure__expand:hover { text-decoration: underline; }
+  .mdx-figure__expand:focus-visible,
+  .mdx-reference-dialog :is(button, a):focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+  .mdx-reference-dialog {
+    box-sizing: border-box;
+    width: min(72rem, calc(100vw - 2rem));
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 2rem);
+    padding: clamp(0.75rem, 2vw, 1.25rem);
+    border: 1px solid var(--color-antique-gold);
+    border-radius: var(--radius-card);
+    background: var(--color-parchment);
+    color: var(--color-charcoal);
+    overflow: auto;
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    line-height: 1.5;
+  }
+  .mdx-reference-dialog::backdrop { background: rgba(0, 0, 0, 0.8); }
+  .mdx-reference-dialog__toolbar { display: flex; justify-content: flex-end; }
+  .mdx-reference-dialog__close {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--color-antique-gold);
+    border-radius: var(--radius-control);
+    background: var(--color-aged-paper);
+    color: var(--color-charcoal);
+    cursor: pointer;
+  }
+  .mdx-reference-dialog__image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 65dvh;
+    margin: 0.75rem auto;
+    object-fit: contain;
+  }
+  .mdx-reference-dialog__caption {
+    margin: 0.75rem 0 0.4rem;
+    font-family: var(--font-reading);
+  }
+  .mdx-reference-dialog__original {
+    color: var(--color-oxide-red);
+    text-decoration: underline;
+    text-underline-offset: 0.17em;
+  }
   /*
    * The middle desktop width can use more of the viewport. On mobile the
    * image stays in the article measure; at 1440+ it does not collide with
@@ -141,3 +246,35 @@ const provenance = [
     .mdx-figure__caption a { color: inherit; }
   }
 </style>
+
+<script>
+  // Native showModal handles focus containment, inert background and Escape.
+  // No-JS readers still see the reference and its original-image link.
+  function initReferenceLightboxes() {
+    for (const trigger of document.querySelectorAll<HTMLButtonElement>("[data-reference-lightbox-open]")) {
+      if (trigger.dataset.lightboxReady === "true") continue;
+      const dialog = trigger.closest("figure")?.nextElementSibling;
+      if (!(dialog instanceof HTMLDialogElement) || !dialog.matches("[data-reference-lightbox]")) continue;
+      const close = dialog.querySelector<HTMLButtonElement>("[data-reference-lightbox-close]");
+      if (!close) continue;
+      trigger.dataset.lightboxReady = "true";
+      trigger.hidden = false;
+      trigger.addEventListener("click", () => {
+        if (!dialog.open) {
+          dialog.showModal();
+          close.focus();
+        }
+      });
+      close.addEventListener("click", () => dialog.close());
+      dialog.addEventListener("close", () => {
+        if (trigger.isConnected) trigger.focus({ preventScroll: true });
+      });
+    }
+  }
+  document.addEventListener("astro:page-load", initReferenceLightboxes);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initReferenceLightboxes, { once: true });
+  } else {
+    initReferenceLightboxes();
+  }
+</script>

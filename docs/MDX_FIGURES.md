@@ -28,6 +28,10 @@ A reference figure with its **registry caption**, source, provenance and reuse t
 
 <ReferenceFigure id="approved-reference-id" />
 
+Optional native enlarge/inspect behavior (requires no additional imports):
+
+<ReferenceFigure id="approved-reference-id" lightbox />
+
 A deliberate layout breakout for an editorial image:
 
 <FullWidthImage id="approved-editorial-id" caption="A wider contextual visual." />
@@ -39,7 +43,7 @@ The identifiers above are **illustrative**, not actual registered images. Only `
 - **ReferenceFigure:** Requires an approved `reference`-role ID, preserves its natural aspect ratio (no cropping), **always** displays its verified registry caption, and adds available creator/date or period/repository, direct source-catalog link, credit, license statement, and a link to documentary reuse terms. It explicitly marks historical reproductions versus modern reference illustrations. Unknown details are omitted rather than fabricated. Caption overrides are not offered.
 - **FullWidthImage:** Uses editorial-role images only. Like ArticleImage, it preserves the image uncropped and may have a contextual caption. At **1024–1439px**, it can expand from the 720px reading measure to at most 960px, while respecting viewport gutters. On phones/tablets and **1440px+ three-column articles**, it stays within the reading column to avoid overlapping the sticky table of contents or right context rail. It remains responsive and lazy loaded; only the top-of-article hero gets high fetch priority.
 
-All three emit semantic `figure` and `figcaption` elements. Reference source and rights links are normal focusable anchors with visible focus indicators. No JavaScript is needed; this prompt adds no lightbox (Prompt 22), gallery (Prompt 24), historical object or new artwork.
+All three emit semantic `figure` and `figcaption` elements. Reference source and rights links are normal focusable anchors with visible focus indicators. Static figures require no JavaScript. Prompt 22 adds opt-in native dialog behavior only for `ReferenceFigure lightbox`: Enter/Space opens, close gains focus, Tab stays in the modal, Escape/close restores focus, and the original uncropped local asset can be opened in a new tab. Without JavaScript, the original figure, its caption/credits/source/rights links and the direct original-image link remain fully readable. No gallery, zoom, historical object or new artwork is added.
 
 ## Implementation and validation
 
@@ -52,3 +56,9 @@ The already-existing `scripts/test-media-render-fixtures.mjs` now creates **temp
 To run immediately after a substantive change to `src/components/mdx/` or `src/components/media/`, the Deep Regression workflow automatically runs the **media** suite. Routine text/content-only changes still trigger just the 1-build fast workflow. Deep Regression can also be dispatched manually for a selected suite or run weekly for all suites.
 
 **Stopped after Prompt 21.**
+
+## Prompt 22 validation
+
+The existing synthetic MDX fixture opts one reference image into the lightbox and leaves another static in both collections. The media browser regression exercises 375px and 1440px, keyboard open/close/Tab/Escape and focus restoration, native modal naming, unclipped image display, original-file link and a disabled-JavaScript fallback. Real historical reference imagery still requires separate source/rights review before publication.
+
+**Stopped after Prompt 22.**

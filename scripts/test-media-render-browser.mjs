@@ -261,6 +261,121 @@ try {
   }
   console.log("PASS: Prompt 21 real MDX figure visual checks at 375px, 1024px and 1440px");
 
+
+  // Prompt 22: keyboard, accessible naming, fit and focus restoration.
+  async function pressKey(key, code, windowsVirtualKeyCode) {
+    const args = { key, code, windowsVirtualKeyCode, nativeVirtualKeyCode: windowsVirtualKeyCode };
+    await send("Input.dispatchKeyEvent", { type: "keyDown", ...args });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", ...args });
+  }
+  for (const width of [375, 1440]) {
+    await send("Emulation.setDeviceMetricsOverride", {
+      width, height: 900, deviceScaleFactor: 1, mobile: false,
+    });
+    for (const section of ["library", "grimoire"]) {
+      await send("Page.navigate", { url: origin + "/" + section + "/qa-mdx-media-" + section + "/" });
+      await waitFor(async () => evaluate(
+        'document.readyState === "complete" && !!document.querySelector("[data-reference-lightbox-open]:not([hidden])")'
+      ), "enabled lightbox for " + section + " at " + width);
+      const initial = await evaluate(`(() => {
+        const figure = document.querySelector('[data-mdx-figure="reference"]');
+        const trigger = figure.querySelector("[data-reference-lightbox-open]");
+        trigger.focus();
+        return {
+          focused: document.activeElement === trigger,
+          dialogCount: document.querySelectorAll("dialog[data-reference-lightbox]").length,
+          plainTrigger: !!document.querySelectorAll('[data-mdx-figure="reference"]')[1]?.querySelector("[data-reference-lightbox-open]"),
+          caption: figure.querySelector("figcaption")?.textContent || "",
+          original: figure.querySelector('a[href*="/_astro/"]')?.getAttribute("href"),
+        };
+      })()`);
+      assert.equal(initial.focused, true, "Launcher must be keyboard focusable");
+      assert.equal(initial.dialogCount, 1, "Only opted-in reference is interactive");
+      assert.equal(initial.plainTrigger, false, "Other reference stays static");
+      assert.ok(initial.caption.includes("CI-only synthetic raster"));
+      assert.ok(initial.original?.startsWith("/_astro/"), "No-JS direct original link");
+
+      await pressKey("Enter", "Enter", 13);
+      await waitFor(async () => evaluate(
+        '!!document.querySelector("dialog[data-reference-lightbox]:modal")'
+      ), "Enter opens native modal");
+      const open = await evaluate(`(() => {
+        const dialog = document.querySelector("dialog[data-reference-lightbox]");
+        const img = dialog.querySelector("img");
+        const ir = img.getBoundingClientRect(), dr = dialog.getBoundingClientRect();
+        return {
+          label: dialog.getAttribute("aria-label"),
+          closeFocused: document.activeElement === dialog.querySelector("[data-reference-lightbox-close]"),
+          caption: dialog.querySelector(".mdx-reference-dialog__caption")?.textContent,
+          original: dialog.querySelector(".mdx-reference-dialog__original")?.getAttribute("href"),
+          alt: img.alt, fit: getComputedStyle(img).objectFit,
+          imageWidth: ir.width, imageHeight: ir.height,
+          left: dr.left, right: dr.right, top: dr.top, bottom: dr.bottom,
+          scrollWidth: document.documentElement.scrollWidth,
+        };
+      })()`);
+      assert.ok(open.label?.includes("CI-only synthetic raster"), "Dialog accessible label");
+      assert.equal(open.closeFocused, true, "Focus enters the close button");
+      assert.ok(open.caption?.includes("CI-only synthetic raster"));
+      assert.equal(open.original, initial.original);
+      assert.ok(open.alt?.includes("reference test raster"));
+      assert.equal(open.fit, "contain");
+      assert.ok(open.imageWidth > 0 && open.imageWidth <= width - 16);
+      assert.ok(open.imageHeight > 0 && open.imageHeight <= 900);
+      assert.ok(open.left >= -1 && open.right <= width + 1 && open.top >= -1 && open.bottom <= 901);
+      assert.ok(open.scrollWidth <= width + 1, "Open dialog fits without horizontal overflow");
+
+      await pressKey("Tab", "Tab", 9);
+      assert.equal(await evaluate(
+        'document.activeElement === document.querySelector(".mdx-reference-dialog__original")'
+      ), true, "Tab reaches original-image link");
+      await pressKey("Tab", "Tab", 9);
+      assert.equal(await evaluate(
+        'document.activeElement === document.querySelector("[data-reference-lightbox-close]")'
+      ), true, "Native dialog traps keyboard focus");
+      await pressKey("Escape", "Escape", 27);
+      await waitFor(async () => evaluate(
+        '!document.querySelector("dialog[data-reference-lightbox]").open && document.activeElement === document.querySelector("[data-reference-lightbox-open]")'
+      ), "Escape closes and restores focus");
+      await pressKey(" ", "Space", 32);
+      await waitFor(async () => evaluate(
+        'document.querySelector("dialog[data-reference-lightbox]").open'
+      ), "Space reopens");
+      await evaluate('document.querySelector("[data-reference-lightbox-close]").click(); true');
+      await waitFor(async () => evaluate(
+        '!document.querySelector("dialog[data-reference-lightbox]").open && document.activeElement === document.querySelector("[data-reference-lightbox-open]")'
+      ), "Close button restores focus");
+      console.log("PASS: " + section + " reference lightbox at " + width +
+        "px: keyboard, modal semantics, original link, caption, focus and unclipped image");
+    }
+  }
+
+  // No-JS fallback: image, registry credits and original link stay visible.
+  await send("Emulation.setScriptExecutionDisabled", { value: true });
+  await send("Page.navigate", { url: origin + "/library/qa-mdx-media-library/" });
+  await waitFor(async () => evaluate(
+    'document.readyState === "complete" && !!document.querySelector("[data-reference-lightbox-open]")'
+  ), "static figure without JavaScript");
+  const noJs = await evaluate(`(() => {
+    const figure = document.querySelector('[data-mdx-figure="reference"]');
+    const trigger = figure.querySelector("[data-reference-lightbox-open]");
+    return {
+      hidden: trigger.hidden && getComputedStyle(trigger).display === "none",
+      caption: figure.querySelector("figcaption")?.textContent || "",
+      alt: figure.querySelector("img")?.alt,
+      original: figure.querySelector('a[href*="/_astro/"]')?.getAttribute("href"),
+      modalOpen: document.querySelector("dialog[data-reference-lightbox]").open,
+    };
+  })()`);
+  assert.equal(noJs.hidden, true, "No unusable launcher without JavaScript");
+  assert.ok(noJs.caption.includes("CI-only synthetic raster") &&
+    noJs.caption.includes("Automated technical QA"), "Caption and credit visible without JavaScript");
+  assert.ok(noJs.alt?.includes("reference test raster"));
+  assert.ok(noJs.original?.startsWith("/_astro/"));
+  assert.equal(noJs.modalOpen, false);
+  await send("Emulation.setScriptExecutionDisabled", { value: false });
+  console.log("PASS: Prompt 22 JavaScript-disabled fallback");
+
 } finally {
   socket?.close();
   chrome.kill("SIGTERM");

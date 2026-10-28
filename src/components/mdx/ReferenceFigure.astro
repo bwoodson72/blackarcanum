@@ -4,8 +4,10 @@ import MediaFigure from "./MediaFigure.astro";
 interface Props {
   /** Approved reference media registry ID; provenance is never overridden. */
   id: string;
+  /** Opt-in lightbox for approved reference images (static by default). */
+  lightbox?: boolean;
 }
-const { id } = Astro.props;
+const { id, lightbox = false } = Astro.props;
 ---
 
-<MediaFigure id={id} kind="reference" />
+<MediaFigure id={id} kind="reference" lightbox={lightbox} />
