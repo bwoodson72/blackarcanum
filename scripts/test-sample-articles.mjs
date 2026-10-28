@@ -130,4 +130,16 @@ assert.ok(!/<form\b/.test(homepage), "No pretend subscription form");
 assert.ok(homepage.includes("Newsletter in preparation"), "Newsletter slot is honest");
 assert.ok(homepage.includes('name="robots" content="noindex, nofollow"'),
   "Homepage remains noindex until real editorial features are curated");
+const heroLinks = [...homepage.matchAll(/<a class="home-button" href="(\/(?:library|grimoire)\/)">([\s\S]*?)<\/a>/g)];
+assert.deepEqual(heroLinks.map((link) => link[1]), ["/library/", "/grimoire/"],
+  "Ornate hero buttons are real links to the two published hubs");
+for (const [, href, body] of heroLinks) {
+  assert.equal((body.match(/class="home-button__corner /g) ?? []).length, 4,
+    "Every engraved button has four decorative corner details");
+  assert.ok(body.includes('class="home-button__icon"') && body.includes('aria-hidden="true"'),
+    "Decorative book or leaf artwork is hidden from assistive technology");
+  assert.ok(body.includes('class="home-button__label"') &&
+    body.includes('class="home-button__arrow"'), "Button label and arrow are readable HTML");
+}
+console.log("PASS: ornate hero CTA framing, real destinations, accessible icons and text");
 console.log("PASS: Prompt 25 homepage gateway, intentional empty-state, newsletter and noindex");

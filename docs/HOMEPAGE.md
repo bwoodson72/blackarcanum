@@ -17,3 +17,7 @@ The existing article fixture browser runner checks the homepage at 375, 768, 102
 The primary visual limitation is deliberate: the approved mockup's painted figures, pictorial cards, parchment texture and elaborate sun identity are not cleared real site media. These have been replaced by accessible CSS elements, rather than copying mockup pixels or generating new art without approval. A later asset-approval step may improve illustrative fidelity.
 
 **Stopped after Prompt 25.**
+
+## Approved hero CTA frame
+
+The owner approved the antique-gold engraved corner treatment from the generated Mystagogia artwork. The two homepage hero CTAs use genuine links with a thin outer gold frame, inset border, small ornamental corners, and book/botanical SVG line icons. Titles and arrows remain accessible HTML, not baked into an image. They stack full-width on narrow screens, preserve visible keyboard focus, and maintain dark/gold contrast. All other homepage artwork is unchanged by this focused styling update.
