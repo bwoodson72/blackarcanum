@@ -299,6 +299,11 @@ try {
       await waitFor(async () => evaluate(
         '!!document.querySelector("dialog[data-reference-lightbox]:modal")'
       ), "Enter opens native modal");
+      await waitFor(async () => evaluate(`(() => {
+        const img = document.querySelector("dialog[data-reference-lightbox] img");
+        return !!img && img.complete && img.naturalWidth > 0 &&
+          img.getBoundingClientRect().width > 0;
+      })()`), "on-demand original reference image to load");
       const open = await evaluate(`(() => {
         const dialog = document.querySelector("dialog[data-reference-lightbox]");
         const img = dialog.querySelector("img");

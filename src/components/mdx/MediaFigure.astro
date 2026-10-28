@@ -262,8 +262,11 @@ const originalAsset = lightbox ? resolveMediaAsset(record) : undefined;
       if (!close) continue;
       trigger.dataset.lightboxReady = "true";
       trigger.hidden = false;
+      const originalImage = dialog.querySelector<HTMLImageElement>(".mdx-reference-dialog__image");
       const openDialog = () => {
         if (!dialog.open) {
+          // Fetch the full-resolution asset only on explicit inspection.
+          if (originalImage) originalImage.loading = "eager";
           dialog.showModal();
           close.focus();
         }
