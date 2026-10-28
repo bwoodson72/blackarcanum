@@ -33,7 +33,9 @@ export function isIndexableBuiltPage(absoluteUrl, outputDir = resolve("dist")) {
   try { pathname = decodeURIComponent(url.pathname); } catch { return false; }
   if (!pathname.startsWith("/") || pathname.includes("..") ||
       !pathname.endsWith("/") || pathname.includes("\\")) return false;
-  const htmlFile = join(outputDir, pathname.slice(1), "index.html");
+  const staticDir = existsSync(join(outputDir, "client"))
+    ? join(outputDir, "client") : outputDir;
+  const htmlFile = join(staticDir, pathname.slice(1), "index.html");
   if (!existsSync(htmlFile)) return false;
   const html = readFileSync(htmlFile, "utf8");
   return !/<meta\b[^>]*name="robots"[^>]*content="[^"]*\bnoindex\b/i.test(html);

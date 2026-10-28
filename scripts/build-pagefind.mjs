@@ -39,7 +39,7 @@ export function verifyMarkers(root = dist, eligible = []) {
   const allowed = new Set(eligible);
   function scan(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (entry.name === "pagefind" || entry.name.startsWith(".")) continue;
+      if (entry.name === "pagefind" || entry.name === "client" || entry.name.startsWith(".")) continue;
       const file = path.join(dir, entry.name);
       if (entry.isDirectory()) { scan(file); continue; }
       if (entry.name !== "index.html" || !entry.isFile()) continue;
@@ -51,6 +51,16 @@ export function verifyMarkers(root = dist, eligible = []) {
   scan(root);
 }
 export function buildSearchIndex(root = dist) {
+  // Adding the on-demand Kit endpoint makes Astro emit a dist/client tree.
+  // Preserve legacy read-only QA paths without changing deployable output.
+  const client = path.join(root, "client");
+  const staticRoot = fs.existsSync(client) ? client : root;
+  if (staticRoot !== root) {
+    for (const entry of fs.readdirSync(staticRoot, {withFileTypes:true})) {
+      fs.cpSync(path.join(staticRoot,entry.name), path.join(root,entry.name),
+        {recursive:true,force:true});
+    }
+  }
   fs.rmSync(path.join(root,"pagefind"), {recursive:true,force:true});
   // Astro's Vercel adapter copies static assets BEFORE this post-build runs.
   // Remove any stale Pagefind output from the final deployment package too.
@@ -65,7 +75,7 @@ export function buildSearchIndex(root = dist) {
   }
   const cli = path.resolve("node_modules/.bin/pagefind");
   if (!fs.existsSync(cli)) throw new Error("Pagefind CLI absent; run npm ci.");
-  const result = spawnSync(cli,["--site",root,"--output-path",path.join(root,"pagefind")],
+  const result = spawnSync(cli,["--site",staticRoot,"--output-path",path.join(root,"pagefind")],
     {encoding:"utf8",timeout:120000});
   if (result.status !== 0) throw new Error("Pagefind CLI failed: "+
     (result.stdout??"").slice(-2500)+" "+(result.stderr??"").slice(-2500));

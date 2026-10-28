@@ -32,3 +32,5 @@ Kit references:
 - https://help.kit.com/en/articles/2502655-the-confirmation-email
 
 **Stopped after Prompt 30.**
+
+**Astro hybrid layout:** Adding the on-demand endpoint moves prerendered assets under `dist/client/`. The Pagefind post-build step copies the static HTML/files into the legacy `dist/` locations for existing editorial acceptance tests, while Pagefind itself indexes `dist/client/` and continues to package the bundle in Vercel output. Sitemap filtering also checks the active static root. This does not alter the public URL layout.
