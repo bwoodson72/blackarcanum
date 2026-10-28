@@ -159,7 +159,8 @@ function writeMdxFixture(section, filepath) {
     "description: Isolated technical figures demonstrating accessible media components.",
     "status: published",
     "publishedAt: 2026-10-28",
-    "preview: true",
+    // This CI-only MDX fixture must exercise the same public rendering
+    // route as a finished article. Production never contains these files.
     "mediaIds:",
     "  - ci-test-raster",
     "  - ci-test-reference",
@@ -350,8 +351,8 @@ try {
     const file = `dist/${section}/qa-mdx-media-${section}/index.html`;
     assert.ok(fs.existsSync(file), "Expected " + section + " MDX figure fixture output");
     const body = fs.readFileSync(file, "utf8");
-    assert.ok(body.includes('name="robots" content="noindex, nofollow"'),
-      "Synthetic MDX pages must never be indexed");
+    assert.ok(body.includes('data-pagefind-body'),
+      "The temporary, published MDX fixture must exercise the real article route");
     assert.equal((body.match(/data-mdx-figure="/g) ?? []).length, 11,
       "Four original figures, five gallery items and two comparison items render in " + section);
     assert.equal((body.match(/<figcaption\b/g) ?? []).length, 12,
