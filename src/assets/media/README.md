@@ -9,4 +9,4 @@ Use:
 
 Paths and filenames use lowercase kebab-case, e.g. `reference/greek-art/relief-01.png`. Read [the media registry guidelines](../../../docs/MEDIA_REGISTRY.md) before adding anything.
 
-Do not put high-resolution masters here: preserve those separately under `media-originals/`. Rendering and optimization belong to Prompt 20.
+Do not put high-resolution masters here: preserve those separately under `media-originals/`. The shared renderer is now implemented (Prompt 20). See [docs/MEDIA_RENDERER.md](../../../docs/MEDIA_RENDERER.md) for responsive variants and priority rules.

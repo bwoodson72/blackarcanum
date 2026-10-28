@@ -6,9 +6,9 @@
 
 | Location | Purpose | Public delivery |
 | --- | --- | --- |
-| `src/assets/media/editorial/` | Approved editorial/hero/card image sources | Astro image pipeline in Prompt 20 |
-| `src/assets/media/reference/` | Source images of manuscripts, figures, diagrams and artifacts | Astro reference renderer in later prompts |
-| `src/assets/media/decorative/` | Approved original ornaments and decorative artwork | Astro image pipeline later |
+| `src/assets/media/editorial/` | Approved editorial/hero/card image sources | Astro responsive pipeline (implemented Prompt 20) |
+| `src/assets/media/reference/` | Source images of manuscripts, figures, diagrams and artifacts | Uncropped reference rendering (Prompt 20); captioned figures in Prompt 21 |
+| `src/assets/media/decorative/` | Approved original ornaments and decorative artwork | Astro image pipeline (Prompt 20) |
 | `media-originals/` | Optional high-resolution archival masters (.tif, .tiff, .psd, etc.), segregated from the website output | **Never bundled or served by the site** |
 | `src/data/media.ts` | One version-controlled metadata record per approved image | No direct UI or image rendering yet |
 
@@ -36,7 +36,7 @@ The **rights status can remain `pending` or `restricted`** while reviewing an im
 2. Put a web-source image in the appropriate `src/assets/media/<role>/...` folder. Preserve a high-resolution original separately under `media-originals/...` if available and lawful to retain.
 3. Add **one** `MediaRecord` in `src/data/media.ts`. A source image cannot be registered under multiple IDs. Assign its stable ID to any number of Library or Grimoire articles through `mediaIds:` in their MDX frontmatter; **no article is required to have an image**.
 4. Run `npm run test:media`, `npm run test:media-files`, `npm run qa:content` and `npm run typecheck`. The registry rejects unsafe source paths, nonexistent files, undeclared masters, invalid rights, missing descriptions/figure captions and unknown article media IDs.
-5. Until Prompt 20, `mediaIds` is a **metadata-only link**. This prompt deliberately does **not** render the image, replace the older optional raw `hero` field, or generate responsive variants; those changes require the next approved prompt. The older `hero` field is retained for backward compatibility with existing tests and is not itself a new provenance-approved image mechanism.
+5. With Prompt 20, approved media can be rendered explicitly with `<MediaImage id="approved-id" variant="hero" />`, using `card`, `hero`, `reference`, or `decorative`. The `mediaIds` field remains a registry-backed declaration; assigning it **does not automatically insert an image** into an article. Prompt 21 will add MDX author-facing figure/caption components. The old raw `hero` field remains for compatibility but is not part of the approved registry rendering pathway.
 
 ## Validation and tests
 
@@ -46,6 +46,6 @@ The **rights status can remain `pending` or `restricted`** while reviewing an im
 - `scripts/test-media-registry.mjs` uses **in-memory-only** positive and negative records to verify types and rules, legal reuse evidence, missing source/original paths, no-data articles and cross-collection reuse. It adds no artifacts or test metadata to the live registry.
 - `scripts/test-media-build.mjs` temporarily injects a **metadata-only** missing-image record, verifies that an actual Astro production build fails for that missing asset, and restores the exact registry file in `finally`. No image is created, and the run is isolated in CI from live content builds.
 
-There is no new media display component, lightbox, gallery, catalog of historical figures, external image service, image purchase, license assertion or generated image in Prompt 19.
+Prompt 19 itself introduced no display components. Prompt 20 added responsive `MediaImage`/`MediaPicture` rendering (see [MEDIA_RENDERER.md](MEDIA_RENDERER.md)); lightbox, galleries, catalogs, selected historical imagery and generated artwork remain out of scope.
 
 **Stopped after Prompt 19.**

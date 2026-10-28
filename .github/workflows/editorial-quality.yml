@@ -71,3 +71,9 @@ jobs:
       - name: Related reading compact/cards — real Chrome and keyboard navigation
         if: github.ref == 'refs/heads/master'
         run: npm run test:related-browser
+      - name: Media renderer — isolated PNG/SVG assets and generated Astro markup
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:media-render-fixtures
+      - name: Responsive media renderer — real Chrome at 375 and 1440
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:media-render-browser

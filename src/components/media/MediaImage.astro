@@ -1,0 +1,34 @@
+---
+import MediaPicture from "./MediaPicture.astro";
+import { media } from "../../data/media";
+import { getMediaRecord, mediaPublicationIssues } from "../../lib/media-registry";
+import { resolveMediaAsset } from "../../lib/media-assets";
+import { validateMediaVariant } from "../../lib/media-display";
+import type { MediaDisplayVariant } from "../../lib/media-display";
+
+interface Props {
+  /** Single stable, rights-reviewed ID from src/data/media.ts. */
+  id: string;
+  variant: MediaDisplayVariant;
+  /** Only the first, visible hero needs high priority. */
+  priority?: boolean;
+  class?: string;
+}
+
+const { id, variant, priority, class: className } = Astro.props;
+const record = getMediaRecord(id, media);
+const issues = mediaPublicationIssues(record);
+if (issues.length) {
+  throw new Error(`Media "${id}" cannot be rendered publicly: ${issues.join("; ")}.`);
+}
+validateMediaVariant(record, variant);
+const asset = resolveMediaAsset(record);
+---
+
+<MediaPicture
+  asset={asset}
+  alt={record.alt}
+  variant={variant}
+  priority={priority}
+  class={className}
+/>
