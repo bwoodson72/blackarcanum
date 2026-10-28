@@ -70,8 +70,12 @@ for (const { collection, slug, title } of expected) {
   const headingIds = new Set(
     [...html.matchAll(/<h[23]\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1]),
   );
+  // Restrict to contents navigation; the site-wide #main-content skip link
+  // is not a heading link and must never be treated as one.
+  const tocMarkup = [...html.matchAll(/<nav\\b[^>]*aria-label="Article contents"[^>]*>[\\s\\S]*?<\\/nav>/g)]
+    .map((match) => match[0]).join("\n");
   const anchors = [...new Set(
-    [...html.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]),
+    [...tocMarkup.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]),
   )];
   assert.ok(headingIds.size >= 5 && anchors.length >= 5);
   for (const slugId of anchors) {
