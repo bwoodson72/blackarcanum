@@ -251,6 +251,9 @@ const originalAsset = lightbox ? resolveMediaAsset(record) : undefined;
   // Native showModal handles focus containment, inert background and Escape.
   // No-JS readers still see the reference and its original-image link.
   function initReferenceLightboxes() {
+    // Do not expose a control if native modal dialogs are unsupported.
+    if (typeof HTMLDialogElement === "undefined" ||
+        typeof HTMLDialogElement.prototype.showModal !== "function") return;
     for (const trigger of document.querySelectorAll<HTMLButtonElement>("[data-reference-lightbox-open]")) {
       if (trigger.dataset.lightboxReady === "true") continue;
       const dialog = trigger.closest("figure")?.nextElementSibling;

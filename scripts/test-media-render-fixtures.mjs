@@ -323,7 +323,7 @@ try {
     assert.ok(body.includes('data-media-variant="reference"') &&
       body.includes('data-media-variant="hero"'),
       "MDX figures reuse existing Astro image variants");
-    assert.equal((body.match(/<dialog\b[^>]*data-reference-lightbox(?:\s|>)/g) ?? []).length, 1,
+    assert.equal((body.match(/<dialog\b[^>]*data-reference-lightbox(?=[\s=>])/g) ?? []).length, 1,
       "Only the opted-in reference should render a native dialog");
     assert.equal((body.match(/<button\b[^>]*data-reference-lightbox-open/g) ?? []).length, 1,
       "An opted-in reference has an initially hidden JS-enhanced launcher");
