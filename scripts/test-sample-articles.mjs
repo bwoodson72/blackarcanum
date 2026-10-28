@@ -146,7 +146,7 @@ for (const [, href, body] of heroLinks) {
 const gatewayLinks = [...homepage.matchAll(/<a class="home-path__link" href="(\/(?:library|grimoire)\/)"[\s\S]*?<\/a>/g)];
 assert.deepEqual(gatewayLinks.map((link) => link[1]), ["/library/", "/grimoire/"],
   "Each gateway image is a complete accessible link to its live archive");
-for (const [, , body] of gatewayLinks) {
+for (const [body] of gatewayLinks) {
   assert.equal((body.match(/class="engraved-frame__corner /g) ?? []).length, 4,
     "Both image panels have four engraved gold corner ornaments");
   assert.ok(body.includes("home-path__tagline") && body.includes("home-path__arrow"),
@@ -222,3 +222,79 @@ for (const html of [homepage, archive.library, archive.grimoire]) {
   assert.ok(html.includes('class="site-header"'), "All main routes share persistent navigation");
 }
 console.log("PASS: persistent header and anchor offset are shared by all main routes");
+
+
+// Prompt 26 fast QA: real generated pages, no extra build or browser process.
+const qaPages = [
+  ["/", "dist/index.html"],
+  ["/about/", "dist/about/index.html"],
+  ["/library/", "dist/library/index.html"],
+  ["/grimoire/", "dist/grimoire/index.html"],
+  ...expected.map(({ collection, slug }) => [
+    "/" + collection + "/" + slug + "/",
+    path.join("dist", collection, slug, "index.html"),
+  ]),
+];
+const knownRoutes = new Set(qaPages.map(([url]) => url));
+for (const [url, filename] of qaPages) {
+  assert.ok(fs.existsSync(filename), "Missing public route " + url);
+  const html = fs.readFileSync(filename, "utf8");
+  assert.equal((html.match(/<main\b/g) ?? []).length, 1, "One main landmark: " + url);
+  assert.equal((html.match(/<h1\b/g) ?? []).length, 1, "One H1: " + url);
+  assert.ok(html.includes('id="main-content"') &&
+    html.includes('href="#main-content"') && html.includes("Skip to content"),
+    "Working skip-link target: " + url);
+  assert.ok(html.includes('aria-label="Primary navigation"') &&
+    html.includes('aria-label="Mobile primary navigation"') &&
+    html.includes('aria-controls="mobile-navigation-dialog"') &&
+    html.includes('aria-labelledby="mobile-navigation-title"'),
+    "Desktop/mobile navigation semantics: " + url);
+  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(ids.length, new Set(ids).size, "Duplicate element IDs: " + url);
+  for (const img of html.match(/<img\b[^>]*>/g) ?? []) {
+    assert.match(img, /\balt="[^"]*"/, "Image missing alt: " + url);
+  }
+  for (const [, href] of html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
+    if (!href || /^(https?:|mailto:|tel:)/.test(href)) continue;
+    assert.ok(!href.startsWith("//"), "Protocol-relative link on " + url);
+    const [page, fragment] = href.split("#", 2);
+    if (page && page.startsWith("/")) {
+      const pathname = page.split("?")[0];
+      assert.ok(knownRoutes.has(pathname) ||
+        fs.existsSync(path.join("dist", pathname.replace(/^\/+/, ""))),
+        "Broken internal link: " + url + " -> " + href);
+    }
+    if (!page && fragment) {
+      assert.ok(ids.includes(decodeURIComponent(fragment)), "Broken anchor " + url + " -> " + href);
+    }
+  }
+  assert.ok(!/<a\b[^>]*href="\/(?:shop|search|newsletter|subscribe)\//.test(html),
+    "No fabricated destination: " + url);
+}
+assert.ok(fs.readFileSync("dist/about/index.html","utf8")
+  .includes("Both sections are available through the"), "About navigation copy must be accurate");
+
+const colorTokens = fs.readFileSync("src/styles/starwind.css", "utf8");
+const color = (name) => {
+  const result = colorTokens.match(new RegExp("--color-" + name + ":[ ]*(#[0-9a-fA-F]{6})[ ]*;"));
+  assert.ok(result, "Missing palette token " + name);
+  return result[1];
+};
+const lum = (hex) => {
+  const parts = [1,3,5].map(i => parseInt(hex.slice(i,i+2),16)/255)
+    .map(v => v <= 0.04045 ? v/12.92 : ((v+0.055)/1.055)**2.4);
+  return .2126*parts[0]+.7152*parts[1]+.0722*parts[2];
+};
+for(const [front, back] of [
+  ["antique-gold","charcoal"], ["parchment","charcoal"],
+  ["aged-paper","charcoal"], ["oxide-red","parchment"],
+  ["sage-ink","parchment"], ["charcoal","parchment"],
+]) {
+  const a=lum(color(front)), b=lum(color(back));
+  assert.ok((Math.max(a,b)+0.05)/(Math.min(a,b)+0.05)>=4.5,
+    "WCAG AA token contrast failed: "+front+" / "+back);
+}
+const reduced=fs.readFileSync("src/styles/page-transitions.css","utf8");
+assert.ok(reduced.includes("@media (prefers-reduced-motion: reduce)") &&
+  reduced.includes("animation: none !important"), "Honor reduced motion");
+console.log("PASS: Prompt 26 seven-route semantics, skip/nav/links, alt text, contrast and reduced motion");

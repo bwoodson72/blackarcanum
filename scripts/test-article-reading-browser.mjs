@@ -108,7 +108,7 @@ try {
     ["library", "qa-library-reading"],
     ["grimoire", "qa-grimoire-reading"],
   ]) {
-    for (const width of [375, 768, 1024, 1440]) {
+    for (const width of [375, 768, 1024, 1280, 1440]) {
       await send("Emulation.setDeviceMetricsOverride", {
         width, height: 900, deviceScaleFactor: 1, mobile: false,
       });
@@ -146,14 +146,14 @@ try {
       }
     }
   }
-  console.log("PASS: real MDX article routes at 375/768/1024/1440, correct 720px reading width and safe media");
+  console.log("PASS: real MDX article routes at 375/768/1024/1280/1440, correct 720px reading width and safe media");
 
   // Prompt 25 reuses the same Chrome session and static build.
   // Capture full-page screenshots for a human comparison with the approved
   // desktop and responsive references, never as production assets.
   const shotDir = "qa-artifacts/homepage";
   fs.mkdirSync(shotDir, { recursive: true });
-  for (const width of [375, 768, 1024, 1440]) {
+  for (const width of [375, 768, 1024, 1280, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", {
       width, height: 900, deviceScaleFactor: 1, mobile: false,
     });
@@ -207,6 +207,96 @@ try {
       "Anchor scrolling leaves room for the persistent header");
     console.log("PASS: persistent header " + width +
       "px: visible on scroll, hero not overlapped, anchors offset");
+  }
+
+
+  // Prompt 26: one Chrome session evaluates all six template routes at each
+  // required viewport. Fixture articles are never written to public content.
+  for (const width of [375, 768, 1024, 1280, 1440]) {
+    await send("Emulation.setDeviceMetricsOverride", {
+      width, height: 900, deviceScaleFactor: 1, mobile: false,
+    });
+    for (const route of ["/", "/about/", "/library/", "/grimoire/",
+      "/library/qa-library-reading/", "/grimoire/qa-grimoire-reading/"]) {
+      await send("Page.navigate", {url: origin + route});
+      await waitFor(async () => evaluate(
+        'document.readyState === "complete" && !!document.querySelector("#main-content")'
+      ), "QA page " + route + " at " + width);
+      const qa = await evaluate(`(() => {
+        const main = document.querySelector("main");
+        const header = document.querySelector(".site-header");
+        const active = [...document.querySelectorAll(
+          ".brand,.desktop-navigation a,.menu-trigger,.home-button,.home-path__link,.archive-hero__action"
+        )].filter(el => el.getClientRects().length > 0);
+        return {
+          width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
+          main: document.querySelectorAll("main").length,
+          h1: main.querySelectorAll("h1").length,
+          skip: document.querySelector(".skip-link")?.getAttribute("href"),
+          mainId: main.id, mainTab: main.tabIndex,
+          headerStyle: getComputedStyle(header).position,
+          headerTop: header.getBoundingClientRect().top,
+          headerHeight: header.getBoundingClientRect().height,
+          mainTop: main.getBoundingClientRect().top,
+          drawer: !!document.querySelector(".menu-trigger")?.getClientRects().length,
+          desktop: !!document.querySelector(".desktop-navigation")?.getClientRects().length,
+          missingAlt: [...main.querySelectorAll("img")].filter(x=>!x.hasAttribute("alt")).length,
+          nestedLinks: document.querySelectorAll("a a").length,
+          targets: active.map(x=>x.getBoundingClientRect().height),
+        };
+      })()`);
+      assert.equal(qa.width, width);
+      assert.ok(qa.scrollWidth <= width + 1, "No overflow " + route + "@" + width);
+      assert.equal(qa.main, 1);
+      assert.equal(qa.h1, 1);
+      assert.equal(qa.skip, "#main-content");
+      assert.equal(qa.mainId, "main-content");
+      assert.equal(qa.mainTab, -1);
+      assert.equal(qa.headerStyle, "sticky");
+      assert.ok(Math.abs(qa.headerTop)<=1 && qa.mainTop >= qa.headerHeight-2,
+        "Sticky header must not cover hero initially");
+      assert.equal(qa.drawer, width<1024);
+      assert.equal(qa.desktop, width>=1024);
+      assert.equal(qa.missingAlt, 0);
+      assert.equal(qa.nestedLinks, 0);
+      assert.ok(qa.targets.length > 0 && qa.targets.every(h=>h>=43.5),
+        "Navigation touch targets at least 44px");
+
+      if ((width === 375 || width === 1440) &&
+          ["/about/", "/library/", "/grimoire/"].includes(route)) {
+        const capture = await send("Page.captureScreenshot", {
+          format: "png", captureBeyondViewport: true, fromSurface: true,
+        });
+        fs.writeFileSync(shotDir + "/audit-" +
+          route.replace(/[^a-z0-9]+/gi, "-") + width + ".png",
+          Buffer.from(capture.result.data, "base64"));
+      }
+      if(route==="/" && width===375) {
+        const result=await evaluate(`(() => {
+          const skip=document.querySelector(".skip-link");
+          skip.focus();
+          const skipFocused=document.activeElement===skip;
+          const trigger=document.querySelector(".menu-trigger");
+          trigger.click();
+          const dialog=document.querySelector("#mobile-navigation-dialog");
+          return {skipFocused, open:dialog.open && dialog.matches(":modal"),
+            expanded:trigger.getAttribute("aria-expanded"),
+            closeFocused:document.activeElement===dialog.querySelector(".menu-close"),
+            links:[...dialog.querySelectorAll("nav a")]
+              .map(x=>x.getBoundingClientRect().height)};
+        })()`);
+        assert.equal(result.skipFocused,true);
+        assert.equal(result.open,true);
+        assert.equal(result.expanded,"true");
+        assert.equal(result.closeFocused,true);
+        assert.ok(result.links.every(h=>h>=44),"Drawer tap targets");
+        await evaluate('document.querySelector(".menu-close").click(); true');
+        await waitFor(async ()=>evaluate(
+          '!document.querySelector("#mobile-navigation-dialog").open && document.activeElement === document.querySelector(".menu-trigger") && document.querySelector(".menu-trigger").getAttribute("aria-expanded") === "false"'
+        ),"drawer restores focus");
+      }
+    }
+    console.log("PASS: Prompt 26 homepage/About/hubs/articles responsive QA at " + width+"px");
   }
 
 } finally {
