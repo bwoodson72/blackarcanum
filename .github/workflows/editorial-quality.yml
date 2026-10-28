@@ -44,6 +44,9 @@ jobs:
       - name: Published Grimoire responsive and pagination QA (Prompt 14 only)
         if: github.ref == 'refs/heads/feature/prompt-14-grimoire-hub'
         run: node scripts/test-grimoire-browser.mjs --full
+      - name: Media source provenance — missing registered file must fail Astro build
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:media-build
       - name: Published Library and Grimoire article routes — isolated MDX fixtures
         if: github.ref == 'refs/heads/master'
         run: npm run test:article-routes

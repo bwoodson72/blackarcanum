@@ -1,6 +1,9 @@
 import { getCollection } from "astro:content";
 import { topics } from "../data/topics";
 import { sources } from "../data/sources";
+import { media } from "../data/media";
+import { mediaAssetFiles } from "./media-asset-inventory";
+import { validateMediaRegistry } from "./media-registry";
 import { featuredContent } from "../data/features";
 import { resolveFeatureSections } from "./editorial-qa";
 
@@ -9,6 +12,9 @@ import { resolveFeatureSections } from "./editorial-qa";
  * before a broken reference or unapproved feature can be deployed.
  */
 export async function checkEditorialBuild() {
+  // The build must not succeed if the registry points at a missing file.
+  // Archival masters are checked separately by the Node filesystem test.
+  validateMediaRegistry(media, { files: mediaAssetFiles });
   const [library, grimoire] = await Promise.all([
     getCollection("library"),
     getCollection("grimoire"),
@@ -20,6 +26,7 @@ export async function checkEditorialBuild() {
     ],
     topics,
     sources,
+    media,
     features: featuredContent,
   };
 

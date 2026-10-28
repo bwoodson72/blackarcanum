@@ -3,6 +3,9 @@ import { EDITORIAL_SLUG_PATTERN } from "./editorial-identifiers.ts";
 import { citationSchema } from "./editorial-citations.ts";
 import { topics } from "../data/topics.ts";
 import { sources } from "../data/sources.ts";
+import { media } from "../data/media.ts";
+import type { MediaRecord } from "../data/media.ts";
+import { mediaPublicationIssues, validateMediaRegistry } from "./media-registry.ts";
 import type { Topic } from "../data/topics.ts";
 import type { SourceRecord } from "../data/sources.ts";
 import {
@@ -37,6 +40,8 @@ const sharedFields = z.object({
   }).optional(),
   /** References ONLY to the owner-approved topic registry. */
   topics: z.array(slug).optional(),
+  /** Optional reusable media IDs; registry-backed image display arrives in Prompt 20. */
+  mediaIds: z.array(slug).optional(),
   /** A related article's collection and stable ID, e.g. library:article-slug. */
   relatedIds: z.array(z.string().regex(/^(library|grimoire):[a-z0-9]+(?:-[a-z0-9]+)*$/)).optional(),
   /** Bibliographic IDs and individual citations refer to the SAME source registry. */
@@ -47,6 +52,7 @@ const sharedFields = z.object({
 export interface EditorialRegistries {
   topics?: readonly Topic[];
   sources?: readonly SourceRecord[];
+  media?: readonly MediaRecord[];
 }
 
 /**
@@ -57,10 +63,13 @@ export interface EditorialRegistries {
 export function createEditorialSchema(registries: EditorialRegistries = {}) {
   const approvedTopics = registries.topics ?? topics;
   const approvedSources = registries.sources ?? sources;
+  const approvedMedia = registries.media ?? media;
 
   validateTopicRegistry(approvedTopics);
   validateSourceRegistry(approvedSources);
+  validateMediaRegistry(approvedMedia);
 
+  const knownMedia = new Map(approvedMedia.map((record) => [record.id, record]));
   const knownTopics = new Set(approvedTopics.map(({ id }) => id));
   const knownSources = new Set(approvedSources.map(({ id }) => id));
 
@@ -80,6 +89,26 @@ export function createEditorialSchema(registries: EditorialRegistries = {}) {
           path: ["topics", index],
           message: `Unknown topic ID "${topicId}". Approve it in src/data/topics.ts first.`,
         });
+      }
+    }
+
+    for (const [index, mediaId] of (entry.mediaIds ?? []).entries()) {
+      const record = knownMedia.get(mediaId);
+      if (!record) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["mediaIds", index],
+          message: `Unknown media ID "${mediaId}". Add a reviewed entry to src/data/media.ts.`,
+        });
+      } else if (entry.status === "published") {
+        const issues = mediaPublicationIssues(record);
+        if (issues.length) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["mediaIds", index],
+            message: `Media "${mediaId}" is not cleared for publication: ${issues.join("; ")}.`,
+          });
+        }
       }
     }
 

@@ -1,6 +1,9 @@
 import { EDITORIAL_SLUG_PATTERN } from "./editorial-identifiers.ts";
 import type { Topic } from "../data/topics.ts";
 import type { SourceRecord } from "../data/sources.ts";
+import { media as approvedMedia } from "../data/media.ts";
+import type { MediaRecord } from "../data/media.ts";
+import { mediaPublicationIssues, validateMediaRegistry } from "./media-registry.ts";
 import type { FeaturedContentRegistry } from "../data/features.ts";
 import { validateTopicRegistry, validateSourceRegistry } from "./editorial-registry-validation.ts";
 
@@ -14,6 +17,7 @@ export interface EditorialRecord {
     publishedAt?: Date;
     updatedAt?: Date;
     topics?: readonly string[];
+    mediaIds?: readonly string[];
     sourceIds?: readonly string[];
     citations?: readonly { sourceId: string }[];
     relatedIds?: readonly string[];
@@ -24,6 +28,8 @@ export interface EditorialQaInput {
   entries: readonly EditorialRecord[];
   topics: readonly Topic[];
   sources: readonly SourceRecord[];
+  /** Optional test injection. Live builds always supply the owner-reviewed registry. */
+  media?: readonly MediaRecord[];
   features: FeaturedContentRegistry;
 }
 
@@ -44,7 +50,10 @@ export interface ResolvedFeatureSections {
 export function validateEditorialIntegrity(input: EditorialQaInput): void {
   validateTopicRegistry(input.topics);
   validateSourceRegistry(input.sources);
+  const records = input.media ?? approvedMedia;
+  validateMediaRegistry(records);
 
+  const knownMedia = new Map(records.map((item) => [item.id, item]));
   const knownTopics = new Set(input.topics.map(({ id }) => id));
   const knownSources = new Set(input.sources.map(({ id }) => id));
   const allArticles = new Map<string, EditorialRecord>();
@@ -82,6 +91,17 @@ export function validateEditorialIntegrity(input: EditorialQaInput): void {
 
     for (const topicId of data.topics ?? []) {
       if (!knownTopics.has(topicId)) errors.push(`${ref}: unknown topic ID "${topicId}"`);
+    }
+    for (const mediaId of data.mediaIds ?? []) {
+      const record = knownMedia.get(mediaId);
+      if (!record) {
+        errors.push(`${ref}: unknown media ID "${mediaId}"`);
+      } else if (published) {
+        const issues = mediaPublicationIssues(record);
+        if (issues.length) {
+          errors.push(`${ref}: media "${mediaId}" is not cleared for publication: ${issues.join("; ")}`);
+        }
+      }
     }
     for (const sourceId of data.sourceIds ?? []) {
       if (!knownSources.has(sourceId)) errors.push(`${ref}: unknown source ID "${sourceId}"`);
