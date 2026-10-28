@@ -13,3 +13,5 @@ The current preview-only website has no Pagefind assets, so the interface descri
 `npm run qa:fast` checks the built search page, navigation, scopes, noindex and lazy script isolation. `Deep Regression → articles` runs `test:pagefind-build`, then `test:search-browser` against the same temporary generated fixture site. Chromium at 375px and 1440px checks real Pagefind matches, scope filters, URL state, keyboard Enter, no draft/review/preview results, and no overflow. Responsive screenshots are uploaded as `search-responsive-qa`. The fixture files are never committed.
 
 **Stopped after Prompt 29.**
+
+**Vercel adapter handoff:** Astro populates `.vercel/output/static` before the post-build Pagefind step. The indexer now removes any stale bundle from both output directories, and after indexing it copies generated assets and the route manifest into `.vercel/output/static/pagefind`. The fixture test confirms that deployment output contains the same index, not merely `dist/pagefind`.

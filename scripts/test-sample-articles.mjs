@@ -342,6 +342,8 @@ assert.deepEqual(eligibleArticles(),[]);
 assert.doesNotThrow(()=>verifyMarkers("dist",[]));
 assert.equal(fs.existsSync("dist/pagefind"),false,
   "Do not index noneditorial pages when only noindex previews exist");
+assert.equal(fs.existsSync(".vercel/output/static/pagefind"),false,
+  "Preview deployments must not contain an old Pagefind index");
 console.log("PASS: Pagefind empty-site indexing fails closed");
 
 

@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const dist = path.resolve("dist");
+const vercelStatic = path.resolve(".vercel/output/static");
 const marker = /\bdata-pagefind-body(?:=|[\s>])/i;
 const noindex = /<meta\b[^>]*\bname="robots"[^>]*\bcontent="[^"]*\bnoindex\b/i;
 
@@ -51,6 +52,11 @@ export function verifyMarkers(root = dist, eligible = []) {
 }
 export function buildSearchIndex(root = dist) {
   fs.rmSync(path.join(root,"pagefind"), {recursive:true,force:true});
+  // Astro's Vercel adapter copies static assets BEFORE this post-build runs.
+  // Remove any stale Pagefind output from the final deployment package too.
+  if (path.resolve(root) === dist && fs.existsSync(vercelStatic)) {
+    fs.rmSync(path.join(vercelStatic,"pagefind"),{recursive:true,force:true});
+  }
   const eligible = eligibleArticles(root);
   verifyMarkers(root,eligible);
   if (eligible.length === 0) {
@@ -67,6 +73,11 @@ export function buildSearchIndex(root = dist) {
     throw new Error("Pagefind did not generate the expected index.");
   fs.writeFileSync(path.join(root,"pagefind","indexed-routes.json"),
     JSON.stringify(eligible)+"\n");
+  if (path.resolve(root) === dist && fs.existsSync(vercelStatic)) {
+    fs.cpSync(path.join(root,"pagefind"),path.join(vercelStatic,"pagefind"),{recursive:true});
+    if (!fs.existsSync(path.join(vercelStatic,"pagefind","pagefind.js")))
+      throw new Error("Pagefind was not packaged into Vercel static output.");
+  }
   console.log("Pagefind indexed "+eligible.length+" verified articles.");
   return eligible;
 }

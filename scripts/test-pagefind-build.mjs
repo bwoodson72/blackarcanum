@@ -32,6 +32,13 @@ try {
   const manifest=JSON.parse(fs.readFileSync("dist/pagefind/indexed-routes.json","utf8"));
   assert.deepEqual(manifest,allowed);
   assert.ok(fs.existsSync("dist/pagefind/pagefind.js"),"Real CLI bundle exists");
+  if(fs.existsSync(".vercel/output/static")) {
+    assert.ok(fs.existsSync(".vercel/output/static/pagefind/pagefind.js"),
+      "The Pagefind browser bundle must be copied to deployable Vercel output");
+    assert.deepEqual(
+      JSON.parse(fs.readFileSync(".vercel/output/static/pagefind/indexed-routes.json","utf8")),
+      allowed, "Vercel's published index manifest matches the Astro output");
+  }
   for (const f of fixtures) {
     const file=path.join("dist",f.collection,f.slug,"index.html");
     if (f.status==="draft"||f.status==="review") {
