@@ -6,6 +6,7 @@ import ArticleLayout from "../../layouts/ArticleLayout.astro";
 import { getPublishedLibraryEntries } from "../../lib/editorial-public";
 import { sortPublishedEntries } from "../../lib/editorial-archive";
 import { toPublishedArticle } from "../../lib/editorial-presentation";
+import { getPublishedRelatedArticles } from "../../lib/editorial-related-public";
 
 export const prerender = true;
 
@@ -24,9 +25,21 @@ interface Props {
 const { entry } = Astro.props;
 const article = toPublishedArticle({ collection: "library", entry });
 if (!article) throw new Error("Unpublished Library entry cannot be rendered.");
+const relatedArticles = await getPublishedRelatedArticles({
+  collection: "library",
+  id: entry.id,
+  relatedIds: entry.data.relatedIds,
+});
 const { Content, headings } = await render(entry);
 ---
 
-<ArticleLayout article={article} headings={headings} citations={entry.data.citations} sourceIds={entry.data.sourceIds}>
+<ArticleLayout
+  article={article}
+  headings={headings}
+  citations={entry.data.citations}
+  sourceIds={entry.data.sourceIds}
+  relatedArticles={relatedArticles}
+  relatedVariant="compact"
+>
   <Content />
 </ArticleLayout>

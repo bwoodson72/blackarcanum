@@ -62,3 +62,9 @@ jobs:
       - name: Citation navigation and print view — real headless Chrome
         if: github.ref == 'refs/heads/master'
         run: npm run test:references-browser
+      - name: Curated related reading — real MDX cross-links and broken-link rejection
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:related-fixtures
+      - name: Related reading compact/cards — real Chrome and keyboard navigation
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:related-browser

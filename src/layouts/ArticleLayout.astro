@@ -3,6 +3,7 @@ import BaseLayout from "./BaseLayout.astro";
 import ArticleHeader from "../components/editorial/ArticleHeader.astro";
 import ArticleTableOfContents from "../components/editorial/ArticleTableOfContents.astro";
 import ArticleReferences from "../components/editorial/ArticleReferences.astro";
+import RelatedArticles from "../components/editorial/RelatedArticles.astro";
 import type { Citation } from "../lib/editorial-citations";
 import { getArticleTableOfContents } from "../lib/article-toc";
 import type { ArticleHeading } from "../lib/article-toc";
@@ -18,8 +19,18 @@ interface Props {
   /** Source-backed citation occurrences and optional uncited bibliography. */
   citations?: readonly Citation[];
   sourceIds?: readonly string[];
+  /** Resolved, explicitly curated published links, never generated matches. */
+  relatedArticles?: readonly PublishedArticleView[];
+  relatedVariant?: "compact" | "cards";
 }
-const { article, headings, citations = [], sourceIds = [] } = Astro.props;
+const {
+  article,
+  headings,
+  citations = [],
+  sourceIds = [],
+  relatedArticles = [],
+  relatedVariant = "compact",
+} = Astro.props;
 const sectionLabel = article.collection === "library" ? "Library" : "Grimoire";
 const sectionHref = article.collection === "library" ? "/library/" : "/grimoire/";
 const breadcrumbs: BreadcrumbTrail = [
@@ -58,6 +69,7 @@ const hasContext = Astro.slots.has("context");
           <slot />
         </div>
         <ArticleReferences citations={citations} sourceIds={sourceIds} />
+        <RelatedArticles articles={relatedArticles} variant={relatedVariant} />
         <footer class="article-reading__footer">
           <a href={sectionHref}>
             <span aria-hidden="true">←</span> All {sectionLabel} entries

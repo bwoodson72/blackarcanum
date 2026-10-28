@@ -2,7 +2,7 @@
  * Shared, source-led editorial reading shell.
  * The left rail shows generated MDX contents only when the article warrants it;
  * the optional right contextual slot remains empty unless authored explicitly.
- * No fake citations, bylines, related links or signup elements are generated.
+ * No guessed citations, bylines, related links or signup elements are generated.
  */
 .article-reading {
   background: var(--color-parchment);

@@ -6,6 +6,7 @@ import ArticleLayout from "../../layouts/ArticleLayout.astro";
 import { getPublishedGrimoireEntries } from "../../lib/editorial-public";
 import { sortPublishedEntries } from "../../lib/editorial-archive";
 import { toPublishedArticle } from "../../lib/editorial-presentation";
+import { getPublishedRelatedArticles } from "../../lib/editorial-related-public";
 
 export const prerender = true;
 
@@ -24,9 +25,21 @@ interface Props {
 const { entry } = Astro.props;
 const article = toPublishedArticle({ collection: "grimoire", entry });
 if (!article) throw new Error("Unpublished Grimoire entry cannot be rendered.");
+const relatedArticles = await getPublishedRelatedArticles({
+  collection: "grimoire",
+  id: entry.id,
+  relatedIds: entry.data.relatedIds,
+});
 const { Content, headings } = await render(entry);
 ---
 
-<ArticleLayout article={article} headings={headings} citations={entry.data.citations} sourceIds={entry.data.sourceIds}>
+<ArticleLayout
+  article={article}
+  headings={headings}
+  citations={entry.data.citations}
+  sourceIds={entry.data.sourceIds}
+  relatedArticles={relatedArticles}
+  relatedVariant="cards"
+>
   <Content />
 </ArticleLayout>

@@ -1,0 +1,82 @@
+---
+import RelatedReading from "./RelatedReading.astro";
+import type { PublishedArticleView } from "../../lib/editorial-presentation";
+
+interface Props {
+  /** Published, author-selected and deduplicated articles only. */
+  articles?: readonly PublishedArticleView[];
+  /** Compact text list or small editorial cards. */
+  variant?: "compact" | "cards";
+}
+
+const { articles = [], variant = "compact" } = Astro.props;
+---
+
+{articles.length > 0 && (
+  <section
+    class:list={["related-articles", `related-articles--${variant}`]}
+    aria-labelledby="related-reading-heading"
+  >
+    <p class="related-articles__eyebrow">Continue exploring</p>
+    <h2 id="related-reading-heading">Related reading</h2>
+    <ul class="related-articles__list">
+      {articles.map((article) => (
+        <li>
+          <RelatedReading
+            article={article}
+            variant={variant === "cards" ? "card" : "compact"}
+          />
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .related-articles {
+    min-width: 0;
+    margin-block: clamp(2rem, 4vw, 3rem);
+    padding-block-start: clamp(1.25rem, 3vw, 2rem);
+    border-top: 1px solid var(--color-border-paper);
+    color: var(--color-charcoal);
+  }
+  .related-articles__eyebrow {
+    margin: 0 0 0.3rem;
+    color: var(--color-sage-ink);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.45;
+    text-transform: uppercase;
+  }
+  .related-articles h2 {
+    margin: 0 0 clamp(1rem, 2.5vw, 1.75rem);
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.4rem + 0.85vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .related-articles__list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(0.85rem, 2vw, 1.25rem);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .related-articles__list > li { min-width: 0; }
+  .related-articles--compact .related-articles__list > li {
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--color-border-paper);
+  }
+  @media (min-width: 768px) {
+    .related-articles--cards .related-articles__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media print {
+    .related-articles__list > li { break-inside: avoid; }
+  }
+</style>
