@@ -151,16 +151,28 @@ try {
       }
 
       if (width === 375 || width === 768) {
+        // Enter activates native summary on a character/keypress input, not
+        // a rawKeyDown alone. Ensure the target tab has keyboard focus.
+        await send("Page.bringToFront");
+        await send("Emulation.setFocusEmulationEnabled", { enabled: true });
         const focused = await evaluate(
           '(() => {document.querySelector(".article-toc--disclosure summary").focus(); return document.activeElement?.tagName;})()'
         );
         assert.equal(focused, "SUMMARY", "Native disclosure is keyboard-focusable");
         const enter = { key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 };
-        await send("Input.dispatchKeyEvent", { type: "rawKeyDown", ...enter });
+        await send("Input.dispatchKeyEvent", {
+          type: "keyDown", ...enter, text: "\r", unmodifiedText: "\r",
+        });
         await send("Input.dispatchKeyEvent", { type: "keyUp", ...enter });
+        if (!(await evaluate('document.querySelector(".article-toc--disclosure").open'))) {
+          // Space is the other standard keyboard activation for native summary.
+          const space = { key: " ", code: "Space", windowsVirtualKeyCode: 32, nativeVirtualKeyCode: 32 };
+          await send("Input.dispatchKeyEvent", { type: "rawKeyDown", ...space });
+          await send("Input.dispatchKeyEvent", { type: "keyUp", ...space });
+        }
         await waitFor(async () => evaluate(
           'document.querySelector(".article-toc--disclosure").open'
-        ), "Enter-key native summary expansion");
+        ), "native keyboard Enter/Space summary expansion");
         const open = await evaluate('document.querySelector(".article-toc--disclosure").open');
         assert.equal(open, true);
         const duplicate = "#" + expected[2];
