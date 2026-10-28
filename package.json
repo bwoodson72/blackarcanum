@@ -33,6 +33,7 @@
     "test:references-fixtures": "node scripts/test-article-references-fixtures.mjs",
     "test:references-browser": "node scripts/test-article-references-browser.mjs",
     "test:samples": "node scripts/test-sample-articles.mjs",
+    "test:seo-build": "node scripts/test-seo-build.mjs",
     "test:toc-fixtures": "node scripts/test-article-toc-fixtures.mjs",
     "test:toc-browser": "node scripts/test-article-toc-browser.mjs",
     "test:archive": "node --experimental-strip-types scripts/test-editorial-archive.mjs",

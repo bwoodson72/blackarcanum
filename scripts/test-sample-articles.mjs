@@ -298,3 +298,37 @@ const reduced=fs.readFileSync("src/styles/page-transitions.css","utf8");
 assert.ok(reduced.includes("@media (prefers-reduced-motion: reduce)") &&
   reduced.includes("animation: none !important"), "Honor reduced motion");
 console.log("PASS: Prompt 26 seven-route semantics, skip/nav/links, alt text, contrast and reduced motion");
+
+
+// Prompt 27: no fictional production site origin. Test configured URL rules
+// directly and check generated HTML/robots in the existing single build.
+const { configuredSiteUrl, isIndexableBuiltPage } =
+  await import("../src/lib/seo-config.mjs");
+assert.equal(configuredSiteUrl(undefined, false), undefined);
+assert.equal(configuredSiteUrl("https://mystagogia.test", true), "https://mystagogia.test");
+for (const bad of [
+  "http://example.org", "https://blackarcanum.vercel.app",
+  "https://example.com", "https://mystagogia.test",
+  "https://fake.invalid", "https://example.org/extra/",
+]) assert.throws(() => configuredSiteUrl(bad, false), /approved HTTPS origin/);
+assert.ok(!fs.existsSync("dist/sitemap-index.xml") &&
+  !fs.existsSync("dist/sitemap-0.xml"),
+  "No public sitemap may be published without approved site configuration");
+assert.ok(fs.readFileSync("dist/robots.txt","utf8").includes("Disallow: /"),
+  "Unapproved preview domain remains undiscoverable to crawlers");
+assert.equal(isIndexableBuiltPage("https://mystagogia.test/about/"), true,
+  "About is an eligible real public page when a domain is approved");
+for (const slug of expected) {
+  assert.equal(isIndexableBuiltPage("https://mystagogia.test/" +
+    slug.collection + "/" + slug.slug + "/"), false,
+    "Noindex design preview must not enter a sitemap");
+}
+assert.equal(isIndexableBuiltPage("https://mystagogia.test/library/qa-seo-draft/"), false);
+for (const [, filename] of qaPages) {
+  const html = fs.readFileSync(filename,"utf8");
+  assert.ok(!html.includes('rel="canonical"'), "No fabricated canonical URL");
+  assert.ok(!html.includes('property="og:url"'), "No fictional OG origin");
+  assert.ok(!html.includes('type="application/ld+json"'),
+    "No public Article structured data without an approved origin");
+}
+console.log("PASS: Prompt 27 no-domain robots, no sitemap/canonical, preview exclusion, site URL validation");

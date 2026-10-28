@@ -1,5 +1,9 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import { getImage } from "astro:assets";
+import { getMediaRecord, mediaPublicationIssues } from "../lib/media-registry";
+import { media } from "../data/media";
+import { resolveMediaAsset } from "../lib/media-assets";
 import ArticleHeader from "../components/editorial/ArticleHeader.astro";
 import ArticleTableOfContents from "../components/editorial/ArticleTableOfContents.astro";
 import ArticleReferences from "../components/editorial/ArticleReferences.astro";
@@ -43,13 +47,29 @@ const breadcrumbs: BreadcrumbTrail = [
 const tocEntries = getArticleTableOfContents(headings);
 const hasToc = tocEntries.length > 0;
 const hasContext = Astro.slots.has("context");
+let socialImage: string | undefined;
+// A legacy hero path is not automatically a rights-cleared social asset.
+// Only attach explicitly approved, publication-cleared article artwork.
+// Do not reuse the Tyche image as an unrelated site's generic OG image.
+if (Astro.site && !article.preview && article.mediaId) {
+  const record = getMediaRecord(article.mediaId, media);
+  const issues = mediaPublicationIssues(record);
+  if (issues.length) throw new Error("Uncleared OG image: " + issues.join("; "));
+  const optimized = await getImage({
+    src: resolveMediaAsset(record),
+    width: 1200,
+    format: "webp",
+  });
+  socialImage = optimized.src;
+}
 ---
 
 <BaseLayout
   title={article.title}
   description={article.excerpt ?? article.title}
-  image={article.image?.src}
+  image={socialImage}
   noindex={article.preview === true}
+  article={article.publishedAt ? { publishedAt: article.publishedAt, updatedAt: article.updatedAt } : undefined}
   breadcrumbs={breadcrumbs}
 >
   <div class:list={["article-reading", `article-reading--${article.collection}`]}>

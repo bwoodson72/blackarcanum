@@ -24,6 +24,11 @@ interface Props {
   canonical?: string;
   /** Optional accurate trail for a published nested route. */
   breadcrumbs?: BreadcrumbTrail;
+  /** Public Article schema only for approved, indexable entries. */
+  article?: {
+    publishedAt: Date;
+    updatedAt?: Date;
+  };
 }
 
 const SITE_NAME = "Mystagogia";
@@ -37,6 +42,7 @@ const {
   noindex = false,
   canonical,
   breadcrumbs,
+  article,
 } = Astro.props;
 
 const pageTitle = title === SITE_NAME ? SITE_NAME : `${title} | ${SITE_NAME}`;
@@ -57,13 +63,24 @@ function absoluteWebUrl(value?: string): string | undefined {
   return undefined;
 }
 
-const canonicalUrl = canonical
-  ? absoluteWebUrl(canonical)
-  : Astro.site
-    ? new URL(Astro.url.pathname, Astro.site).href
-    : undefined;
+const canonicalUrl = !noindex && Astro.site
+  ? (canonical ? absoluteWebUrl(canonical) : new URL(Astro.url.pathname, Astro.site).href)
+  : undefined;
 
 const socialImage = absoluteWebUrl(image);
+const publicArticle = !noindex && article && canonicalUrl ? article : undefined;
+const articleSchema = publicArticle ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description,
+  datePublished: publicArticle.publishedAt.toISOString(),
+  ...(publicArticle.updatedAt
+    ? { dateModified: publicArticle.updatedAt.toISOString() }
+    : {}),
+  mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+  ...(socialImage ? { image: socialImage } : {}),
+}).replace(/</g, "\\u003c") : undefined;
 ---
 
 <!doctype html>
@@ -74,9 +91,12 @@ const socialImage = absoluteWebUrl(image);
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {Astro.site && <link rel="sitemap" href="/sitemap-index.xml" />}
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={publicArticle ? "article" : "website"} />
+    {publicArticle && <meta property="article:published_time" content={publicArticle.publishedAt.toISOString()} />}
+    {publicArticle?.updatedAt && <meta property="article:modified_time" content={publicArticle.updatedAt.toISOString()} />}
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={pageTitle} />
@@ -88,6 +108,7 @@ const socialImage = absoluteWebUrl(image);
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     {socialImage && <meta name="twitter:image" content={socialImage} />}
+    {articleSchema && <script type="application/ld+json" set:html={articleSchema} />}
 
     <!-- Until an approved Mystagogia favicon exists, suppress Astro's starter icon. -->
     <link rel="icon" href="data:," />
