@@ -65,3 +65,5 @@ To undo a problematic application change, revert its commit on `master` and veri
 
 **Still blocked for a public editorial launch:** finished owner-approved content and curated features, a real approved domain, privacy/contact and applicable disclosures, and a separately approved live Kit form/sender/confirmation flow. Real-device accessibility/contrast review also remains required. The Shop is still out of scope.
 
+
+**Deep run 40782109663 (2026-10-28):** All article-route and 375/768/1024/1280/1440 responsive checks passed; Pagefind published/hidden fixture indexing also passed. The run then failed in the search browser test because the Enter-key assertion inspected the previous completed result before the submitted URL had updated. The acceptance script now waits for URL state and excludes initial SSR status from its completion predicate. **The full suite must be rerun at the new SHA; this note does not claim search is cleared.**

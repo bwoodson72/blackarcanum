@@ -68,7 +68,11 @@ async function visit(url) {
 async function settled() {
   return await waitFor(async()=>{
     const s=await snap();
-    return !s.busy && s.status && !/checking|searching/i.test(s.status) ? s : false;
+    // For a URL containing q, the initial SSR placeholder status is not
+    // evidence that the client has completed its asynchronous Pagefind work.
+    const hasQuery = new URL(origin + s.location).searchParams.has("q");
+    const finalStatus = /(?:published article(?:s)? found\.|No matching published articles\.|Search could not be loaded\.|Search is not available yet\.)/.test(s.status || "");
+    return !s.busy && s.status && (!hasQuery || finalStatus) ? s : false;
   },"Pagefind search settled");
 }
 try{
@@ -131,6 +135,13 @@ try{
     })()`);
     await send("Input.dispatchKeyEvent",{type:"keyDown",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
     await send("Input.dispatchKeyEvent",{type:"keyUp",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
+    // A prior completed query may still be visible when Chrome has only
+    // dispatched the key event. Wait for the submitted URL before judging
+    // the final result, rather than mistaking stale results for a failed Enter.
+    await waitFor(async () => {
+      const state = await snap();
+      return state.location.includes("q=Moonpetal") ? state : false;
+    }, "Enter key commits the new URL query");
     result=await settled();
     assert.ok(result.location.includes("q=Moonpetal"));
     assert.equal(result.scope,"grimoire");

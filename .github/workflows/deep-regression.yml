@@ -15,6 +15,7 @@ on:
       # Publication policy changes require an explicit release regression run.
       - "src/lib/editorial-public.ts"
       - "src/lib/editorial-related-public.ts"
+      - "scripts/test-search-browser.mjs"
   workflow_dispatch:
     inputs:
       suite:
