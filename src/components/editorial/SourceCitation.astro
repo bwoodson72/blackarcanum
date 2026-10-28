@@ -1,0 +1,51 @@
+---
+import { getArticleNote } from "../../lib/article-references";
+import type { Citation } from "../../lib/editorial-citations";
+
+interface Props {
+  /** One-based position in frontmatter.citations, used exactly once per note. */
+  index: number;
+  /** Pass frontmatter.citations from the MDX source; no duplicated locators. */
+  citations: readonly Citation[];
+}
+const { index, citations } = Astro.props;
+const note = getArticleNote(index, citations);
+const title = [
+  note.source.title,
+  note.locator,
+].filter(Boolean).join(", ");
+---
+
+<sup class="source-citation" id={`citation-ref-${note.number}`}>
+  <a
+    href={`#citation-note-${note.number}`}
+    aria-label={`Source reference ${note.number}: ${title}`}
+  >[{note.number}]</a>
+</sup>
+
+<style>
+  .source-citation {
+    vertical-align: super;
+    font-family: var(--font-interface);
+    font-size: 0.8em;
+    line-height: 0;
+    white-space: nowrap;
+    scroll-margin-top: 6rem;
+  }
+  .source-citation a {
+    display: inline-block;
+    min-width: 1.2rem;
+    padding: 0.1em;
+    color: var(--color-oxide-red);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+  .source-citation a:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-control);
+  }
+  @media print {
+    .source-citation a { color: inherit; }
+  }
+</style>

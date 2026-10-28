@@ -1,0 +1,141 @@
+---
+import { buildArticleReferences } from "../../lib/article-references";
+import type { Citation } from "../../lib/editorial-citations";
+
+interface Props {
+  citations?: readonly Citation[];
+  sourceIds?: readonly string[];
+}
+const { citations = [], sourceIds = [] } = Astro.props;
+const { notes, bibliography } = buildArticleReferences(citations, sourceIds);
+---
+
+{(notes.length > 0 || bibliography.length > 0) && (
+  <div class="article-references" aria-label="Article notes and sources">
+    {notes.length > 0 && (
+      <section class="article-references__notes" aria-labelledby="article-notes-title">
+        <h2 id="article-notes-title">Notes</h2>
+        <ol>
+          {notes.map(({ number, source, locator, citation }) => (
+            <li id={`citation-note-${number}`}>
+              <a href={`#article-source-${source.id}`} class="article-references__source">
+                {source.title}
+              </a>
+              {locator && <span class="article-references__locator">, {locator}</span>}
+              {citation.note && <span class="article-references__comment"> — {citation.note}</span>}
+              <a
+                class="article-references__backlink"
+                href={`#citation-ref-${number}`}
+                aria-label={`Return to source reference ${number} in the article`}
+              >↩</a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {bibliography.length > 0 && (
+      <section class="article-references__bibliography" aria-labelledby="article-sources-title">
+        <h2 id="article-sources-title">Sources</h2>
+        <ul>
+          {bibliography.map((source) => (
+            <li id={`article-source-${source.id}`}>
+              {source.creator && <span class="article-references__creator">{source.creator}. </span>}
+              <cite>
+                {source.stableUrl
+                  ? <a href={source.stableUrl}>{source.title}</a>
+                  : source.title}
+              </cite>
+              {source.translator && <span>. Translated by {source.translator}</span>}
+              {source.edition && <span>. {source.edition}</span>}
+              {source.publisher && <span>. {source.publisher}</span>}
+              {source.period && <span>. {source.period}</span>}
+              {source.archive && <span>. {source.archive}</span>}
+              <span>.</span>
+              {source.stableUrl && (
+                <span class="article-references__print-url"> {source.stableUrl}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </div>
+)}
+
+<style>
+  .article-references {
+    margin-block: clamp(2rem, 4vw, 3rem);
+    padding-block-start: clamp(1.25rem, 3vw, 2rem);
+    border-top: 1px solid var(--color-border-paper);
+    font-family: var(--font-reading);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: var(--color-charcoal);
+    overflow-wrap: anywhere;
+  }
+  .article-references section + section { margin-block-start: 2.25rem; }
+  .article-references h2 {
+    margin: 0 0 0.8em;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.4rem + 0.8vw, 2.15rem);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .article-references :is(ol, ul) {
+    margin: 0;
+    padding-inline-start: 1.5rem;
+  }
+  .article-references ol { list-style: decimal; }
+  .article-references ul { list-style: none; padding-inline-start: 0; }
+  .article-references li {
+    padding-block: 0.65rem;
+    scroll-margin-top: 6rem;
+    break-inside: avoid;
+  }
+  .article-references li + li {
+    border-top: 1px solid var(--color-border-paper);
+  }
+  .article-references a {
+    color: var(--color-oxide-red);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .article-references a:hover { text-decoration-thickness: 2px; }
+  .article-references a:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-control);
+  }
+  .article-references__backlink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    margin-inline-start: 0.5rem;
+    font-family: var(--font-interface);
+    font-size: 1rem;
+    vertical-align: middle;
+  }
+  .article-references__creator { font-style: normal; }
+  .article-references__print-url { display: none; }
+  @media print {
+    .article-references {
+      color: black;
+      border-color: currentColor;
+      break-before: auto;
+      font-size: 11pt;
+    }
+    .article-references section { break-inside: auto; }
+    .article-references h2 { break-after: avoid; }
+    .article-references li { break-inside: avoid; }
+    .article-references a { color: inherit; text-decoration: underline; }
+    .article-references__print-url {
+      display: inline;
+      font-size: 0.82em;
+      overflow-wrap: anywhere;
+    }
+    .article-references__backlink { display: none; }
+  }
+</style>

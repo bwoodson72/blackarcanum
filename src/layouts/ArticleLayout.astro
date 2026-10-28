@@ -2,6 +2,8 @@
 import BaseLayout from "./BaseLayout.astro";
 import ArticleHeader from "../components/editorial/ArticleHeader.astro";
 import ArticleTableOfContents from "../components/editorial/ArticleTableOfContents.astro";
+import ArticleReferences from "../components/editorial/ArticleReferences.astro";
+import type { Citation } from "../lib/editorial-citations";
 import { getArticleTableOfContents } from "../lib/article-toc";
 import type { ArticleHeading } from "../lib/article-toc";
 import type { PublishedArticleView } from "../lib/editorial-presentation";
@@ -13,8 +15,11 @@ interface Props {
   article: PublishedArticleView;
   /** Passed verbatim from Astro MDX render(entry).headings. */
   headings: readonly ArticleHeading[];
+  /** Source-backed citation occurrences and optional uncited bibliography. */
+  citations?: readonly Citation[];
+  sourceIds?: readonly string[];
 }
-const { article, headings } = Astro.props;
+const { article, headings, citations = [], sourceIds = [] } = Astro.props;
 const sectionLabel = article.collection === "library" ? "Library" : "Grimoire";
 const sectionHref = article.collection === "library" ? "/library/" : "/grimoire/";
 const breadcrumbs: BreadcrumbTrail = [
@@ -52,6 +57,7 @@ const hasContext = Astro.slots.has("context");
         <div class="article-reading__content reading-content" data-reading-content>
           <slot />
         </div>
+        <ArticleReferences citations={citations} sourceIds={sourceIds} />
         <footer class="article-reading__footer">
           <a href={sectionHref}>
             <span aria-hidden="true">←</span> All {sectionLabel} entries

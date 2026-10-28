@@ -27,6 +27,6 @@ if (!article) throw new Error("Unpublished Library entry cannot be rendered.");
 const { Content, headings } = await render(entry);
 ---
 
-<ArticleLayout article={article} headings={headings}>
+<ArticleLayout article={article} headings={headings} citations={entry.data.citations} sourceIds={entry.data.sourceIds}>
   <Content />
 </ArticleLayout>

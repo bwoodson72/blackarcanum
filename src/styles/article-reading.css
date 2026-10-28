@@ -197,3 +197,35 @@
     align-self: start;
   }
 }
+/* Source and footnote details must remain useful when the page is printed. */
+@media print {
+  .article-reading {
+    background: transparent;
+    color: black;
+    padding: 0;
+    min-height: 0;
+  }
+  .article-reading__grid {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0;
+  }
+  .article-reading__article {
+    width: 100%;
+    max-width: 100%;
+  }
+  .article-reading__toc,
+  .article-reading__mobile-toc,
+  .article-reading__context,
+  .article-reading__footer {
+    display: none !important;
+  }
+  .article-reading__content {
+    color: black;
+    orphans: 3;
+    widows: 3;
+  }
+  .article-reading__content :is(h2, h3, h4) { break-after: avoid; }
+  .article-reading__content :is(blockquote, figure) { break-inside: avoid; }
+}

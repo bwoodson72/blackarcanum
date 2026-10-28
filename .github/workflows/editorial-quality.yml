@@ -56,3 +56,9 @@ jobs:
       - name: Responsive and keyboard-operable TOC — headless Chrome
         if: github.ref == 'refs/heads/master'
         run: npm run test:toc-browser
+      - name: Source-backed citations — temporary MDX and invalid source build checks
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:references-fixtures
+      - name: Citation navigation and print view — real headless Chrome
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:references-browser
