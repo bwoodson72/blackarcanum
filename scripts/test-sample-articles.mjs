@@ -63,7 +63,27 @@ for (const { collection, slug, title } of expected) {
     "Every temporary sample article must be noindex");
   assert.ok(html.includes("LAYOUT PREVIEW"), "Article header must clearly label the sample");
   assert.ok(html.includes("Temporary sample content for design review"));
-  assert.ok(!html.includes("article-header__hero"), "No image placeholder for text-only samples");
+  if (slug === "tyche-fortune-and-the-city") {
+    assert.match(markdown, /^featuredMediaId: tyche-fortune-city-illustration$/m,
+      "Tyche explicitly selects one approved featured-image ID");
+    assert.match(markdown, /^  - tyche-fortune-city-illustration$/m,
+      "The featured image must also be declared in mediaIds");
+    assert.ok(html.includes("article-header__hero--registered"),
+      "Tyche receives the registered responsive article hero");
+    assert.ok(html.includes('data-media-variant="hero"'),
+      "The hero uses the Astro image renderer, not an unreviewed raw URL");
+    assert.ok(html.includes("Modern AI-generated artistic interpretation of Tyche"),
+      "The caption clearly distinguishes a modern depiction from an antique artifact");
+    assert.ok(html.includes('type="image/avif"') && html.includes('type="image/webp"'),
+      "The registered image has optimized modern responsive sources");
+    assert.ok(html.includes("city-wall crown"),
+      "Accessible alt text comes from the actual registry record");
+    assert.ok(archive[collection].includes('data-media-variant="card"'),
+      "The Library archive renders a cropped, optimized Tyche thumbnail");
+  } else {
+    assert.ok(!html.includes("article-header__hero"),
+      "Hekate and Hermes remain text-only without empty image placeholders");
+  }
   assert.ok((html.match(/aria-label="Article contents"/g) ?? []).length === 2,
     "Long demo content should render the mobile and desktop TOC variants");
 

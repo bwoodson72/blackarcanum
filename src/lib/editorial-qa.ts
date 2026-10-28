@@ -18,6 +18,7 @@ export interface EditorialRecord {
     updatedAt?: Date;
     topics?: readonly string[];
     mediaIds?: readonly string[];
+    featuredMediaId?: string;
     sourceIds?: readonly string[];
     citations?: readonly { sourceId: string }[];
     relatedIds?: readonly string[];
@@ -101,6 +102,17 @@ export function validateEditorialIntegrity(input: EditorialQaInput): void {
         if (issues.length) {
           errors.push(`${ref}: media "${mediaId}" is not cleared for publication: ${issues.join("; ")}`);
         }
+      }
+    }
+    if (data.featuredMediaId) {
+      const featured = knownMedia.get(data.featuredMediaId);
+      if (!featured) {
+        errors.push(`${ref}: unknown featured media ID "${data.featuredMediaId}"`);
+      } else if (featured.role !== "editorial") {
+        errors.push(`${ref}: featured media "${data.featuredMediaId}" must be editorial`);
+      }
+      if (!data.mediaIds?.includes(data.featuredMediaId)) {
+        errors.push(`${ref}: featuredMediaId must appear in mediaIds`);
       }
     }
     for (const sourceId of data.sourceIds ?? []) {

@@ -6,12 +6,14 @@ import { spawnSync } from "node:child_process";
 
 const registry = "src/data/media.ts";
 const original = fs.readFileSync(registry, "utf8");
-const marker = "export const media: readonly MediaRecord[] = ";
+const marker = "export const media: readonly MediaRecord[] = [";
 const markerIndex = original.indexOf(marker);
 assert.ok(markerIndex >= 0 && original.indexOf(marker, markerIndex + 1) === -1,
   "Expected one typed media export; refuse to overwrite an unexpected registry format.");
 
-const badRecord = `export const media: readonly MediaRecord[] = [{
+// Append the missing fixture to the real registry, preserving all approved
+// media records that published articles depend on.
+const badRecord = `{
   id: "ci-missing-source",
   sourceFile: "src/assets/media/reference/ci-absent-source.png",
   role: "reference",
@@ -21,10 +23,10 @@ const badRecord = `export const media: readonly MediaRecord[] = [{
   caption: "Test caption; this image has never been selected or published.",
   sourceUrl: "https://example.org/ci-only-source",
   rights: { status: "pending" },
-}];`;
+},`;
 
 try {
-  fs.writeFileSync(registry, original.slice(0, markerIndex) + badRecord + "\n");
+  fs.writeFileSync(registry, original.replace(marker, marker + "\n" + badRecord));
   fs.rmSync("dist", { recursive: true, force: true });
   fs.rmSync(".astro", { recursive: true, force: true });
   const build = spawnSync("npm", ["run", "build"], {

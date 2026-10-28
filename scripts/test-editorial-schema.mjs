@@ -27,6 +27,25 @@ assert.equal(editorialSchema.safeParse(draft).success, true, "Draft without date
 assert.equal(editorialSchema.safeParse(review).success, true, "Review without date is valid");
 assert.equal(editorialSchema.safeParse(published).success, true, "Published with date is valid");
 assert.equal(editorialSchema.safeParse({ ...published, preview: true }).success, true, "Explicit layout previews are allowed");
+const featured = "tyche-fortune-city-illustration";
+assert.equal(editorialSchema.safeParse({
+  ...published,
+  mediaIds: [featured],
+  featuredMediaId: featured,
+}).success, true, "An owner-approved editorial image may be selected for hero and card");
+assert.equal(editorialSchema.safeParse({
+  ...published,
+  mediaIds: [featured],
+  featuredMediaId: "not-registered",
+}).success, false, "An unknown featured media ID is rejected");
+assert.equal(editorialSchema.safeParse({
+  ...published,
+  featuredMediaId: featured,
+}).success, false, "A featured media ID must also be declared in mediaIds");
+assert.equal(editorialSchema.safeParse({
+  ...published,
+  mediaIds: [featured],
+}).success, true, "Registered media can exist without being promoted to a featured image");
 assert.equal(editorialSchema.safeParse({ ...published, preview: "yes" }).success, false, "Preview flag must be boolean");
 assert.equal(editorialSchema.safeParse({ ...draft, status: "published" }).success, false, "Published requires date");
 assert.equal(editorialSchema.safeParse({ ...draft, status: "unlisted" }).success, false, "Reject invalid status");

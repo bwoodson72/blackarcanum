@@ -24,6 +24,13 @@ assert.deepEqual(library, {
   image: { src: "/test-editorial.jpg", alt: "Actual artwork description" },
 });
 assert.equal(toPublishedArticle({
+  collection: "library", entry: { ...published, data: {
+    ...published.data,
+    featuredMediaId: "tyche-fortune-city-illustration",
+  } },
+})?.mediaId, "tyche-fortune-city-illustration",
+"An explicitly selected registered image is preserved in the view model");
+assert.equal(toPublishedArticle({
   collection: "library", entry: { ...published, data: { ...published.data, preview: true } },
 })?.preview, true, "Public layout previews carry the noindex flag");
 assert.equal(toPublishedArticle({ collection: "library", entry: published })?.preview, undefined,

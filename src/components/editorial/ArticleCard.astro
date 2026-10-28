@@ -1,5 +1,6 @@
 ---
 import ArticleMetadata from "./ArticleMetadata.astro";
+import MediaImage from "../media/MediaImage.astro";
 import type { PublishedArticleView } from "../../lib/editorial-presentation";
 import { articlePath } from "../../lib/editorial-presentation";
 
@@ -30,16 +31,20 @@ const excerpt = article.excerpt?.trim();
 ---
 
 <article class:list={["article-card", `article-card--${variant}`, className]}>
-  {image && (
+  {(article.mediaId || image) && (
     <div class="article-card__media">
-      <img
-        src={image.src}
-        alt={image.alt}
-        loading="lazy"
-        decoding="async"
-        width="720"
-        height="480"
-      />
+      {article.mediaId ? (
+        <MediaImage id={article.mediaId} variant="card" />
+      ) : image && (
+        <img
+          src={image.src}
+          alt={image.alt}
+          loading="lazy"
+          decoding="async"
+          width="720"
+          height="480"
+        />
+      )}
     </div>
   )}
   <div class="article-card__content">

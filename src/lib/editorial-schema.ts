@@ -42,6 +42,8 @@ const sharedFields = z.object({
   topics: z.array(slug).optional(),
   /** Optional reusable media IDs; registry-backed image display arrives in Prompt 20. */
   mediaIds: z.array(slug).optional(),
+  /** Explicit editorial hero/card selection from mediaIds (no implicit first image). */
+  featuredMediaId: slug.optional(),
   /** A related article's collection and stable ID, e.g. library:article-slug. */
   relatedIds: z.array(z.string().regex(/^(library|grimoire):[a-z0-9]+(?:-[a-z0-9]+)*$/)).optional(),
   /** Bibliographic IDs and individual citations refer to the SAME source registry. */
@@ -109,6 +111,30 @@ export function createEditorialSchema(registries: EditorialRegistries = {}) {
             message: `Media "${mediaId}" is not cleared for publication: ${issues.join("; ")}.`,
           });
         }
+      }
+    }
+
+    if (entry.featuredMediaId) {
+      const record = knownMedia.get(entry.featuredMediaId);
+      if (!record) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["featuredMediaId"],
+          message: `Unknown featured media ID "${entry.featuredMediaId}".`,
+        });
+      } else if (record.role !== "editorial") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["featuredMediaId"],
+          message: `Featured media "${entry.featuredMediaId}" must have the editorial role.`,
+        });
+      }
+      if (!entry.mediaIds?.includes(entry.featuredMediaId)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["featuredMediaId"],
+          message: "featuredMediaId must also be declared in mediaIds.",
+        });
       }
     }
 

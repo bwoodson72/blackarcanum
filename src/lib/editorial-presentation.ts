@@ -16,6 +16,8 @@ export interface PublishedArticleView {
   /** Temporary layout content, never presented as finished scholarship. */
   preview?: boolean;
   updatedAt?: Date;
+  /** Explicit registered editorial image for a hero and its archive card. */
+  mediaId?: string;
   image?: {
     src: string;
     /** Real editorial alt text, not a title invented by the card. */
@@ -57,6 +59,7 @@ export function toPublishedArticle({ collection, entry }: EditorialEntry): Publi
     ...(data.updatedAt instanceof Date && !Number.isNaN(data.updatedAt.valueOf())
       ? { updatedAt: data.updatedAt }
       : {}),
+    ...(data.featuredMediaId ? { mediaId: data.featuredMediaId } : {}),
     ...(data.hero ? { image: { src: data.hero.src, alt: data.hero.alt } } : {}),
   };
 }

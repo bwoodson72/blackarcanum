@@ -1,6 +1,6 @@
 # Mystagogia — Prompt 20: Astro Responsive Media Renderer
 
-**Scope:** Shared image rendering only. The approved media registry is still empty. No new historical depictions, deity artwork, public articles, images, MDX figure components, galleries or lightboxes were added.
+**Scope:** Shared image rendering. The image renderer was introduced in Prompt 20 without public artwork. Subsequently, on October 28, 2026, the owner approved one modern AI-generated Tyche illustration for its Library preview; the registered image now uses this renderer. Historical reference photographs, MDX figure components, galleries, and lightboxes remain unimplemented.
 
 ## Component boundary
 
@@ -26,7 +26,7 @@ import MediaImage from "../components/media/MediaImage.astro";
 <MediaImage id="approved-ornament-id" variant="decorative" />
 ```
 
-`mediaIds` on an article remains metadata-only; **it does not automatically create image markup**. A future editor explicitly places images using the approved components. Existing article `hero` fields are not migrated in this prompt, and the three Greek previews remain text-only. Prompt 21 will implement MDX figure, caption and full-width composition components.
+`mediaIds` declares approved media for an article but doesn't automatically create image markup. An explicit `featuredMediaId` (which must also be in `mediaIds` and have the editorial role) displays the registered image as the article hero and archive thumbnail. The Tyche preview is the first example. Existing raw `hero` fields are unchanged for legacy compatibility. Prompt 21 will implement MDX figure, caption and full-width composition components.
 
 ## Responsive behavior and variants
 
@@ -52,6 +52,6 @@ At the end of the `master` Editorial Quality workflow:
 - `npm run test:media-render-fixtures` temporarily creates two **blank synthetic PNGs** (flat black pixels only), two minimal plain SVG rectangles, and a nonindexable local QA page. These are **technical pixels, not illustrative artwork**. The temporary fixture IDs use documented rights/source test metadata under `example.org` and cannot be mistaken for real artifacts. It runs an actual Astro production build and inspects all five rendered variants for generated `srcset`/`sizes`, dimension attributes, alt, AVIF/WebP fallback and hero loading priority. It restores the original registry and removes every synthetic image and route in `finally`.
 - `npm run test:media-render-browser` serves **only the test build output**, checks loaded local images, natural aspect ratios, full reference detail, card crop, alt, hero priority, and no horizontal overflow at **375px and 1440px**. The test build is not deployed.
 
-No approved images were selected, no permanent new media assets exist, and no new image is placed on any public page.
+One owner-approved Tyche illustration was subsequently added at `src/assets/media/editorial/greek-deities/tyche-fortune-and-city.webp` (1536 × 1024 source), with a reviewable registry rights record and descriptive alt text. It is categorized as a **modern artistic interpretation**, not as evidence of an ancient artifact. Hekate and Hermes remain text-only and their publication-preview `noindex` flags are unchanged.
 
 **Stopped after Prompt 20.**
