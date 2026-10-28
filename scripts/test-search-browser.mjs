@@ -60,17 +60,27 @@ const snap=()=>evaluate(`(() => ({
   mobileSearch:!!document.querySelector('.mobile-dialog a[href="/search/"]'),
 }))()`);
 async function visit(url) {
-  await send("Page.navigate",{url:origin+url});
-  await waitFor(async()=>evaluate(
-    'document.readyState==="complete" && !!document.querySelector("[data-search-form]")'
-  ),"search DOM loaded");
+  const target = new URL(url, origin);
+  await send("Page.navigate",{url:target.href});
+  // CDP's Page.navigate resolves before the old document is replaced.
+  // A generic form-present check can accidentally inspect stale search
+  // results from the previous URL. Require the requested URL AND DOM state.
+  const ready = [
+    'document.readyState==="complete"',
+    'location.pathname===' + JSON.stringify(target.pathname),
+    'location.search===' + JSON.stringify(target.search),
+    '!!document.querySelector("[data-search-form]")',
+  ].join(" && ");
+  await waitFor(async()=>evaluate(ready),"search DOM loaded at "+target.pathname+target.search);
 }
 async function settled() {
   return await waitFor(async()=>{
     const s=await snap();
     // For a URL containing q, the initial SSR placeholder status is not
     // evidence that the client has completed its asynchronous Pagefind work.
-    const hasQuery = new URL(origin + s.location).searchParams.has("q");
+    const query = new URL(origin + s.location).searchParams.get("q");
+    if (query !== null && s.input !== query.slice(0, 150)) return false;
+    const hasQuery = query !== null;
     const finalStatus = /(?:published article(?:s)? found\.|No matching published articles\.|Search could not be loaded\.|Search is not available yet\.)/.test(s.status || "");
     return !s.busy && s.status && (!hasQuery || finalStatus) ? s : false;
   },"Pagefind search settled");
