@@ -278,6 +278,19 @@ const originalAsset = lightbox ? resolveMediaAsset(record) : undefined;
         }
       });
       close.addEventListener("click", () => dialog.close());
+      // Native modal focus containment is the baseline. Also wrap between
+      // these two controls explicitly for browser/keyboard edge cases.
+      const originalLink = dialog.querySelector<HTMLAnchorElement>(".mdx-reference-dialog__original");
+      dialog.addEventListener("keydown", (event) => {
+        if (event.key !== "Tab" || !originalLink) return;
+        if (event.shiftKey && document.activeElement === close) {
+          event.preventDefault();
+          originalLink.focus();
+        } else if (!event.shiftKey && document.activeElement === originalLink) {
+          event.preventDefault();
+          close.focus();
+        }
+      });
       dialog.addEventListener("close", () => {
         if (trigger.isConnected) trigger.focus({ preventScroll: true });
       });
