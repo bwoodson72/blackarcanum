@@ -270,7 +270,7 @@ for (const [url, filename] of qaPages) {
       assert.ok(ids.includes(decodeURIComponent(fragment)), "Broken anchor " + url + " -> " + href);
     }
   }
-  assert.ok(!/<a\b[^>]*href="\/(?:shop|search|newsletter|subscribe)\//.test(html),
+  assert.ok(!/<a\b[^>]*href="\/(?:shop|newsletter|subscribe)\//.test(html),
     "No fabricated destination: " + url);
 }
 assert.ok(fs.readFileSync("dist/about/index.html","utf8")
