@@ -15,7 +15,7 @@ This repository is the **Astro frontend** for Mystagogia (GitHub repository name
 
 - The owner has explicitly authorized **working directly on `master`** for the development phase. Do not create feature branches or pull requests. Build each prompt's complete changes before moving the branch reference; use one atomic commit directly on `master` when possible.
 - Complete tests and self-review for the assigned prompt and stop. A later prompt requires a new user instruction.
-- Development is local-first: **do not intentionally trigger a Vercel production deployment** during prompt work. GitHub's existing Vercel integration may independently attempt an automatic deployment when `master` moves; that integration should be disabled separately before it can be guaranteed no deployment will occur.
+- Keep Vercel's existing **automatic deployments from `master` enabled**, as the owner explicitly requested. Do not manually trigger duplicate deployments; verify the automatic deployment status after the atomic commit. The team previously encountered Hobby deployment-rate limits, so minimize unnecessary builds.
 - Do not create test articles inside the committed public content collections. Integration fixtures belong only in isolated test runners and must restore the real content directories.
 
 ## Rules for all changes

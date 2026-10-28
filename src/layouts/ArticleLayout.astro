@@ -1,6 +1,9 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import ArticleHeader from "../components/editorial/ArticleHeader.astro";
+import ArticleTableOfContents from "../components/editorial/ArticleTableOfContents.astro";
+import { getArticleTableOfContents } from "../lib/article-toc";
+import type { ArticleHeading } from "../lib/article-toc";
 import type { PublishedArticleView } from "../lib/editorial-presentation";
 import type { BreadcrumbTrail } from "../components/site/Breadcrumbs.astro";
 import "../styles/article-reading.css";
@@ -8,8 +11,10 @@ import "../styles/article-reading.css";
 interface Props {
   /** Already publication-gated and validated before entering the layout. */
   article: PublishedArticleView;
+  /** Passed verbatim from Astro MDX render(entry).headings. */
+  headings: readonly ArticleHeading[];
 }
-const { article } = Astro.props;
+const { article, headings } = Astro.props;
 const sectionLabel = article.collection === "library" ? "Library" : "Grimoire";
 const sectionHref = article.collection === "library" ? "/library/" : "/grimoire/";
 const breadcrumbs: BreadcrumbTrail = [
@@ -17,7 +22,8 @@ const breadcrumbs: BreadcrumbTrail = [
   { label: sectionLabel, href: sectionHref },
   { label: article.title },
 ];
-const hasToc = Astro.slots.has("toc");
+const tocEntries = getArticleTableOfContents(headings);
+const hasToc = tocEntries.length > 0;
 const hasContext = Astro.slots.has("context");
 ---
 
@@ -31,12 +37,17 @@ const hasContext = Astro.slots.has("context");
     <div class="article-reading__grid">
       {hasToc && (
         <aside class="article-reading__toc" aria-label="On this page">
-          <slot name="toc" />
+          <ArticleTableOfContents entries={tocEntries} variant="rail" />
         </aside>
       )}
 
       <article class="article-reading__article" aria-labelledby="article-title">
         <ArticleHeader article={article} />
+        {hasToc && (
+          <div class="article-reading__mobile-toc">
+            <ArticleTableOfContents entries={tocEntries} variant="disclosure" />
+          </div>
+        )}
         <div class="article-reading__content reading-content" data-reading-content>
           <slot />
         </div>

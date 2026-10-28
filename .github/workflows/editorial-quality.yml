@@ -50,3 +50,9 @@ jobs:
       - name: Reading shell layout — real Chrome at 375, 768, 1024 and 1440
         if: github.ref == 'refs/heads/master'
         run: npm run test:article-responsive
+      - name: Generated article contents — real MDX fixtures, repeated headings and unpublished exclusions
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:toc-fixtures
+      - name: Responsive and keyboard-operable TOC — headless Chrome
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:toc-browser

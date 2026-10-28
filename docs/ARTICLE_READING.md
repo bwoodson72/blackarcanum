@@ -16,14 +16,14 @@ The production collections remain empty until the editor approves actual publish
 - `src/components/editorial/ArticleHeader.astro` displays the **real title**, optional lead (frontmatter description), date and updated date via `ArticleMetadata`, and optional author-provided hero. No author names, bylines, reading-time estimates or invented images are generated. The Library and Grimoire use distinct eyebrow/accent treatments.
 - The article body uses the licensed self-hosted **Source Serif 4**, while titles use Cormorant Garamond and metadata/controls use Inter. All colors and spacing follow the established Mystagogia tokens.
 - The central reading column has a **720px maximum** and responsive gutters, with 17–19px body text. Text, lists, quotation blocks, inline media, long code blocks and tables remain within the viewport. The optional hero gets an explicit **3:2** aspect fallback with `object-fit: contain` so reference art is not arbitrarily cropped. If no hero is provided, **no empty image space** appears.
-- `ArticleLayout` reserves optional named `toc` and `context` slots for later tasks. Empty slots produce **no empty landmarks or fake content**. At mobile and tablet widths, the ToC slot (if used) precedes the article and contextual content follows it. Only at **≥1440px** does the shell switch to a three-column **190px / 720px / 240px** arrangement with practical gaps. The article column is never squeezed to force sidebars.
-- Prompt 16 will implement automatic table-of-contents generation and disclosure behavior. References, citations and related-reading logic are deliberately not implemented here.
+- **Prompt 16 addition:** `ArticleLayout` now consumes generated MDX heading metadata and automatically builds the article contents navigation when at least three meaningful h2/h3 headings exist. It does not use a manual `toc` slot. The native mobile/tablet disclosure follows the article header, while the sticky desktop rail appears at **≥1440px**. Both use the same renderer IDs. Short articles omit both TOCs. The optional `context` slot remains reserved for future related content.
+- Only at **≥1440px** does the shell use the wide three-column **190px / 720px / 240px** arrangement with practical gaps, keeping the central reading column full-width. References and citations are intentionally reserved for Prompt 17. See [ARTICLE_TOC.md](ARTICLE_TOC.md).
 
 ## Metadata and deployment boundary
 
 `BaseLayout` emits unique page title, description, social title and description, and truthful breadcrumb navigation. It deliberately omits canonical/OG absolute URLs until the owner approves a permanent site URL (there is no configured `Astro.site`). When that domain is configured, its existing canonical logic can apply to distinct article paths. No separate article `noindex` is set for explicitly published entries.
 
-No production deployment is initiated. The repository has an existing GitHub→Vercel integration, and moving `master` may still independently request deployment unless Vercel automatic deployment is disabled.
+The owner has explicitly asked to **keep automatic Vercel deployments from `master` enabled**. Each finished prompt is committed atomically; the existing integration may deploy it automatically. Do not trigger a duplicate manual deployment.
 
 ## Acceptance checks
 

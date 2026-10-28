@@ -1,0 +1,142 @@
+---
+import type { ArticleHeading } from "../../lib/article-toc";
+
+interface Props {
+  /** Already filtered; use the exact IDs from Astro's MDX renderer. */
+  entries: readonly ArticleHeading[];
+  variant: "rail" | "disclosure";
+}
+
+const { entries, variant } = Astro.props;
+---
+
+{entries.length > 0 && (
+  variant === "disclosure" ? (
+    <details class="article-toc article-toc--disclosure">
+      <summary>
+        <span>On this page</span>
+        <span class="article-toc__indicator" aria-hidden="true">+</span>
+      </summary>
+      <nav aria-label="Article contents">
+        <ol class="article-toc__list">
+          {entries.map((heading) => (
+            <li class:list={["article-toc__item", heading.depth === 3 && "article-toc__item--nested"]}>
+              <a class="article-toc__link" href={"#" + heading.slug}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </details>
+  ) : (
+    <nav class="article-toc article-toc--rail" aria-label="Article contents">
+      <p class="article-toc__heading">On this page</p>
+      <ol class="article-toc__list">
+        {entries.map((heading) => (
+          <li class:list={["article-toc__item", heading.depth === 3 && "article-toc__item--nested"]}>
+            <a class="article-toc__link" href={"#" + heading.slug}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+)}
+
+<style>
+  .article-toc {
+    min-width: 0;
+    color: var(--color-charcoal);
+    font-family: var(--font-interface);
+    font-size: var(--text-ui);
+    line-height: 1.5;
+  }
+  .article-toc__heading {
+    margin: 0 0 0.7rem;
+    color: var(--color-sage-ink);
+    font-weight: 700;
+    letter-spacing: 0.095em;
+    text-transform: uppercase;
+  }
+  .article-toc__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .article-toc__item {
+    min-width: 0;
+  }
+  .article-toc__item--nested {
+    padding-inline-start: 0.85rem;
+    border-inline-start: 1px solid var(--color-border-paper);
+  }
+  .article-toc__link {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--radius-control);
+    color: var(--color-charcoal);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .article-toc__link:hover {
+    background: var(--color-aged-paper);
+    color: var(--color-oxide-red);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .article-toc__link:focus-visible,
+  .article-toc--disclosure summary:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+  .article-toc--rail {
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.25rem 0.15rem 0.75rem 0;
+    border-inline-end: 1px solid var(--color-border-paper);
+  }
+  .article-toc--disclosure {
+    margin-block: clamp(1.25rem, 2.5vw, 2rem) 0;
+    border: 1px solid var(--color-border-paper);
+    border-radius: var(--radius-control);
+    background: var(--color-aged-paper);
+  }
+  .article-toc--disclosure summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--color-charcoal);
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+  }
+  .article-toc--disclosure summary::-webkit-details-marker {
+    display: none;
+  }
+  .article-toc__indicator {
+    display: inline-block;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--color-sage-ink);
+  }
+  .article-toc--disclosure[open] .article-toc__indicator {
+    transform: rotate(45deg);
+  }
+  .article-toc--disclosure nav {
+    padding: 0 0.65rem 0.75rem;
+    border-top: 1px solid var(--color-border-paper);
+  }
+  .article-toc--disclosure .article-toc__list {
+    padding-block-start: 0.45rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .article-toc__indicator { transform: none !important; }
+  }
+</style>
