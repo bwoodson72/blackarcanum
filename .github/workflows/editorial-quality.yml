@@ -44,3 +44,9 @@ jobs:
       - name: Published Grimoire responsive and pagination QA (Prompt 14 only)
         if: github.ref == 'refs/heads/feature/prompt-14-grimoire-hub'
         run: node scripts/test-grimoire-browser.mjs --full
+      - name: Published Library and Grimoire article routes — isolated MDX fixtures
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:article-routes
+      - name: Reading shell layout — real Chrome at 375, 768, 1024 and 1440
+        if: github.ref == 'refs/heads/master'
+        run: npm run test:article-responsive

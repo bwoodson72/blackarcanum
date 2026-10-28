@@ -1,0 +1,57 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import ArticleHeader from "../components/editorial/ArticleHeader.astro";
+import type { PublishedArticleView } from "../lib/editorial-presentation";
+import type { BreadcrumbTrail } from "../components/site/Breadcrumbs.astro";
+import "../styles/article-reading.css";
+
+interface Props {
+  /** Already publication-gated and validated before entering the layout. */
+  article: PublishedArticleView;
+}
+const { article } = Astro.props;
+const sectionLabel = article.collection === "library" ? "Library" : "Grimoire";
+const sectionHref = article.collection === "library" ? "/library/" : "/grimoire/";
+const breadcrumbs: BreadcrumbTrail = [
+  { label: "Home", href: "/" },
+  { label: sectionLabel, href: sectionHref },
+  { label: article.title },
+];
+const hasToc = Astro.slots.has("toc");
+const hasContext = Astro.slots.has("context");
+---
+
+<BaseLayout
+  title={article.title}
+  description={article.excerpt ?? article.title}
+  image={article.image?.src}
+  breadcrumbs={breadcrumbs}
+>
+  <div class:list={["article-reading", `article-reading--${article.collection}`]}>
+    <div class="article-reading__grid">
+      {hasToc && (
+        <aside class="article-reading__toc" aria-label="On this page">
+          <slot name="toc" />
+        </aside>
+      )}
+
+      <article class="article-reading__article" aria-labelledby="article-title">
+        <ArticleHeader article={article} />
+        <div class="article-reading__content reading-content" data-reading-content>
+          <slot />
+        </div>
+        <footer class="article-reading__footer">
+          <a href={sectionHref}>
+            <span aria-hidden="true">←</span> All {sectionLabel} entries
+          </a>
+        </footer>
+      </article>
+
+      {hasContext && (
+        <aside class="article-reading__context" aria-label="Additional reading">
+          <slot name="context" />
+        </aside>
+      )}
+    </div>
+  </div>
+</BaseLayout>

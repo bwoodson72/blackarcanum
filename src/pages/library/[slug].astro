@@ -1,0 +1,32 @@
+---
+import { render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import ArticleLayout from "../../layouts/ArticleLayout.astro";
+import { getPublishedLibraryEntries } from "../../lib/editorial-public";
+import { sortPublishedEntries } from "../../lib/editorial-archive";
+import { toPublishedArticle } from "../../lib/editorial-presentation";
+
+export const prerender = true;
+
+/** Static pages only for explicitly published Library articles. */
+export const getStaticPaths = (async () => {
+  const published = sortPublishedEntries(await getPublishedLibraryEntries());
+  return published.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  entry: CollectionEntry<"library">;
+}
+const { entry } = Astro.props;
+const article = toPublishedArticle({ collection: "library", entry });
+if (!article) throw new Error("Unpublished Library entry cannot be rendered.");
+const { Content } = await render(entry);
+---
+
+<ArticleLayout article={article}>
+  <Content />
+</ArticleLayout>

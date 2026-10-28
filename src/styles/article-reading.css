@@ -1,0 +1,183 @@
+/*
+ * Shared, source-led editorial reading shell.
+ * Visual rails are reserved via optional named slots. No fake ToC, citation
+ * listings, author identity, related links or signup elements are generated.
+ */
+.article-reading {
+  background: var(--color-parchment);
+  color: var(--color-charcoal);
+  padding-block: clamp(1.5rem, 3vw, 3rem) var(--spacing-section);
+  min-height: 50vh;
+}
+.article-reading__grid {
+  display: grid;
+  grid-template-columns: minmax(0, var(--container-reading));
+  justify-content: center;
+  gap: var(--spacing-article-gap);
+  width: 100%;
+  max-width: calc(
+    var(--container-toc) + var(--container-reading) + var(--container-aside)
+    + var(--spacing-article-gap) + var(--spacing-article-gap)
+    + var(--spacing-gutter) + var(--spacing-gutter)
+  );
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+.article-reading__article,
+.article-reading__toc,
+.article-reading__context {
+  min-width: 0;
+}
+.article-reading__article {
+  width: 100%;
+  max-width: var(--container-reading);
+}
+.article-reading__content {
+  margin-block: clamp(1.75rem, 3vw, 3rem);
+  color: var(--color-charcoal);
+  font-family: var(--font-reading);
+  font-size: var(--text-body);
+  line-height: 1.7;
+  overflow-wrap: break-word;
+}
+.article-reading__content > :first-child {
+  margin-top: 0;
+}
+.article-reading__content :is(p, ul, ol, blockquote, pre, table, figure) {
+  margin-block: 0 1.25em;
+}
+.article-reading__content :is(h2, h3, h4) {
+  margin-block: 1.5em 0.6em;
+  color: var(--color-charcoal);
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+.article-reading__content h2 {
+  font-size: clamp(1.75rem, 1.48rem + 1.05vw, 2.25rem);
+}
+.article-reading__content h3 {
+  font-size: clamp(1.4375rem, 1.25rem + 0.55vw, 1.75rem);
+}
+.article-reading__content :is(ul, ol) {
+  padding-inline-start: clamp(1.25rem, 3vw, 2rem);
+}
+.article-reading__content li + li {
+  margin-block-start: 0.35em;
+}
+.article-reading__content ul { list-style: disc; }
+.article-reading__content ol { list-style: decimal; }
+.article-reading__content blockquote {
+  border-inline-start: 3px solid var(--color-antique-gold);
+  padding: 0.4em 0 0.4em clamp(1rem, 3vw, 1.5rem);
+  font-style: italic;
+}
+.article-reading__content :is(a) {
+  color: var(--color-oxide-red);
+  text-decoration: underline;
+  text-underline-offset: 0.17em;
+}
+.article-reading__content a:hover { text-decoration-thickness: 2px; }
+.article-reading__content a:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-control);
+}
+.article-reading__content :is(img, video, svg) {
+  max-width: 100%;
+  height: auto;
+}
+.article-reading__content :is(pre, table) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.article-reading__content pre {
+  padding: 1rem;
+  background: var(--color-deep-brown);
+  color: var(--color-parchment);
+  border-radius: var(--radius-control);
+  font-size: 0.875em;
+  line-height: 1.55;
+}
+.article-reading__content :not(pre) > code {
+  overflow-wrap: anywhere;
+  font-size: 0.9em;
+}
+.article-reading__content table {
+  border-collapse: collapse;
+  border: 1px solid var(--color-border-paper);
+}
+.article-reading__content :is(th, td) {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border-paper);
+  text-align: start;
+  vertical-align: top;
+}
+.article-reading__content hr {
+  margin-block: 2rem;
+  border: 0;
+  border-top: 1px solid var(--color-border-paper);
+}
+.article-reading__footer {
+  margin-block-start: 2rem;
+  border-top: 1px solid var(--color-border-paper);
+  padding-block-start: 1.25rem;
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+}
+.article-reading__footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  gap: 0.5rem;
+  color: var(--color-oxide-red);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+.article-reading__footer a:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-control);
+}
+.article-reading__toc,
+.article-reading__context {
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+}
+.article-reading__toc { order: 0; }
+.article-reading__article { order: 1; }
+.article-reading__context { order: 2; }
+/*
+ * Only on genuinely wide screens does the full 190 + 720 + 240px reading
+ * arrangement become active. The 720px article column never gets squeezed.
+ */
+@media (min-width: 1440px) {
+  .article-reading__grid {
+    grid-template-columns:
+      minmax(0, var(--container-toc))
+      minmax(0, var(--container-reading))
+      minmax(0, var(--container-aside));
+    align-items: start;
+    justify-content: center;
+  }
+  .article-reading__toc {
+    grid-column: 1;
+    grid-row: 1;
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+  }
+  .article-reading__article {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .article-reading__context {
+    grid-column: 3;
+    grid-row: 1;
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+  }
+}

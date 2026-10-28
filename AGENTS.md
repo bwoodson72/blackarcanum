@@ -11,6 +11,13 @@ This repository is the **Astro frontend** for Mystagogia (GitHub repository name
 
 **Execution rule:** Work on **only one explicitly assigned numbered prompt at a time**. The existence of later prompts is not permission to execute them. Do not proceed automatically, deploy, publish content, purchase services, create artwork, or enable payments without express authorization. After the assigned prompt, run relevant checks, summarize changes/results/limitations, and **STOP** for review.
 
+## Current approved development workflow (supersedes older review/branch conventions)
+
+- The owner has explicitly authorized **working directly on `master`** for the development phase. Do not create feature branches or pull requests. Build each prompt's complete changes before moving the branch reference; use one atomic commit directly on `master` when possible.
+- Complete tests and self-review for the assigned prompt and stop. A later prompt requires a new user instruction.
+- Development is local-first: **do not intentionally trigger a Vercel production deployment** during prompt work. GitHub's existing Vercel integration may independently attempt an automatic deployment when `master` moves; that integration should be disabled separately before it can be guaranteed no deployment will occur.
+- Do not create test articles inside the committed public content collections. Integration fixtures belong only in isolated test runners and must restore the real content directories.
+
 ## Rules for all changes
 - Follow the latest approved specification. If a prompt conflicts with the specification or existing code, explain the conflict; do not silently override either. Later explicit user approval supersedes stale written guidance; update docs when asked.
 - Use Astro components by default; introduce Svelte/browser-side JS only for necessary interactions. Use **selective** Starwind controls when helpful, styled consistently with Mystagogia.
