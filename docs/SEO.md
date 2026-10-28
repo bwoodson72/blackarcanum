@@ -25,3 +25,8 @@ With a real site URL, the build adds `@astrojs/sitemap` conditionally, emits `re
 Deep browser/fixture checks and manual visual QA from Prompt 26 still need separate acceptance; this prompt changes only metadata/discovery and does not certify those pending screens.
 
 **Stopped after Prompt 27.**
+
+## Update — removed public preview routes (2026-10-28)
+
+The preview MDX files are now excluded from the public Astro route generation stage by the shared `canPublishEditorialEntry` predicate. The older `noindex` handling remains defense in depth, but preview pages are no longer emitted. The SEO integration test now asserts **missing preview HTML**, not merely noindex/canonical attributes.
+

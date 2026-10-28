@@ -12,6 +12,9 @@ on:
     paths:
       - "src/components/mdx/**"
       - "src/components/media/**"
+      # Publication policy changes require an explicit release regression run.
+      - "src/lib/editorial-public.ts"
+      - "src/lib/editorial-related-public.ts"
   workflow_dispatch:
     inputs:
       suite:
@@ -41,7 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      QA_SUITE: ${{ github.event_name == 'push' && 'media' || inputs.suite || 'all' }}
+      # Use [release-qa] on the committed publication-gate change to run
+      # the COMPLETE suite once; keep media-only push checks lightweight.
+      QA_SUITE: ${{ github.event_name == 'push' && (contains(github.event.head_commit.message, '[release-qa]') && 'all' || 'media') || inputs.suite || 'all' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

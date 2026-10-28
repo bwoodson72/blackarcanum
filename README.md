@@ -2,7 +2,7 @@
 
 Mystagogia is an **in-development** Astro 7 editorial site exploring historical sources and contemporary esoteric practice. Its two collections are **the Library** (source-led research) and **the Grimoire** (methods and observations). The future merchandise Shop uses a separate Medusa backend and is **not enabled** in this repository. The public domain is **not approved**; the current Vercel URL is a development/preview deployment, **not a public launch**.
 
-> **Release status:** NOT READY FOR PUBLIC LAUNCH. See [`docs/RELEASE_REVIEW.md`](docs/RELEASE_REVIEW.md) for the dated Prompt 31 pass/fail register and unresolved gates. Three visible article routes still contain noindex layout previews; do not represent them as finished scholarship or launch content.
+> **Release status:** NOT READY FOR PUBLIC LAUNCH. See [`docs/RELEASE_REVIEW.md`](docs/RELEASE_REVIEW.md) for the dated Prompt 31 pass/fail register and unresolved gates. The three retained MDX layout previews are now explicitly excluded from generated public routes; verify the deployed removal in current CI before release.
 
 ## Run locally
 
@@ -34,7 +34,7 @@ The production build uses `@astrojs/vercel` with prerendered editorial pages and
 
 Every `master` push runs `.github/workflows/editorial-quality.yml` (`npm ci` → `npm run qa:fast`). The most recent clean-install, build, typecheck and high/critical audit passed for `9399aaf` at [Editorial Quality run 40779280270](https://github.com/bwoodson72/blackarcanum/actions/runs/40779280270). That is **fast CI**, not release approval.
 
-For complete responsive/keyboard/content acceptance, use **GitHub → Actions → Deep Regression → Run workflow → `all`**. The `articles` suite includes published/draft fixtures, real Pagefind search queries, SEO and screenshot checks. Other suites cover TOC, citations, related content and media. These runs are destructive **test fixtures**, not live editorial uploads. No current-commit `all` run or manual screen-reader review was observed during Prompt 31; **do not mark either passed**. See [`docs/RELEASE_REVIEW.md`](docs/RELEASE_REVIEW.md).
+For complete responsive/keyboard/content acceptance, use **GitHub → Actions → Deep Regression → Run workflow → `all`**. The `articles` suite includes published/draft fixtures, real Pagefind search queries, SEO and screenshot checks. Other suites cover TOC, citations, related content and media. These runs are destructive **test fixtures**, not live editorial uploads. The post-review publication-gate change requests a complete `all` run via the commit's `[release-qa]` trigger. Review its actual status and screenshot artifacts before marking it passed; manual screen-reader checks remain pending. See [`docs/RELEASE_REVIEW.md`](docs/RELEASE_REVIEW.md).
 
 ## Environment configuration (Vercel)
 
@@ -51,7 +51,7 @@ Do not check `.env` files, real IDs or API keys into Git, screenshots, browser J
 
 ## Unlaunched features and publication gates
 
-Shop/Medusa/Printful/Stripe, a live newsletter signup, public domain, public SEO launch, and a finished article corpus are **not enabled**. No lead magnet, newsletter sender identity, store inventory, or author persona is implied. Search UI exists but correctly has no results when only previews are available. The three Tyche/Hekate/Hermes `preview: true` pages remain at public URLs and are marked `noindex`; **remove or fully gate these before announcing an editorial release**. The spec's contact/privacy/legal disclosure destinations are not yet implemented. Do not remove these blockers from the release checklist until actually resolved and retested.
+Shop/Medusa/Printful/Stripe, a live newsletter signup, public domain, public SEO launch, and a finished article corpus are **not enabled**. No lead magnet, newsletter sender identity, store inventory, or author persona is implied. Search UI exists but correctly has no results when only previews are available. The three Tyche/Hekate/Hermes `preview: true` MDX files are retained for source review, but shared publication accessors now prevent them from generating page routes, archive cards or related links. They are not protected merely by `noindex`; real builds must confirm no preview files are deployed. The spec's contact/privacy/legal disclosure destinations are not yet implemented. Do not remove these blockers from the release checklist until actually resolved and retested.
 
 ## Controlled rollout and rollback
 

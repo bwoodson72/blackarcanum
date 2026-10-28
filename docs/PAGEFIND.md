@@ -17,3 +17,8 @@ Fast master CI verifies that the current preview-only production build does not 
 At the present editorial stage the default build's zero-result behavior is intentional and does not indicate a broken index. When finished articles are explicitly approved and published, Pagefind will generate a real bundle automatically.
 
 **Stopped after Prompt 28.**
+
+## Update — preview articles are not built (2026-10-28)
+
+The publication gate now omits every `preview: true` entry from generated article routes and archive listings. Pagefind's empty-index behavior remains unchanged; the integration fixture test asserts preview HTML is absent as well as excluding its text and URL from the index.
+

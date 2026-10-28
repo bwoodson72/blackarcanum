@@ -45,12 +45,12 @@ try {
       assert.equal(fs.existsSync(file),false,"Hidden entry has no public route: "+f.slug);
       continue;
     }
-    const html=fs.readFileSync(file,"utf8");
-    assert.ok(html.includes(f.phrase),"Unique known phrase appears in built article: "+f.slug);
     if (f.preview) {
-      assert.ok(html.includes('name="robots" content="noindex, nofollow"'));
-      assert.doesNotMatch(html,/\bdata-pagefind-body(?:=|[\s>])/i);
+      assert.equal(fs.existsSync(file),false,
+        "Preview-only fixture is not emitted as a public route: "+f.slug);
     } else {
+      const html=fs.readFileSync(file,"utf8");
+      assert.ok(html.includes(f.phrase),"Unique known phrase appears in built article: "+f.slug);
       assert.match(html,/\bdata-pagefind-body(?:=|[\s>])/i);
       assert.ok(html.includes('data-pagefind-filter="collection:'+f.collection+'"'),
         "Pagefind filter derives from published article collection");

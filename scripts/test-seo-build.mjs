@@ -76,10 +76,14 @@ try {
     "Article schema uses the same approved, optimized actual image");
   assert.equal(data.author, undefined);
   assert.equal(data.publisher, undefined);
-  const noindex = read("library/tyche-fortune-and-the-city/index.html");
-  assert.ok(noindex.includes('name="robots" content="noindex, nofollow"'));
-  assert.ok(!noindex.includes('rel="canonical"'));
-  assert.ok(!noindex.includes('type="application/ld+json"'));
+  for (const [collection, slug] of [
+    ["library", "tyche-fortune-and-the-city"],
+    ["library", "hekate-torches-and-crossroads"],
+    ["grimoire", "hermes-petition-template"],
+  ]) {
+    assert.ok(!existsSync("dist/" + collection + "/" + slug + "/index.html"),
+      "Preview MDX is not a public page, regardless of sitemap filtering");
+  }
   const listing = read("library/index.html");
   assert.ok(listing.includes('<link rel="canonical" href="' + origin + '/library/"'));
   const robots = read("robots.txt");

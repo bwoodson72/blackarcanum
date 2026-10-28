@@ -56,3 +56,12 @@ The user-approved workflow is direct work on `master` with Vercel Git auto-deplo
 To undo a problematic application change, revert its commit on `master` and verify CI and the new Vercel deployment. For an emergency, use Vercel rollback deliberately, knowing it may suspend automatic alias assignment until restored. Record the tested SHA and the incident before claiming recovery.
 
 **Stopped after Prompt 31.**
+
+## Post-review hardening — preview route exclusion (2026-10-28)
+
+**Source change:** Shared `getPublishedLibraryEntries`, `getPublishedGrimoireEntries`, single-entry accessors and the related-reading adapter now explicitly reject `preview: true` even when the MDX status is `published`. The Tyche, Hekate and Hermes fixtures remain in Git for development, but production builds no longer generate their HTML or archive-card URLs. This fixes the underlying *public accessibility* defect; `noindex` alone was insufficient. Normal hubs show their truthful empty states.
+
+**Acceptance:** Updated the fast sample smoke tests to require all three preview routes to be absent from `dist`, `dist/client` and Vercel's static bundle. Updated SEO and Pagefind integration fixtures to test **no preview HTML at all**, while checking indexable published entries and unpublished draft/review exclusion. The same change arranges one automatic full Deep Regression run on the commit tagged `[release-qa]`. Record the completed current-SHA CI run and visually review screenshots before changing the corresponding **PENDING** entries to **PASS**. Prior Prompt 31 checklist is a dated snapshot at `9399aaf`, not a statement that the old preview exposure persists after this fix.
+
+**Still blocked for a public editorial launch:** finished owner-approved content and curated features, a real approved domain, privacy/contact and applicable disclosures, and a separately approved live Kit form/sender/confirmation flow. Real-device accessibility/contrast review also remains required. The Shop is still out of scope.
+

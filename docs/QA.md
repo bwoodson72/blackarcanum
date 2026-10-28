@@ -59,3 +59,10 @@ central CSS source and one H1 per page. Browser screenshot review at 375, 768,
 ## Compact shared hero actions (October 28, 2026)
 
 The former branching home-only 5rem button and compact archive-only 3.25rem button are replaced with one `HeroAction.astro` component. Every action uses `src/styles/hero-action.css`, an identical 3.25rem minimum height, the shared `EngravedFrame` ornament and an optional inline icon. `PageHero.astro` now maps typed action props without a home/archive rendering conditional. The approved homepage hero height, artwork and other page sections are unchanged. Fast tests inspect all four routes and the compact CSS token. The existing five-width browser acceptance checks 44–65px CTA height on all four heroes.
+
+## Publication hardening and full release regression (2026-10-28)
+
+All three `preview: true` Greek deity MDX articles now fail the single public publication gate, even when `status: published` is set for historical layout tests. They are retained as source-only specimens and **cannot be served at direct public URLs** from a normal Astro build. The Library/Grimoire gateways remain live but display their honest empty states. Published finished articles can be added later using the ordinary status/date/media/source review gates.
+
+`test:samples` verifies that their routes are absent in Astro and deployable output; `test:seo-build` and `test:pagefind-build` validate missing preview pages in their fixture builds. A commit tagged `[release-qa]` on the shared publication gate triggers `Deep Regression` with the `all` suite to cover content, responsive navigation, media, TOC, related entries, citations, SEO and search against one exact commit. Automated browser acceptance must not be mistaken for manual screen-reader sign-off.
+

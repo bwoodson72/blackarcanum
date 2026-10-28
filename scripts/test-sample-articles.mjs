@@ -22,93 +22,50 @@ const expected = [
   },
 ];
 
+// Preview MDX is retained for visual/editorial QA, but not emitted as routes.
 for (const collection of ["library", "grimoire"]) {
   const files = fs.readdirSync(path.join("src/content", collection))
     .filter((name) => name.endsWith(".mdx"));
-  const slugs = expected
-    .filter((entry) => entry.collection === collection)
+  const slugs = expected.filter((entry) => entry.collection === collection)
     .map((entry) => entry.slug + ".mdx");
   assert.deepEqual(files.sort(), slugs.sort(),
-    "Only the three explicitly authorized Greek-deity preview MDX files may be committed");
+    "Only the three owner-approved Greek-deity layout MDX files are committed");
 }
-
 const archive = Object.fromEntries(["library", "grimoire"].map((section) => [
   section, fs.readFileSync(path.join("dist", section, "index.html"), "utf8"),
 ]));
-
 for (const section of ["library", "grimoire"]) {
   const html = archive[section];
   assert.ok(html.includes('<meta name="robots" content="noindex, nofollow"'),
-    "Preview-only archives must not be search indexed");
-  assert.ok(html.includes("Layout previews"), "Archive must label samples");
+    "Empty archive hubs are not search indexed");
+  assert.ok(!html.includes("Layout previews") &&
+    (section === "library" ? html.includes("The first studies are being prepared.") :
+      html.includes("The first entries are still to come.")),
+    "Public hubs must show an honest empty state, not preview content");
   assert.ok(html.includes('href="/library/"') && html.includes('href="/grimoire/"'),
-    "Site navigation should link to both active sections");
+    "Site navigation links to both archive gateways");
 }
-
 for (const { collection, slug, title } of expected) {
   const markdown = fs.readFileSync(path.join("src/content", collection, slug + ".mdx"), "utf8");
-  const generated = path.join("dist", collection, slug, "index.html");
-  assert.ok(fs.existsSync(generated), "Expected sample article page: " + generated);
-  const html = fs.readFileSync(generated, "utf8");
-
   assert.match(markdown, /^preview: true$/m);
   assert.match(markdown, /^status: published$/m);
   assert.match(markdown, /^publishedAt: 2026-10-28$/m);
-  assert.ok(!/^hero:/m.test(markdown), "No unapproved artwork or hero");
+  assert.ok(!/^hero:/m.test(markdown), "No unapproved hero artwork in preview MDX");
   assert.ok((markdown.match(/^#{2,3} /gm) ?? []).length >= 5,
-    "Sample should exercise generated heading navigation");
-
-  assert.ok(html.includes("<title>" + title + " | Mystagogia</title>"));
-  assert.ok(html.includes('<meta name="robots" content="noindex, nofollow"'),
-    "Every temporary sample article must be noindex");
-  assert.ok(html.includes("LAYOUT PREVIEW"), "Article header must clearly label the sample");
-  assert.ok(html.includes("Temporary sample content for design review"));
+    "Layout fixtures preserve heading/TOC test structure");
+  for (const output of ["dist", "dist/client", ".vercel/output/static"]) {
+    assert.ok(!fs.existsSync(path.join(output, collection, slug, "index.html")),
+      "Private layout preview must never appear in deployed build output: " + output + "/" + slug);
+  }
+  assert.ok(!archive[collection].includes('href="/' + collection + '/' + slug + '/"') &&
+    !archive[collection].includes(title),
+    "Preview card and title must not leak through the archive: " + slug);
   if (slug === "tyche-fortune-and-the-city") {
     assert.match(markdown, /^featuredMediaId: tyche-fortune-city-illustration$/m,
-      "Tyche explicitly selects one approved featured-image ID");
-    assert.match(markdown, /^  - tyche-fortune-city-illustration$/m,
-      "The featured image must also be declared in mediaIds");
-    assert.ok(html.includes("article-header__hero--registered"),
-      "Tyche receives the registered responsive article hero");
-    assert.ok(html.includes('data-media-variant="hero"'),
-      "The hero uses the Astro image renderer, not an unreviewed raw URL");
-    assert.ok(html.includes("Modern AI-generated artistic interpretation of Tyche"),
-      "The caption clearly distinguishes a modern depiction from an antique artifact");
-    assert.ok(html.includes('type="image/avif"') && html.includes('type="image/webp"'),
-      "The registered image has optimized modern responsive sources");
-    assert.ok(html.includes("city-wall crown"),
-      "Accessible alt text comes from the actual registry record");
-    assert.ok(archive[collection].includes('data-media-variant="card"'),
-      "The Library archive renders a cropped, optimized Tyche thumbnail");
-  } else {
-    assert.ok(!html.includes("article-header__hero"),
-      "Hekate and Hermes remain text-only without empty image placeholders");
+      "Approved Tyche media mapping is preserved as source-only layout fixture");
   }
-  assert.ok((html.match(/aria-label="Article contents"/g) ?? []).length === 2,
-    "Long demo content should render the mobile and desktop TOC variants");
-
-  const headingIds = new Set(
-    [...html.matchAll(/<h[23]\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1]),
-  );
-  // Restrict to contents navigation; the site-wide #main-content skip link
-  // is not a heading link and must never be treated as one.
-  const tocMarkup = [...html.matchAll(/<nav\b[^>]*aria-label="Article contents"[^>]*>[\s\S]*?<\/nav>/g)]
-    .map((match) => match[0]).join("\n");
-  const anchors = [...new Set(
-    [...tocMarkup.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]),
-  )];
-  assert.ok(headingIds.size >= 5 && anchors.length >= 5);
-  for (const slugId of anchors) {
-    assert.ok(headingIds.has(slugId), "TOC href must target real article heading: " + slugId);
-  }
-  assert.ok(archive[collection].includes('href="/' + collection + '/' + slug + '/"'),
-    "Sample should appear as a working archive link");
-  assert.ok(archive[collection].includes("Layout preview"), "Card should label the sample");
-  console.log("PASS: " + collection + "/" + slug +
-    " published preview, noindex, visible label, generated TOC, internal archive link");
 }
-
-console.log("PASS: three Greek-deity samples visible, clearly temporary and excluded from indexing");
+console.log("PASS: three retained layout MDX fixtures have no public routes, cards or search pages");
 
 // Prompt 25: honest homepage in the absence of any curated feature IDs.
 const homepage = fs.readFileSync("dist/index.html", "utf8");
@@ -237,10 +194,6 @@ const qaPages = [
   ["/search/", "dist/search/index.html"],
   ["/library/", "dist/library/index.html"],
   ["/grimoire/", "dist/grimoire/index.html"],
-  ...expected.map(({ collection, slug }) => [
-    "/" + collection + "/" + slug + "/",
-    path.join("dist", collection, slug, "index.html"),
-  ]),
 ];
 const knownRoutes = new Set(qaPages.map(([url]) => url));
 for (const [url, filename] of qaPages) {
@@ -304,7 +257,7 @@ for(const [front, back] of [
 const reduced=fs.readFileSync("src/styles/page-transitions.css","utf8");
 assert.ok(reduced.includes("@media (prefers-reduced-motion: reduce)") &&
   reduced.includes("animation: none !important"), "Honor reduced motion");
-console.log("PASS: Prompt 26 seven-route semantics, skip/nav/links, alt text, contrast and reduced motion");
+console.log("PASS: Prompt 26 public-route semantics, skip/nav/links, alt text, contrast and reduced motion");
 
 
 // Prompt 27: no fictional production site origin. Test configured URL rules
@@ -435,10 +388,8 @@ assert.ok(searchClient.includes("document.createElement") &&
   !searchClient.includes(".innerHTML"), "Results are rendered as safe text, not HTML");
 assert.ok(searchClient.includes("history[method]") &&
   searchClient.includes("popstate"), "Queries and scopes can be shared and navigated");
-for(const [section, slug] of [["library","tyche-fortune-and-the-city"],
-  ["grimoire","hermes-petition-template"]]) {
-  const sample=fs.readFileSync("dist/"+section+"/"+slug+"/index.html","utf8");
-  assert.ok(!sample.includes('data-pagefind-filter="collection:'),
-    "Preview articles do not expose Pagefind filters");
+for (const { collection, slug } of expected) {
+  assert.ok(!fs.existsSync(path.join("dist", collection, slug, "index.html")),
+    "Unpublished preview must not enter Pagefind: " + slug);
 }
 console.log("PASS: Prompt 29 search page, navigation, noindex, scopes, no Shop, lazy browser API and safe snippets");
