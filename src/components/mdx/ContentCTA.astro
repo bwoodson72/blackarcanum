@@ -1,0 +1,21 @@
+---
+import ActionLink from "../foundation/ActionLink.astro";
+import { assertLiveCtaRoute } from "../../lib/content-cta";
+import type { ContentCtaRoute } from "../../lib/content-cta";
+interface Props {
+  title: string;
+  label: string;
+  href: ContentCtaRoute;
+}
+const { title, label, href } = Astro.props;
+if (typeof title !== "string" || !title.trim() ||
+    typeof label !== "string" || !label.trim()) {
+  throw new Error("ContentCTA requires a nonblank title and link label.");
+}
+assertLiveCtaRoute(href);
+---
+<aside class="mdx-text-block mdx-content-cta" data-mdx-block="cta" aria-label={title}>
+  <p class="mdx-content-cta__title">{title}</p>
+  <div class="mdx-block-body"><slot /></div>
+  <ActionLink href={href} variant="secondary" size="compact">{label}</ActionLink>
+</aside>

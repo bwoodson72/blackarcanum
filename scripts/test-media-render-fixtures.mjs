@@ -182,6 +182,41 @@ function writeMdxFixture(section, filepath) {
     "",
     "<FullWidthImage id=\"ci-test-raster\" caption=\"Wider composition on permitted desktop widths.\" />",
     "",
+    "## Textual blocks",
+    "",
+    "<Callout kind=\"note\" title=\"Reading context\">",
+    "",
+    "A **nested** editorial note with two points:",
+    "",
+    "- First research point",
+    "- Second research point",
+    "",
+    "</Callout>",
+    "",
+    "<Callout kind=\"caution\">",
+    "",
+    "An illustrative caution, not real-world guidance.",
+    "",
+    "</Callout>",
+    "",
+    "<SourceNote label=\"Source context\">",
+    "",
+    "A **source note** with a [working link](/about/).",
+    "",
+    "</SourceNote>",
+    "",
+    "<QuoteBlock attribution=\"Synthetic QA attribution\">",
+    "",
+    "A **test quotation** for display verification.",
+    "",
+    "</QuoteBlock>",
+    "",
+    "<ContentCTA title=\"Continue exploring\" label=\"Browse the Library\" href=\"/library/\">",
+    "",
+    "A **working archive** destination.",
+    "",
+    "</ContentCTA>",
+    "",
     "A test-only entry. No historic object or user artwork is represented here.",
   ].join("\n");
   fs.writeFileSync(filepath, fixture);
@@ -331,7 +366,26 @@ try {
       "Direct original-image access and a visible modal close control are present");
     assert.ok(body.includes("Enlarged reference image: CI-only synthetic raster"),
       "Dialog has a descriptive label drawn from the approved reference caption");
-    console.log("PASS: " + section + " MDX figures, attribution and opt-in lightbox semantics");
+    assert.equal((body.match(/data-mdx-block="/g) ?? []).length, 5,
+      "Five explicitly authored text blocks render in each collection");
+    for (const item of ['data-kind="note"', 'data-kind="caution"',
+      'data-mdx-block="source-note"', 'data-mdx-block="quote"',
+      'data-mdx-block="cta"']) {
+      assert.ok(body.includes(item), "Missing mapped MDX block: " + item);
+    }
+    assert.ok(body.includes("<strong>nested</strong>") &&
+      body.includes("<li>First research point</li>") &&
+      body.includes("<strong>source note</strong>") &&
+      body.includes("<strong>test quotation</strong>"),
+      "Nested markdown and lists remain semantic HTML");
+    assert.ok(body.includes("<blockquote") &&
+      body.includes("Synthetic QA attribution") && body.includes("<figcaption"),
+      "Attributed quotation uses blockquote and figcaption");
+    assert.ok(body.includes('href="/about/"') && body.includes('href="/library/"'),
+      "Links are to implemented routes");
+    assert.ok(!body.includes('href="/shop/"') && !body.includes('href="/newsletter/"'),
+      "No invented product or newsletter destination is rendered");
+    console.log("PASS: " + section + " MDX figures and four editorial text components");
   }
 } finally {
   fs.writeFileSync(mediaRegistryPath, originalRegistry);

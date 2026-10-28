@@ -13,6 +13,7 @@ import {
 import { citationSchema } from "../src/lib/editorial-citations.ts";
 import { topics } from "../src/data/topics.ts";
 import { sources } from "../src/data/sources.ts";
+import { assertLiveCtaRoute } from "../src/lib/content-cta.ts";
 
 const draft = { slug: "a-study", title: "A study", description: "Research summary", status: "draft" };
 const review = { ...draft, status: "review" };
@@ -134,3 +135,12 @@ assert.equal(grimoireId({ entry: "different.mdx", data: { slug: "stable-article"
   "Identical slug in another collection is allowed");
 
 console.log("PASS: statuses, dates, stable slugs, registry uniqueness, citation locators, known/unknown topic/source references");
+
+// ContentCTA cannot navigate to unavailable offers, off-site destinations or placeholders.
+for (const allowed of ["/", "/about/", "/library/", "/grimoire/"]) {
+  assert.doesNotThrow(() => assertLiveCtaRoute(allowed));
+}
+for (const forbidden of ["/shop/", "/newsletter/", "/products/example/", "https://example.org", "//example.org", "/library/?coupon=1", "", "/grimoire"]) {
+  assert.throws(() => assertLiveCtaRoute(forbidden), /not a live approved route/);
+}
+console.log("PASS: ContentCTA destinations fail closed on unavailable routes");

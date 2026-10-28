@@ -257,6 +257,45 @@ try {
       }
       console.log("PASS: " + section + " MDX figures at " + width +
         "px: captions/links, uncropped details, safe breakout, no overflow");
+
+      const textBlocks = await evaluate(`(() => ({
+        items: [...document.querySelectorAll("[data-mdx-block]")].map((item) => {
+          const box = item.getBoundingClientRect();
+          return {
+            type: item.dataset.mdxBlock,
+            left: box.left, right: box.right, width: box.width,
+            text: item.textContent,
+            anchors: [...item.querySelectorAll("a")].map((a) => ({
+              href: a.getAttribute("href"), tabIndex: a.tabIndex,
+            })),
+          };
+        }),
+        images: document.querySelectorAll("[data-mdx-block] img").length,
+        quotes: document.querySelectorAll('[data-mdx-block="quote"] blockquote').length,
+      }))()`);
+      assert.deepEqual(textBlocks.items.map((b) => b.type),
+        ["callout", "callout", "source-note", "quote", "cta"]);
+      assert.equal(textBlocks.images, 0, "Text blocks do not require artwork");
+      assert.equal(textBlocks.quotes, 1, "Quotations have semantic blockquote");
+      for (const block of textBlocks.items) {
+        assert.ok(block.width > 0 && block.left >= -1 && block.right <= width + 1,
+          "Text blocks must not overflow the phone or reading column");
+      }
+      assert.equal(textBlocks.items[2].anchors[0].href, "/about/");
+      assert.equal(textBlocks.items[4].anchors[0].href, "/library/");
+      assert.ok(textBlocks.items[2].anchors[0].tabIndex >= 0 &&
+        textBlocks.items[4].anchors[0].tabIndex >= 0, "Links participate in keyboard navigation");
+      const focusable = await evaluate(`(() => {
+        const source = document.querySelector('[data-mdx-block="source-note"] a');
+        const cta = document.querySelector('[data-mdx-block="cta"] a');
+        source.focus();
+        const first = document.activeElement === source;
+        cta.focus();
+        return first && document.activeElement === cta;
+      })()`);
+      assert.equal(focusable, true, "Source and CTA links receive keyboard focus");
+      console.log("PASS: " + section + " textual MDX blocks " + width + "px: fit, semantics and links");
+
     }
   }
   console.log("PASS: Prompt 21 real MDX figure visual checks at 375px, 1024px and 1440px");

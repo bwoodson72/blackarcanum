@@ -1,0 +1,16 @@
+---
+interface Props {
+  kind?: "note" | "caution";
+  title?: string;
+}
+const { kind = "note", title } = Astro.props;
+if (kind !== "note" && kind !== "caution") throw new Error("Callout kind must be note or caution.");
+if (title !== undefined && (typeof title !== "string" || !title.trim())) {
+  throw new Error("Callout title must not be blank.");
+}
+const heading = title ?? (kind === "caution" ? "Caution" : "Note");
+---
+<aside class:list={["mdx-text-block", "mdx-callout", "mdx-callout--" + kind]} data-mdx-block="callout" data-kind={kind} aria-label={heading}>
+  <p class="mdx-block-label">{heading}</p>
+  <div class="mdx-block-body"><slot /></div>
+</aside>

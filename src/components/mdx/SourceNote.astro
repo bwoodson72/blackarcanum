@@ -1,0 +1,10 @@
+---
+/** Explanatory editorial note; does not invent a source or citation. */
+interface Props { label?: string; }
+const { label = "Source note" } = Astro.props;
+if (typeof label !== "string" || !label.trim()) throw new Error("SourceNote label must not be blank.");
+---
+<aside class="mdx-text-block mdx-source-note" data-mdx-block="source-note" aria-label={label}>
+  <p class="mdx-block-label">{label}</p>
+  <div class="mdx-block-body"><slot /></div>
+</aside>

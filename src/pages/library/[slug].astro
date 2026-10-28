@@ -6,6 +6,10 @@ import ArticleLayout from "../../layouts/ArticleLayout.astro";
 import ArticleImage from "../../components/mdx/ArticleImage.astro";
 import ReferenceFigure from "../../components/mdx/ReferenceFigure.astro";
 import FullWidthImage from "../../components/mdx/FullWidthImage.astro";
+import Callout from "../../components/mdx/Callout.astro";
+import SourceNote from "../../components/mdx/SourceNote.astro";
+import QuoteBlock from "../../components/mdx/QuoteBlock.astro";
+import ContentCTA from "../../components/mdx/ContentCTA.astro";
 import { getPublishedLibraryEntries } from "../../lib/editorial-public";
 import { sortPublishedEntries } from "../../lib/editorial-archive";
 import { toPublishedArticle } from "../../lib/editorial-presentation";
@@ -44,5 +48,5 @@ const { Content, headings } = await render(entry);
   relatedArticles={relatedArticles}
   relatedVariant="compact"
 >
-  <Content components={{ ArticleImage, ReferenceFigure, FullWidthImage }} />
+  <Content components={{ ArticleImage, ReferenceFigure, FullWidthImage, Callout, SourceNote, QuoteBlock, ContentCTA }} />
 </ArticleLayout>

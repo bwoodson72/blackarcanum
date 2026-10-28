@@ -1,0 +1,12 @@
+---
+/** A real quote must have an editor-supplied attribution. */
+interface Props { attribution: string; }
+const { attribution } = Astro.props;
+if (typeof attribution !== "string" || !attribution.trim()) {
+  throw new Error("QuoteBlock requires an attribution.");
+}
+---
+<figure class="mdx-text-block mdx-quote" data-mdx-block="quote">
+  <blockquote class="mdx-quote__text"><slot /></blockquote>
+  <figcaption class="mdx-quote__attribution">{attribution}</figcaption>
+</figure>
