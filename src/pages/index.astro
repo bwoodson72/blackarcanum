@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/foundation/Container.astro";
 import Ornament from "../components/foundation/Ornament.astro";
+import EngravedFrame from "../components/foundation/EngravedFrame.astro";
 import ArticleGrid from "../components/editorial/ArticleGrid.astro";
 import { checkEditorialBuild } from "../lib/editorial-build-qa";
 import { getPublishedLibraryEntries, getPublishedGrimoireEntry } from "../lib/editorial-public";
@@ -47,20 +48,21 @@ const launched = featuredLibrary.some((article) => !article.preview) ||
     </div>
     <Container width="wide" class="home-hero__inner">
       <div class="home-hero__copy">
-        <p class="home-eyebrow">Research <span aria-hidden="true">·</span> Tradition <span aria-hidden="true">·</span> Practice</p>
+        <Ornament variant="rule" class="home-hero__rule" />
         <h1 id="home-title">Mystagogia</h1>
-        <p class="home-hero__subtitle">The Study and Practice of Hidden Arts</p>
-        <Ornament variant="rule" />
+        <p class="home-eyebrow home-hero__tagline">
+          Historical Research <span aria-hidden="true">·</span>
+          Practical Wisdom <span aria-hidden="true">·</span>
+          Living Tradition
+        </p>
         <p class="home-hero__lead">
-          Historical research, living traditions, and practical exploration of the esoteric arts.
-          Two distinct paths through questions that have endured for centuries.
+          Explore the crossroads of history, mythology, and magical practice.
+          Mystagogia brings together rigorous research and practical wisdom for a
+          modern return to the ancient ways.
         </p>
         <div class="home-hero__actions">
           <a class="home-button" href="/library/">
-            <span class="home-button__corner home-button__corner--tl" aria-hidden="true"></span>
-            <span class="home-button__corner home-button__corner--tr" aria-hidden="true"></span>
-            <span class="home-button__corner home-button__corner--bl" aria-hidden="true"></span>
-            <span class="home-button__corner home-button__corner--br" aria-hidden="true"></span>
+            <EngravedFrame />
             <svg class="home-button__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <path d="M16 25.5c-3-2.4-7.4-3.7-12-3.2V6.5c5-.3 9 1 12 3.2 3-2.2 7-3.5 12-3.2v15.8c-4.6-.5-9 0.8-12 3.2Z" />
               <path d="M16 9.7v15.8M7.4 10.5c2.2.1 3.9.7 5.4 1.6M24.6 10.5c-2.2.1-3.9.7-5.4 1.6" />
@@ -68,10 +70,7 @@ const launched = featuredLibrary.some((article) => !article.preview) ||
             <span class="home-button__label">Enter the Library <span class="home-button__arrow" aria-hidden="true">→</span></span>
           </a>
           <a class="home-button" href="/grimoire/">
-            <span class="home-button__corner home-button__corner--tl" aria-hidden="true"></span>
-            <span class="home-button__corner home-button__corner--tr" aria-hidden="true"></span>
-            <span class="home-button__corner home-button__corner--bl" aria-hidden="true"></span>
-            <span class="home-button__corner home-button__corner--br" aria-hidden="true"></span>
+            <EngravedFrame />
             <svg class="home-button__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <path d="M16 27V5M16 10c-4.7 0-6.8-2.9-6.7-5.2 4.1 0 6.7 2.4 6.7 5.2Zm0 5.5c4.9 0 7.2-3.2 7-5.5-4.3.1-7 2.5-7 5.5Zm0 5.3c-4.4 0-6.7-3.3-6.6-5.4 4.1 0 6.6 2.6 6.6 5.4Zm0 4.2c4.5 0 6.6-3.1 6.5-5.1-4 .1-6.5 2.5-6.5 5.1Z" />
               <path d="M11.5 27h9" />
@@ -92,36 +91,38 @@ const launched = featuredLibrary.some((article) => !article.preview) ||
       </div>
       <div class="home-paths__grid">
         <article class="home-path">
-          <div class="home-path__art home-path__art--library" aria-hidden="true">
-            <svg class="home-path__image" viewBox="0 800 667 256" preserveAspectRatio="xMidYMid slice" focusable="false" aria-hidden="true">
-              <image href="/images/homepage/mystagogia-editorial-atlas.avif" x="0" y="0" width="2000" height="1056" />
-            </svg>
-          </div>
-          <div class="home-path__body">
-            <p class="home-eyebrow">Sources &amp; traditions</p>
-            <h3>The Library</h3>
-            <p>
-              Historical texts, established traditions, and the evidence behind esoteric ideas.
-              Follow the sources and distinguish what is recorded from what is interpreted.
-            </p>
-            <a class="home-text-link" href="/library/">Explore the Library <span aria-hidden="true">→</span></a>
-          </div>
+          <a class="home-path__link" href="/library/" aria-labelledby="home-library-title">
+            <span class="home-path__art home-path__art--library" aria-hidden="true">
+              <svg class="home-path__image" viewBox="0 800 667 256" preserveAspectRatio="xMidYMid slice" focusable="false" aria-hidden="true">
+                <image href="/images/homepage/mystagogia-editorial-atlas.avif" x="0" y="0" width="2000" height="1056" />
+              </svg>
+            </span>
+            <div class="home-path__body">
+              <div class="home-path__copy">
+                <h3 id="home-library-title">The Library</h3>
+                <span class="home-path__tagline">Historical Sources <span aria-hidden="true">·</span> Academic Research <span aria-hidden="true">·</span> Cultural Context</span>
+              </div>
+              <span class="home-path__arrow" aria-hidden="true">→</span>
+            </div>
+            <EngravedFrame />
+          </a>
         </article>
         <article class="home-path">
-          <div class="home-path__art home-path__art--grimoire" aria-hidden="true">
-            <svg class="home-path__image" viewBox="667 800 666 256" preserveAspectRatio="xMidYMid slice" focusable="false" aria-hidden="true">
-              <image href="/images/homepage/mystagogia-editorial-atlas.avif" x="0" y="0" width="2000" height="1056" />
-            </svg>
-          </div>
-          <div class="home-path__body">
-            <p class="home-eyebrow">Methods &amp; observations</p>
-            <h3>The Grimoire</h3>
-            <p>
-              Original methods, experiments, adaptations, and firsthand observations.
-              Examine the work of practice without confusing experience with proof.
-            </p>
-            <a class="home-text-link" href="/grimoire/">Explore the Grimoire <span aria-hidden="true">→</span></a>
-          </div>
+          <a class="home-path__link" href="/grimoire/" aria-labelledby="home-grimoire-title">
+            <span class="home-path__art home-path__art--grimoire" aria-hidden="true">
+              <svg class="home-path__image" viewBox="667 800 666 256" preserveAspectRatio="xMidYMid slice" focusable="false" aria-hidden="true">
+                <image href="/images/homepage/mystagogia-editorial-atlas.avif" x="0" y="0" width="2000" height="1056" />
+              </svg>
+            </span>
+            <div class="home-path__body">
+              <div class="home-path__copy">
+                <h3 id="home-grimoire-title">The Grimoire</h3>
+                <span class="home-path__tagline">Ritual Practice <span aria-hidden="true">·</span> Techniques <span aria-hidden="true">·</span> Personal Work</span>
+              </div>
+              <span class="home-path__arrow" aria-hidden="true">→</span>
+            </div>
+            <EngravedFrame />
+          </a>
         </article>
       </div>
     </Container>
@@ -160,6 +161,7 @@ const launched = featuredLibrary.some((article) => !article.preview) ||
         <svg class="home-practice__image" viewBox="1333 800 667 256" preserveAspectRatio="xMidYMid slice" focusable="false" aria-hidden="true">
               <image href="/images/homepage/mystagogia-editorial-atlas.avif" x="0" y="0" width="2000" height="1056" />
             </svg>
+        <EngravedFrame />
       </div>
       <div class="home-practice__copy">
         <p class="home-eyebrow">From the Grimoire</p>

@@ -112,7 +112,9 @@ console.log("PASS: three Greek-deity samples visible, clearly temporary and excl
 
 // Prompt 25: honest homepage in the absence of any curated feature IDs.
 const homepage = fs.readFileSync("dist/index.html", "utf8");
-assert.ok(homepage.includes('id="home-title"') && homepage.includes("The Study and Practice of Hidden Arts"));
+assert.ok(homepage.includes('id="home-title"') && homepage.includes("Practical Wisdom") &&
+  homepage.includes("Living Tradition") && homepage.includes("Explore the crossroads of history"),
+  "Homepage hero uses the approved mockup wording");
 assert.equal((homepage.match(/<h1\b/g) ?? []).length, 1, "Homepage has a single H1");
 for (const id of ["home-paths-heading", "home-research-heading", "home-practice-heading", "home-newsletter-heading"]) {
   assert.ok(homepage.includes('id="' + id + '"'), "Homepage section exists: " + id);
@@ -134,13 +136,30 @@ const heroLinks = [...homepage.matchAll(/<a class="home-button" href="(\/(?:libr
 assert.deepEqual(heroLinks.map((link) => link[1]), ["/library/", "/grimoire/"],
   "Ornate hero buttons are real links to the two published hubs");
 for (const [, href, body] of heroLinks) {
-  assert.equal((body.match(/class="home-button__corner /g) ?? []).length, 4,
-    "Every engraved button has four decorative corner details");
+  assert.equal((body.match(/class="engraved-frame__corner /g) ?? []).length, 4,
+    "Every hero link shares the approved ornate four-corner engraved frame");
   assert.ok(body.includes('class="home-button__icon"') && body.includes('aria-hidden="true"'),
     "Decorative book or leaf artwork is hidden from assistive technology");
   assert.ok(body.includes('class="home-button__label"') &&
     body.includes('class="home-button__arrow"'), "Button label and arrow are readable HTML");
 }
+const gatewayLinks = [...homepage.matchAll(/<a class="home-path__link" href="(\/(?:library|grimoire)\/)"[\s\S]*?<\/a>/g)];
+assert.deepEqual(gatewayLinks.map((link) => link[1]), ["/library/", "/grimoire/"],
+  "Each gateway image is a complete accessible link to its live archive");
+for (const [, , body] of gatewayLinks) {
+  assert.equal((body.match(/class="engraved-frame__corner /g) ?? []).length, 4,
+    "Both image panels have four engraved gold corner ornaments");
+  assert.ok(body.includes("home-path__tagline") && body.includes("home-path__arrow"),
+    "Image panel titles and labels overlay the picture rather than a plain card");
+}
+for (const term of ["Historical Sources", "Academic Research", "Cultural Context",
+  "Ritual Practice", "Techniques", "Personal Work"]) {
+  assert.ok(homepage.includes(term), "Gateway descriptions match approved artwork: " + term);
+}
+assert.equal((homepage.match(/class="engraved-frame"/g) ?? []).length, 5,
+  "Both hero links, both editorial image panels and the spotlight share etched frame");
+assert.ok(!homepage.includes('class="home-path__body"><p'),
+  "No detached parchment body beneath gateway artwork");
 console.log("PASS: ornate hero CTA framing, real destinations, accessible icons and text");
 console.log("PASS: Prompt 25 homepage gateway, intentional empty-state, newsletter and noindex");
 

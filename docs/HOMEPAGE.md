@@ -33,3 +33,7 @@ The former note that mockup-equivalent imagery was still absent is superseded by
 ## Image fidelity fix (October 28, 2026)
 
 The initial image atlas was inadvertently overcompressed to 28 KB and downsampled to 1400 × 739 pixels; magnifying it into full-bleed sections visibly damaged engraving detail. Replaced it with the same approved artwork arranged at 2000 × 1056 pixels with quality-78 AVIF compression (approximately 476 KB). Its full-width hero strip is 2000 × 800 and the three remaining image strips are 667 × 256, 666 × 256, and 667 × 256 pixels. All four SVG crop coordinates and the native source size have been adjusted; layout and live ornate buttons remain intact. The homepage regression now rejects an implausibly tiny atlas and asserts the high-resolution crop geometry. The change addresses compression and scaling blur; it does not pretend to add detail beyond the original generated source.
+
+## Engraved cards and exact mockup editorial wording
+
+The two gateway panels are now single, image-backed navigation links with an original gold-etched double rule and four vector filigree corners. The shared `EngravedFrame` foundation component is also used on both hero buttons and the Grimoire artwork. Card headings and the Library/Grimoire taglines are HTML overlays on the illustrations, following the latest approved black-and-gold gateway mockup rather than separate pale cards. The hero's research/practice tagline and its introductory prose now match the later approved mockup. No image, commerce or article data was replaced.

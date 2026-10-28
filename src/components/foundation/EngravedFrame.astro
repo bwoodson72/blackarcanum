@@ -1,0 +1,27 @@
+---
+/**
+ * Shared antique-gold etched frame: double rule and four vector corner ornaments.
+ * The frame is decorative only; interactive text remains real semantic HTML.
+ */
+---
+<span class="engraved-frame" aria-hidden="true">
+  {(["tl", "tr", "br", "bl"] as const).map((corner) => (
+    <svg
+      class:list={["engraved-frame__corner", "engraved-frame__corner--" + corner]}
+      viewBox="0 0 52 52"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.15"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <path d="M1 50V1H50M6 40V6H40" />
+      <path d="M1.8 26 26 1.8M2 14Q13 13 14 2M2 36Q13 34 14 24Q24 14 36 2" />
+      <path d="M13 13 20 20 13 27 6 20Z" />
+      <path d="M24 6c-1 8-4 12-10 14M6 24c8-1 12-4 14-10" />
+      <circle cx="13" cy="13" r="2.5" />
+    </svg>
+  ))}
+</span>
