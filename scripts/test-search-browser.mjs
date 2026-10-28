@@ -52,6 +52,8 @@ const snap=()=>evaluate(`(() => ({
   links:[...document.querySelectorAll(".search-result__title")].map(a=>({
     href:a.getAttribute("href"),label:a.textContent.trim()
   })),
+  excerpts:[...document.querySelectorAll(".search-result__excerpt")]
+    .map(p=>p.textContent.trim()),
   groups:[...document.querySelectorAll(".search-group h3")].map(h=>h.textContent.trim()),
   scope:document.querySelector('input[name="scope"]:checked')?.value,
   input:document.querySelector("[data-search-input]")?.value,
@@ -165,16 +167,24 @@ try{
     assert.equal(result.scope,"grimoire");
     assert.deepEqual(result.links.map(x=>x.href),["/grimoire/qa-pagefind-grimoire/"]);
 
-    await visit("/search/?q=ForbiddenDraftWord");
-    result=await settled();
-    assert.equal(result.links.length,0);
-    assert.ok(result.status.includes("No matching"),"Draft phrase never returns");
-    await visit("/search/?q=ForbiddenReviewWord");
-    result=await settled();
-    assert.equal(result.links.length,0);
-    await visit("/search/?q=ForbiddenPreviewWord");
-    result=await settled();
-    assert.equal(result.links.length,0);
+    // Pagefind may fuzzy-match a term absent from the corpus. The security
+    // contract is NO unpublished URL/text, not necessarily zero approximate
+    // matches from the two approved published fixtures.
+    const publishedUrls=new Set([
+      "/library/qa-pagefind-library/",
+      "/grimoire/qa-pagefind-grimoire/",
+    ]);
+    for (const hiddenPhrase of [
+      "ForbiddenDraftWord", "ForbiddenReviewWord", "ForbiddenPreviewWord",
+    ]) {
+      await visit("/search/?q="+hiddenPhrase);
+      result=await settled();
+      assert.equal(result.input,hiddenPhrase,"Query URL restored into search input");
+      assert.ok(result.links.every(x=>publishedUrls.has(x.href)),
+        "Search must never surface a draft/review/preview route: "+hiddenPhrase);
+      assert.ok(!result.excerpts.some(x=>/ForbiddenDraftWord|ForbiddenReviewWord|ForbiddenPreviewWord/.test(x)),
+        "Search snippets must never reveal excluded content: "+hiddenPhrase);
+    }
     // URL encoding survives deep links and refresh.
     await visit("/search/?q=Moonpetal%20vellum&scope=grimoire");
     result=await settled();
