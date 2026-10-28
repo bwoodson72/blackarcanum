@@ -16,6 +16,7 @@ on:
       - "src/lib/editorial-public.ts"
       - "src/lib/editorial-related-public.ts"
       - "scripts/test-search-browser.mjs"
+      - "src/scripts/search-page.ts"
   workflow_dispatch:
     inputs:
       suite:

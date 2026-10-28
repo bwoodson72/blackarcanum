@@ -181,6 +181,13 @@ if (root) {
     const radio = form.querySelector<HTMLInputElement>('input[name="scope"][value="' + scope + '"]');
     if (radio) radio.checked = true;
   }
+  // Explicit Enter support avoids browser-specific implicit-submit behavior
+  // for search inputs. Route through the same validated native form handler.
+  input.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.isComposing) return;
+    event.preventDefault();
+    form.requestSubmit();
+  });
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     if (inputTimer !== undefined) clearTimeout(inputTimer);

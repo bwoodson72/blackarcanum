@@ -67,3 +67,5 @@ To undo a problematic application change, revert its commit on `master` and veri
 
 
 **Deep run 40782109663 (2026-10-28):** All article-route and 375/768/1024/1280/1440 responsive checks passed; Pagefind published/hidden fixture indexing also passed. The run then failed in the search browser test because the Enter-key assertion inspected the previous completed result before the submitted URL had updated. The acceptance script now waits for URL state and excludes initial SSR status from its completion predicate. **The full suite must be rerun at the new SHA; this note does not claim search is cleared.**
+
+**Deep run 40782465089:** Five-width article responsiveness and published/draft Pagefind index filtering again passed, but the stricter test showed Enter did not submit on the headless Chromium test input. This is treated as a functional keyboard acceptance gap. The search client now explicitly routes non-composing Enter keydowns to `form.requestSubmit()`, and the browser test sends a full native CDP key event sequence. Full `[release-qa]` regression is required on this next SHA before declaring keyboard acceptance complete.

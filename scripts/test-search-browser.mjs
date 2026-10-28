@@ -133,8 +133,16 @@ try{
       el.value="Moonpetal";
       el.focus();
     })()`);
-    await send("Input.dispatchKeyEvent",{type:"keyDown",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
-    await send("Input.dispatchKeyEvent",{type:"keyUp",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
+    await send("Input.dispatchKeyEvent",{
+      type:"rawKeyDown",key:"Enter",code:"Enter",windowsVirtualKeyCode:13,nativeVirtualKeyCode:13,
+    });
+    await send("Input.dispatchKeyEvent",{
+      type:"char",key:"Enter",text:"\r",unmodifiedText:"\r",
+      windowsVirtualKeyCode:13,nativeVirtualKeyCode:13,
+    });
+    await send("Input.dispatchKeyEvent",{
+      type:"keyUp",key:"Enter",code:"Enter",windowsVirtualKeyCode:13,nativeVirtualKeyCode:13,
+    });
     // A prior completed query may still be visible when Chrome has only
     // dispatched the key event. Wait for the submitted URL before judging
     // the final result, rather than mistaking stale results for a failed Enter.
