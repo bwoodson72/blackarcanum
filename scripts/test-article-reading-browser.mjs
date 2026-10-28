@@ -161,7 +161,7 @@ try {
     await waitFor(async () => evaluate(
       'document.readyState === "complete" && !!document.querySelector("#home-title")'
     ), "homepage at " + width);
-    const snapshot = await evaluate('(() => { const cards = [...document.querySelectorAll(".home-path")]; const grid = document.querySelector(".home-paths__grid"); return { width: innerWidth, scrollWidth: document.documentElement.scrollWidth, h1: document.querySelectorAll("main h1").length, gatewayCount: cards.length, gatewayColumns: getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length, cards: cards.map((x) => { const r=x.getBoundingClientRect(); return { left:r.left,right:r.right,width:r.width }; }), links: [...document.querySelectorAll("main a[href]")].map((x) => ({ href:x.getAttribute("href"), height:x.getBoundingClientRect().height })), featureCards: document.querySelectorAll(".home-research .article-card").length, featureEmpty: !!document.querySelector("[data-home-features-empty]"), newsletterForm: !!document.querySelector(".home-newsletter form") }; })()');
+    const snapshot = await evaluate('(() => { const cards = [...document.querySelectorAll(".home-path")]; const grid = document.querySelector(".home-paths__grid"); return { width: innerWidth, scrollWidth: document.documentElement.scrollWidth, h1: document.querySelectorAll("main h1").length, gatewayCount: cards.length, gatewayColumns: getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length, cards: cards.map((x) => { const r=x.getBoundingClientRect(); return { left:r.left,right:r.right,width:r.width }; }), links: [...document.querySelectorAll("main a[href]")].map((x) => ({ href:x.getAttribute("href"), height:x.getBoundingClientRect().height })), featureCards: document.querySelectorAll(".home-research .article-card").length, featureEmpty: !!document.querySelector("[data-home-features-empty]"), newsletterForm: !!document.querySelector(".home-newsletter form"), newsletterInitiallyHidden: document.querySelector(".home-newsletter form")?.hidden }; })()');
     assert.equal(snapshot.width, width);
     assert.ok(snapshot.scrollWidth <= width + 1, "Homepage must not overflow at " + width);
     assert.equal(snapshot.h1, 1);
@@ -169,7 +169,8 @@ try {
     assert.equal(snapshot.gatewayColumns, width >= 768 ? 2 : 1);
     assert.equal(snapshot.featureCards, 0, "No auto-curated sample articles");
     assert.equal(snapshot.featureEmpty, true);
-    assert.equal(snapshot.newsletterForm, false, "No unimplemented signup");
+    assert.equal(snapshot.newsletterForm, true, "Real consent-aware signup is rendered");
+    assert.equal(snapshot.newsletterInitiallyHidden, true, "Form remains disabled until verified provider config");
     for (const rect of snapshot.cards) {
       assert.ok(rect.width > 0 && rect.left >= -1 && rect.right <= width + 1,
         "Gateway card cannot overflow viewport");

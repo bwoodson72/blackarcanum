@@ -1,0 +1,79 @@
+---
+/** Reusable consent-aware Kit signup. Disabled until server configuration is verified. */
+---
+<div class="newsletter-signup" data-newsletter-signup>
+  <p class="home-newsletter__status" role="status" aria-live="polite" data-newsletter-status>
+    Newsletter in preparation
+  </p>
+  <form class="newsletter-form" data-newsletter-form hidden method="post" action="/api/newsletter">
+    <label class="newsletter-form__label" for="newsletter-email">Email address</label>
+    <div class="newsletter-form__row">
+      <input id="newsletter-email" name="email" type="email" required maxlength="254"
+        autocomplete="email" placeholder="you@example.com" aria-describedby="newsletter-consent" />
+      <button type="submit">Subscribe <span aria-hidden="true">→</span></button>
+    </div>
+    <label class="newsletter-form__consent" id="newsletter-consent">
+      <input type="checkbox" name="consent" value="yes" required />
+      <span>Yes, send me email updates from Mystagogia about new research and writing. I can unsubscribe at any time.</span>
+    </label>
+    <div class="newsletter-form__honeypot" aria-hidden="true">
+      <label for="newsletter-website">Leave this blank</label>
+      <input id="newsletter-website" type="text" name="website" tabindex="-1" autocomplete="off" />
+    </div>
+  </form>
+  <p class="newsletter-signup__help">No unsolicited messages. You will be asked to confirm your email when subscriptions open.</p>
+</div>
+<script>
+  const signup = document.querySelector<HTMLElement>("[data-newsletter-signup]");
+  if (signup) {
+    const form = signup.querySelector<HTMLFormElement>("[data-newsletter-form]")!;
+    const status = signup.querySelector<HTMLElement>("[data-newsletter-status]")!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const input = form.querySelector<HTMLInputElement>('input[name="email"]')!;
+    const consent = form.querySelector<HTMLInputElement>('input[name="consent"]')!;
+    const honeypot = form.querySelector<HTMLInputElement>('input[name="website"]')!;
+    const endpoint = "/api/newsletter";
+    async function checkAvailable() {
+      try {
+        const response = await fetch(endpoint, { cache: "no-store" });
+        if (!response.ok) return;
+        const data: { available?: boolean } = await response.json();
+        if (data.available === true) {
+          form.hidden = false;
+          status.textContent = "Subscribe to Mystagogia";
+        }
+      } catch {
+        // Leave the truthful disabled state visible.
+      }
+    }
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      button.disabled = true;
+      status.textContent = "Submitting your request…";
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: input.value, consent: consent.checked, website: honeypot.value,
+          }),
+        });
+        if (response.status === 202 && honeypot.value === "") {
+          status.textContent = "Signup request received. Please check your inbox for a confirmation email.";
+          form.reset();
+          form.hidden = true;
+        } else if (response.status === 429) {
+          status.textContent = "Too many signup attempts. Please try again later.";
+        } else {
+          status.textContent = response.status === 400
+            ? "Please enter a valid email address and agree to receive updates."
+            : "Signup could not be completed. Please try again.";
+        }
+      } catch {
+        status.textContent = "Signup could not be completed. Please try again.";
+      } finally { button.disabled = false; }
+    });
+    void checkAvailable();
+  }
+</script>

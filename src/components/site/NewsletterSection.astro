@@ -1,0 +1,16 @@
+---
+import Container from "../foundation/Container.astro";
+import NewsletterForm from "./NewsletterForm.astro";
+import "../../styles/newsletter.css";
+---
+<section class="home-newsletter" aria-labelledby="home-newsletter-heading">
+  <Container width="wide" class="home-newsletter__inner">
+    <div class="home-newsletter__symbol" aria-hidden="true">✦</div>
+    <div class="home-newsletter__copy">
+      <p class="home-eyebrow">Dispatches from the study</p>
+      <h2 id="home-newsletter-heading">Letters from Mystagogia</h2>
+      <p>Notes on research, practice, and new writing, whenever there is something worth sharing.</p>
+    </div>
+    <NewsletterForm />
+  </Container>
+</section>

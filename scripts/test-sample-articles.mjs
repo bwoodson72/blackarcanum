@@ -128,8 +128,13 @@ assert.ok(!homepage.includes('class="article-card'),
   "Uncurated layout previews must not appear as featured research");
 assert.ok(!homepage.includes('href="/shop/"') && !homepage.includes('href="/newsletter/"'),
   "Unimplemented Shop and newsletter routes must not be exposed");
-assert.ok(!/<form\b/.test(homepage), "No pretend subscription form");
-assert.ok(homepage.includes("Newsletter in preparation"), "Newsletter slot is honest");
+assert.ok(homepage.includes('data-newsletter-form') && homepage.includes('data-newsletter-form hidden'),
+  "Real Kit form is progressively enabled only after server config readiness");
+assert.ok(homepage.includes('name="consent"') && homepage.includes('type="checkbox"'),
+  "Explicit opt-in consent is required");
+assert.ok(homepage.includes('name="email"') && homepage.includes('type="email"'),
+  "Signup uses a labeled native email input");
+assert.ok(homepage.includes("Newsletter in preparation"), "Unavailable newsletter state remains honest");
 assert.ok(homepage.includes('name="robots" content="noindex, nofollow"'),
   "Homepage remains noindex until real editorial features are curated");
 const heroLinks = [...homepage.matchAll(/<a class="hero-action" href="(\/(?:library|grimoire)\/)">([\s\S]*?)<\/a>/g)];

@@ -5,6 +5,7 @@ import Ornament from "../components/foundation/Ornament.astro";
 import PageHero from "../components/site/PageHero.astro";
 import EngravedFrame from "../components/foundation/EngravedFrame.astro";
 import ArticleGrid from "../components/editorial/ArticleGrid.astro";
+import NewsletterSection from "../components/site/NewsletterSection.astro";
 import { checkEditorialBuild } from "../lib/editorial-build-qa";
 import { getPublishedLibraryEntries, getPublishedGrimoireEntry } from "../lib/editorial-public";
 import { toPublishedArticle } from "../lib/editorial-presentation";
@@ -167,18 +168,5 @@ const launched = featuredLibrary.some((article) => !article.preview) ||
     </Container>
   </section>
 
-  <section class="home-newsletter" aria-labelledby="home-newsletter-heading">
-    <Container width="wide" class="home-newsletter__inner">
-      <div class="home-newsletter__symbol" aria-hidden="true">✦</div>
-      <div class="home-newsletter__copy">
-        <p class="home-eyebrow">Dispatches from the study</p>
-        <h2 id="home-newsletter-heading">Letters from Mystagogia</h2>
-        <p>
-          Future notes on research, practice, and new writing.
-          Subscriptions will open when the newsletter has a working signup.
-        </p>
-      </div>
-      <p class="home-newsletter__status">Newsletter in preparation</p>
-    </Container>
-  </section>
+  <NewsletterSection />
 </BaseLayout>

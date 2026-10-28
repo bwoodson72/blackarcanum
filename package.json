@@ -13,7 +13,7 @@
     "typecheck": "astro check",
     "test:content": "node --experimental-strip-types scripts/test-editorial-schema.mjs",
     "test:editorial": "node --experimental-strip-types scripts/test-editorial-qa.mjs",
-    "qa:units": "node --experimental-strip-types scripts/run-unit-tests.mjs",
+    "qa:units": "node --experimental-strip-types scripts/run-unit-tests.mjs && npm run test:newsletter",
     "qa:content": "npm run qa:units && npm run build && npm run test:samples",
     "qa:fast": "npm run qa:content && npm run typecheck && npm audit --audit-level=high",
     "test:grimoire": "node --experimental-strip-types scripts/test-grimoire-archive.mjs",
@@ -39,7 +39,8 @@
     "test:archive": "node --experimental-strip-types scripts/test-editorial-archive.mjs",
     "test:presentation": "node --experimental-strip-types scripts/test-editorial-presentation.mjs",
     "test:pagefind-build": "node scripts/test-pagefind-build.mjs",
-    "test:search-browser": "node scripts/test-search-browser.mjs"
+    "test:search-browser": "node scripts/test-search-browser.mjs",
+    "test:newsletter": "node scripts/test-newsletter.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.5",

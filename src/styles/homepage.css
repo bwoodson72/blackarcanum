@@ -1,5 +1,5 @@
 /* Homepage visual system — approved layout, original CSS-only ornamentation. */
-.home-paths, .home-research, .home-practice, .home-newsletter {
+.home-paths, .home-research, .home-practice {
   width: 100%;
   min-width: 0;
 }
@@ -170,39 +170,16 @@
 .home-practice__aside { align-self: stretch; padding-block: 0.4rem; border-top: 1px solid var(--color-antique-gold); }
 .home-practice__aside p:not(.home-eyebrow) { margin-top: 0.8rem; font-size: 1rem; }
 
-.home-newsletter { background: var(--color-parchment); padding-block: clamp(2rem, 4vw, 3.5rem); }
-.home-newsletter__inner { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: clamp(1rem, 3vw, 2.25rem); }
-.home-newsletter__symbol { display: grid; place-items: center; width: clamp(3.5rem, 7vw, 5rem); aspect-ratio: 1; border: 1px solid var(--color-sage-ink); border-radius: 50%; color: var(--color-sage-ink); font-size: 2rem; }
-.home-newsletter .home-eyebrow { color: var(--color-sage-ink); }
-.home-newsletter h2 { margin: 0.3rem 0 0.6rem; font-size: clamp(1.6rem, 1.4rem + 1vw, 2.3rem); color: var(--color-charcoal); }
-.home-newsletter__copy > p:not(.home-eyebrow) { margin: 0; max-width: 65ch; color: var(--color-charcoal); font-family: var(--font-reading); font-size: var(--text-body); line-height: 1.55; }
-.home-newsletter__status {
-  grid-column: 2;
-  justify-self: start;
-  margin: 0;
-  padding: 0.65rem 0.95rem;
-  border: 1px solid var(--color-border-paper);
-  background: var(--color-aged-paper);
-  color: var(--color-charcoal);
-  font-family: var(--font-interface);
-  font-size: var(--text-ui);
-  font-weight: 650;
-}
 @media (min-width: 768px) {
   .home-paths__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 1024px) {
    .home-practice__inner { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) minmax(0, 0.65fr); }
   .home-practice__aside { border-top: 0; border-left: 1px solid var(--color-antique-gold); padding-left: clamp(1.2rem, 2vw, 2rem); }
-  .home-newsletter__inner { grid-template-columns: auto minmax(0, 1fr) auto; }
-  .home-newsletter__status { grid-column: 3; }
 }
 @media (max-width: 639px) {
   .home-section-heading--center .ornament { display: none; }
   .home-research__empty { grid-template-columns: minmax(0, 1fr); }
   .home-research__mark { display: none; }
   .home-research__empty > .home-text-link { grid-column: 1; }
-  .home-newsletter__inner { grid-template-columns: minmax(0, 1fr); }
-  .home-newsletter__symbol { display: none; }
-  .home-newsletter__status { grid-column: 1; }
 }
