@@ -315,4 +315,55 @@ export const sources: readonly SourceRecord[] = [
     stableUrl: "https://academic.oup.com/edited-volume/61673/chapter-abstract/549703726",
     kind: "scholarly",
   },
+  {
+    "id": "callimachus-hymn-demeter",
+    "title": "Hymn 6: To Demeter",
+    "creator": "Callimachus",
+    "translator": "A. W. Mair",
+    "period": "Third century BCE",
+    "stableUrl": "https://www.theoi.com/Text/CallimachusHymns2.html",
+    "kind": "primary"
+  },
+  {
+    "id": "karoglou-mystery-cults",
+    "title": "Mystery Cults in the Greek and Roman World",
+    "creator": "Kiki Karoglou",
+    "publisher": "The Metropolitan Museum of Art, Heilbrunn Timeline of Art History",
+    "period": "2013",
+    "stableUrl": "https://www.metmuseum.org/essays/mystery-cults-in-the-greek-and-roman-world",
+    "kind": "scholarly"
+  },
+  {
+    "id": "oxford-thesmophoria",
+    "title": "Thesmophoria",
+    "creator": "Nils Martin Persson Nilsson, Michael H. Jameson, and Kevin Clinton",
+    "publisher": "Oxford Classical Dictionary",
+    "stableUrl": "https://doi.org/10.1093/acrefore/9780199381135.013.6391",
+    "kind": "scholarly"
+  },
+  {
+    "id": "eleusis-first-fruits-decree",
+    "title": "On the first-fruits at Eleusis (I Eleusis 28a)",
+    "translator": "Stephen Lambert and Robin Osborne",
+    "period": "Fifth century BCE; conventionally c. 435 BCE, date uncertain",
+    "archive": "Attic Inscriptions Online",
+    "stableUrl": "https://www.atticinscriptions.com/inscription/IEleus/28a",
+    "kind": "primary"
+  },
+  {
+    "id": "piraeus-thesmophorion-decree",
+    "title": "Decree of deme Piraeus concerning the Thesmophorion (IG II² 1177)",
+    "period": "Mid-fourth century BCE",
+    "archive": "Attic Inscriptions Online",
+    "stableUrl": "https://www.atticinscriptions.com/inscription/IGII2/1177",
+    "kind": "primary"
+  },
+  {
+    "id": "met-eleusinian-relief",
+    "title": "Ten marble fragments of the Great Eleusinian Relief, object 14.130.9",
+    "archive": "The Metropolitan Museum of Art",
+    "period": "Roman, c. 27 BCE–14 CE",
+    "stableUrl": "https://www.metmuseum.org/art/collection/search/248899",
+    "kind": "scholarly"
+  },
 ];

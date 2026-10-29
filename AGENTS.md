@@ -7,7 +7,8 @@ This repository is the **Astro frontend** for Mystagogia (GitHub repository name
 2. [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) — concise reference for tokens, type, responsive design and images.
 3. [docs/IMPLEMENTATION_PROMPTS.md](docs/IMPLEMENTATION_PROMPTS.md) — **42** sequential tasks (v1.2, including Prompt 06A); only the task explicitly authorized now may be executed.
 4. [docs/design-references/README.md](docs/design-references/README.md) — approved visual references and production-art restrictions. Inspect relevant image previews for visual tasks.
-5. Read the existing project configuration and affected source files before edits.
+5. **Before researching, outlining, writing, editing, or preparing assets for articles, every AI agent must read both [docs/EDITORIAL_STYLE.md](docs/EDITORIAL_STYLE.md) and [docs/EDITORIAL_WORKFLOW.md](docs/EDITORIAL_WORKFLOW.md).** Apply the style standard to chat drafts as well as repository content, and follow the workflow for sources, MDX, imagery, validation, and publication. Existing articles are structural references, not permission to repeat their prose weaknesses. These documents grant no authorization to create content, download or generate images, publish, commit, push, or deploy; follow the current explicit assignment.
+6. Read the existing project configuration and affected source files before edits.
 
 **Execution rule:** Work on **only one explicitly assigned numbered prompt at a time**. The existence of later prompts is not permission to execute them. Do not proceed automatically, deploy, publish content, purchase services, create artwork, or enable payments without express authorization. After the assigned prompt, run relevant checks, summarize changes/results/limitations, and **STOP** for review.
 

@@ -43,6 +43,7 @@
   --spacing-article-gap: clamp(1.5rem, 3vw, 3rem);
 
   --container-reading: 45rem;
+  --container-reference-inline: 20rem;
   --container-wide: 80rem;
   --container-toc: 11.875rem;
   --container-aside: 15rem;

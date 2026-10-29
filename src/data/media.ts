@@ -285,4 +285,59 @@ export const media: readonly MediaRecord[] = [
       evidenceNote: "The Commons page advises contacting the museum regarding its own conditions for commercial photography; photograph is offered by its creator under CC BY-SA 4.0.",
     },
   },
+  {
+    "id": "demeter-wheat-torch-sunset-hero",
+    "sourceFile": "src/assets/media/editorial/greek-deities/demeter-wheat-and-torch-at-sunset.webp",
+    "role": "editorial",
+    "origin": "modern-artwork",
+    "alt": "Demeter wearing a veil and draped Greek clothing, holding a burning torch and ripe wheat above cultivated fields at sunset.",
+    "decorative": false,
+    "rights": {
+      "status": "cleared",
+      "basis": "owned",
+      "license": "AI-generated editorial artwork created for Mystagogia using the built-in image-generation capability; approved for local article incorporation by the owner.",
+      "creditLine": "Mystagogia",
+      "evidenceNote": "Concept approved and generation requested in this chat on 2026-10-29; owner subsequently requested the article and images be placed in the local repository. Generated source: exec-e7062e9d-21a6-4c87-acce-8075f3fe4597.png. No third-party reference image was supplied to generation."
+    }
+  },
+  {
+    "id": "demeter-knidos-british-museum",
+    "sourceFile": "src/assets/media/reference/greek-deities/demeter-knidos-british-museum.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Marble statue of a veiled Demeter seated on a throne, with draped clothing and missing lower arms, displayed in the British Museum.",
+    "decorative": false,
+    "caption": "Demeter of Knidos, c. 350–330 BCE. Marble statue from the sanctuary of Demeter at Knidos. British Museum, inventory 1859,1226.26. Photograph: Raymond Ellis, 2011; CC0. Resized and converted to WebP.",
+    "creator": "Raymond Ellis (photographer)",
+    "date": "2011-07-05",
+    "period": "Greek, c. 350–330 BCE",
+    "repository": "British Museum, inventory 1859,1226.26",
+    "sourceUrl": "https://www.britishmuseum.org/collection/object/G_1859-1226-26",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "CC0 1.0 Universal Public Domain Dedication applied to this photograph by Raymond.ellis on Wikimedia Commons; resized and converted to WebP.",
+      "creditLine": "Photo: Raymond Ellis · CC0 1.0",
+      "evidenceUrl": "https://commons.wikimedia.org/wiki/File:Marble_Statue_of_Demeter.jpg"
+    }
+  },
+  {
+    "id": "demeter-eleusinian-relief-met",
+    "sourceFile": "src/assets/media/reference/greek-deities/demeter-eleusinian-relief-met.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Eleusinian relief showing Demeter with a scepter on the left, a young figure generally identified as Triptolemos in the center, and Persephone on the right.",
+    "decorative": false,
+    "caption": "Demeter, Persephone, and a youth generally identified as Triptolemos. Ten Roman marble fragments of the Great Eleusinian Relief, c. 27 BCE–14 CE, embedded in a cast of the surviving Greek original. The Metropolitan Museum of Art, Rogers Fund, 1914, object 14.130.9. Open Access image; resized and converted to WebP.",
+    "period": "Roman, c. 27 BCE–14 CE, after a fifth-century BCE Greek original",
+    "repository": "The Metropolitan Museum of Art, object 14.130.9",
+    "sourceUrl": "https://www.metmuseum.org/art/collection/search/248899",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "The object’s image is marked Public Domain by The Metropolitan Museum of Art and made available under its CC0 Open Access policy; resized and converted to WebP.",
+      "creditLine": "The Metropolitan Museum of Art · Rogers Fund, 1914 · Open Access (CC0)",
+      "evidenceUrl": "https://www.metmuseum.org/policies/image-resources"
+    }
+  },
 ];

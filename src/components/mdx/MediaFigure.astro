@@ -35,7 +35,9 @@ if (kind === "reference" && !captionText?.trim()) {
 }
 const imageSizes = sizes ?? (kind === "wide"
   ? "(min-width: 1440px) 720px, (min-width: 1024px) min(960px, calc(100vw - 40px)), (min-width: 760px) 720px, calc(100vw - 40px)"
-  : undefined);
+  : kind === "reference"
+    ? "(max-width: 359px) calc(100vw - 40px), 320px"
+    : undefined);
 const provenance = [
   record.creator,
   record.date || record.period,
@@ -124,6 +126,19 @@ const originalAsset = lightbox ? resolveMediaAsset(record) : undefined;
     background: var(--color-aged-paper);
     overflow: hidden;
     break-inside: avoid;
+  }
+  /* Compact inline reference previews; the lightbox retains the full image. */
+  .mdx-figure--reference :global(.media-picture--reference) {
+    max-width: min(100%, var(--container-reference-inline));
+    margin-inline: auto;
+  }
+  .mdx-figure--reference :global(.media-picture--reference img) {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: var(--container-reference-inline);
+    margin-inline: auto;
+    object-fit: contain;
   }
   .mdx-figure__caption {
     display: flex;
