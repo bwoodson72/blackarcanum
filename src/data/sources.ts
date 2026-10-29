@@ -474,4 +474,35 @@ export const sources: readonly SourceRecord[] = [
     "stableUrl": "https://www.metmuseum.org/art/collection/search/252973",
     "kind": "scholarly"
   },
+  {
+    id: "foley-homeric-hymn-demeter",
+    title: "The Homeric Hymn to Demeter: Translation, Commentary, and Interpretive Essays",
+    creator: "Helene P. Foley",
+    publisher: "Princeton University Press, 1994",
+    stableUrl: "https://www.jstor.org/stable/j.ctt3fgxdk",
+    kind: "scholarly",
+  },
+  {
+    id: "eleusinian-first-fruits-decree",
+    title: "On the First-Fruits at Eleusis (IEleus 28a)",
+    period: "Fifth century BCE",
+    archive: "Attic Inscriptions Online",
+    stableUrl: "https://www.atticinscriptions.com/inscription/IEleus/28a",
+    kind: "primary",
+  },
+  {
+    id: "oxford-classical-dictionary-thesmophoria",
+    title: "Thesmophoria",
+    archive: "Oxford Classical Dictionary",
+    stableUrl: "https://academic.oup.com/edited-volume/61673/chapter-abstract/548213840",
+    kind: "scholarly",
+  },
+  {
+    id: "hamburg-miletus-demeter",
+    title: "Temple of Demeter",
+    creator: "Sandra Golling",
+    archive: "University of Hamburg, Miletus Excavation",
+    stableUrl: "https://www.miletgrabung.uni-hamburg.de/en/milet-tour/tour-humeitepe/demetertempel.html",
+    kind: "scholarly",
+  },
 ];
