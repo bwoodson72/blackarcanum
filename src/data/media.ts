@@ -395,4 +395,25 @@ export const media: readonly MediaRecord[] = [
       "evidenceNote": "Museum API object 394307, accession 2023.103, reports share_license_status: CC0."
     }
   },
+  {
+    id: "demeter-of-knidos-british-museum",
+    sourceFile: "src/assets/media/reference/greek-deities/demeter-of-knidos-british-museum.webp",
+    role: "reference",
+    origin: "historical-reproduction",
+    alt: "Marble statue of Demeter seated on a throne, excavated at Knidos and now in the British Museum.",
+    decorative: false,
+    caption: "Demeter of Knidos, seated marble statue from the Sanctuary of Demeter at Knidos, c. 350 BCE. British Museum, 1859,1226.26. Photograph: Raymond.ellis (CC0).",
+    creator: "Raymond.ellis (photographer)",
+    date: "2011-07-05",
+    period: "Late Classical Greek, c. 350 BCE",
+    repository: "British Museum; photograph via Wikimedia Commons",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Marble_Statue_of_Demeter.jpg",
+    rights: {
+      status: "cleared",
+      basis: "cc-license",
+      license: "Creative Commons CC0 1.0 Universal Public Domain Dedication; resized and converted to WebP.",
+      creditLine: "Photo: Raymond.ellis · CC0 1.0 · resized and converted to WebP",
+      evidenceUrl: "https://commons.wikimedia.org/wiki/File:Marble_Statue_of_Demeter.jpg",
+    },
+  },
 ];
