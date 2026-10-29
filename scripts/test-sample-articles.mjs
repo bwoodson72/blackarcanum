@@ -27,7 +27,9 @@ const expected = [
 const finished = [{ collection: "library", slug: "hekate-crossroads-protection",
   title: "Hekate: The Ancient Greek Goddess of Crossroads, Protection, and Magic" },
   { collection: "library", slug: "hermes-trade-trickery-safe-passage",
-    title: "Hermes: The Greek God of Trade, Trickery, and Safe Passage" }];
+    title: "Hermes: The Greek God of Trade, Trickery, and Safe Passage" },
+  { collection: "library", slug: "tyche-goddess-fortune-prosperity-fate",
+    title: "Tyche: The Greek Goddess of Fortune, Prosperity, and Fate" }];
 for (const collection of ["library", "grimoire"]) {
   const files = fs.readdirSync(path.join("src/content", collection))
     .filter((name) => name.endsWith(".mdx"));
@@ -88,11 +90,13 @@ for (const { collection, slug, title } of finished) {
     "Finished article is readable and has the published search marker");
   assert.ok(html.includes("The Metropolitan Museum of Art") &&
     (slug === "hekate-crossroads-protection" ? html.includes("Carole Raddato") :
-      html.includes("Sabouroff Painter") && html.includes("Hermes")),
+      (slug === "hermes-trade-trickery-safe-passage" ?
+      html.includes("Sabouroff Painter") && html.includes("Hermes") :
+      html.includes("Incituna") && html.includes("Tyche"))),
     "Historical reference image captions retain provenance and attribution");
   assert.ok(!html.includes("LAYOUT PREVIEW"), "Finished article must not present as a layout preview");
 }
-console.log("PASS: finished Hekate and Hermes Library studies, references, and publication gates");
+console.log("PASS: three finished Greek deity Library studies, references, and publication gates");
 
 // Homepage now contains a deliberately curated finished Library feature.
 const homepage = fs.readFileSync("dist/index.html", "utf8");
@@ -109,7 +113,7 @@ for (const href of ["/library/", "/grimoire/"]) {
 assert.ok(!homepage.includes("data-home-features-empty") &&
   finished.every(({ slug }) => homepage.includes('href="/library/' + slug + '/"')) &&
   homepage.includes('class="article-card'),
-  "Homepage shows both curated finished Library studies without an empty-state fallback");
+  "Homepage shows all curated finished Library studies without an empty-state fallback");
 for (const { collection, slug, title } of expected) {
   assert.ok(!homepage.includes('href="/' + collection + '/' + slug + '/"') &&
     !homepage.includes(title), "Layout previews must not be featured");
