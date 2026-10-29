@@ -120,5 +120,105 @@ export const sources: readonly SourceRecord[] = [
     "creator": "Jenny Strauss Clay",
     "publisher": "Cambridge University Press, 2003",
     "kind": "scholarly"
+  },  {
+    "id": "homeric-hymn-hermes",
+    "title": "Homeric Hymn to Hermes",
+    "period": "Archaic Greek poetry",
+    "stableUrl": "https://www.theoi.com/Text/HomericHymns2.html",
+    "kind": "primary"
+  },
+  {
+    "id": "hesiod-works-days",
+    "title": "Works and Days",
+    "creator": "Hesiod",
+    "period": "Archaic Greek poetry",
+    "stableUrl": "https://www.theoi.com/Text/HesiodWorksDays.html",
+    "kind": "primary"
+  },
+  {
+    "id": "homer-iliad",
+    "title": "Iliad",
+    "creator": "Homer",
+    "period": "Archaic Greek epic",
+    "kind": "primary"
+  },
+  {
+    "id": "homer-odyssey",
+    "title": "Odyssey",
+    "creator": "Homer",
+    "period": "Archaic Greek epic",
+    "stableUrl": "https://www.theoi.com/Text/HomerOdyssey10.html",
+    "kind": "primary"
+  },
+  {
+    "id": "homeric-hymn-pan",
+    "title": "Homeric Hymn to Pan",
+    "period": "Greek hymn tradition",
+    "stableUrl": "https://www.theoi.com/Text/HomericHymns3.html",
+    "kind": "primary"
+  },
+  {
+    "id": "apollodorus-library",
+    "title": "Bibliotheca (Library)",
+    "creator": "Pseudo-Apollodorus",
+    "period": "Ancient Greek mythography",
+    "kind": "primary"
+  },
+  {
+    "id": "thucydides-peloponnesian-war",
+    "title": "History of the Peloponnesian War",
+    "creator": "Thucydides",
+    "period": "Fifth century BCE",
+    "kind": "primary"
+  },
+  {
+    "id": "attic-inscription-igi3-776",
+    "title": "Dedication to Hermes by a herald (IG I³ 776)",
+    "period": "Early fifth century BCE",
+    "archive": "Attic Inscriptions Online",
+    "stableUrl": "https://www.atticinscriptions.com/inscription/IGI3/776",
+    "kind": "primary"
+  },
+  {
+    "id": "adak-klazomenai-hermes",
+    "title": "Zwei Weihungen aus Klazomenai",
+    "creator": "Mustafa Adak",
+    "publisher": "Philia, 2015",
+    "kind": "scholarly"
+  },
+  {
+    "id": "pgm-vii-hermes-thoth",
+    "title": "Greek Magical Papyri VII.664–685: Dream request to Hermes-Thoth",
+    "period": "Roman Egyptian ritual tradition",
+    "kind": "primary"
+  },
+  {
+    "id": "vergados-homeric-hymn-hermes",
+    "title": "The Homeric Hymn to Hermes: Introduction, Text and Commentary",
+    "creator": "Athanassios Vergados",
+    "publisher": "De Gruyter, 2013",
+    "kind": "scholarly"
+  },
+  {
+    "id": "miller-clay-tracking-hermes",
+    "title": "Tracking Hermes, Pursuing Mercury",
+    "creator": "John F. Miller and Jenny Strauss Clay (editors)",
+    "publisher": "Oxford University Press, 2019",
+    "stableUrl": "https://academic.oup.com/book/7176",
+    "kind": "scholarly"
+  },
+  {
+    "id": "fowden-egyptian-hermes",
+    "title": "The Egyptian Hermes: A Historical Approach to the Late Pagan Mind",
+    "creator": "Garth Fowden",
+    "publisher": "Cambridge University Press, 1986",
+    "kind": "scholarly"
+  },
+  {
+    "id": "bull-tradition-hermes-trismegistus",
+    "title": "The Tradition of Hermes Trismegistus",
+    "creator": "Christian H. Bull",
+    "publisher": "Brill, 2018",
+    "kind": "scholarly"
   },
 ];

@@ -12,8 +12,8 @@ export interface FeaturedContentRegistry {
 }
 
 export const featuredContent: FeaturedContentRegistry = {
-  homepageLibrary: ["hekate-crossroads-protection"],
+  homepageLibrary: ["hekate-crossroads-protection", "hermes-trade-trickery-safe-passage"],
   primaryGrimoire: null,
-  libraryHub: ["hekate-crossroads-protection"],
+  libraryHub: ["hekate-crossroads-protection", "hermes-trade-trickery-safe-passage"],
   grimoireHub: [],
 };

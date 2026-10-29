@@ -125,5 +125,62 @@ export const media: readonly MediaRecord[] = [
       "creditLine": "Photo: Carole Raddato · CC BY-SA 2.0 · resized and converted to WebP",
       "evidenceUrl": "https://creativecommons.org/licenses/by-sa/2.0/"
     }
+  },  {
+    "id": "hermes-divine-traveler-hero",
+    "sourceFile": "src/assets/media/editorial/greek-deities/hermes-divine-traveler.webp",
+    "role": "editorial",
+    "origin": "modern-artwork",
+    "alt": "Hermes walks along a rugged Greek road carrying a herald's staff, with a sunlit city and mountains in the distance.",
+    "decorative": false,
+    "creator": "Illustration for Mystagogia",
+    "date": "2026-10-28",
+    "rights": {
+      "status": "cleared",
+      "basis": "owned",
+      "license": "Illustration created at the project owner's request for Mystagogia.",
+      "creditLine": "Mystagogia",
+      "evidenceNote": "Owner-approved generated hero, image generation ID c04ae5f7-01d7-4fcb-bcec-74da80d3cdab, prepared for self-hosting; local optimized asset SHA-256 a9ee0fdd829e2e59cc7911dad8c99f097110ea737cad82078741648c2a5ab56e."
+    }
+  },
+  {
+    "id": "hermes-herm-head-met",
+    "sourceFile": "src/assets/media/reference/greek-deities/hermes-herm-head-met.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "A bearded Greek marble head from a herm, probably representing Hermes, against a neutral museum background.",
+    "decorative": false,
+    "caption": "Greek marble head from a herm, probably representing Hermes, late fifth century BCE. The Metropolitan Museum of Art, accession 59.11.24.",
+    "date": "Probably late fifth century BCE",
+    "period": "Classical Greek",
+    "repository": "The Metropolitan Museum of Art",
+    "sourceUrl": "https://www.metmuseum.org/art/collection/search/255016",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "Public Domain / The Met Open Access (CC0); resized and converted to WebP.",
+      "creditLine": "The Metropolitan Museum of Art · Public Domain",
+      "evidenceUrl": "https://www.metmuseum.org/hubs/open-access"
+    }
+  },
+  {
+    "id": "hermes-soul-guide-met",
+    "sourceFile": "src/assets/media/reference/greek-deities/hermes-soul-guide-met.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Attic white-ground lekythos depicting Hermes guiding a deceased youth toward Charon's boat.",
+    "decorative": false,
+    "caption": "Hermes guides a deceased youth toward Charon's boat on an Attic white-ground lekythos, attributed to the Sabouroff Painter, ca. 450 BCE. The Metropolitan Museum of Art, accession 21.88.17.",
+    "creator": "Attributed to the Sabouroff Painter",
+    "date": "ca. 450 BCE",
+    "period": "Greek, Attic, Classical",
+    "repository": "The Metropolitan Museum of Art",
+    "sourceUrl": "https://www.metmuseum.org/art/collection/search/251043",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "Public Domain / The Met Open Access (CC0); resized and converted to WebP.",
+      "creditLine": "The Metropolitan Museum of Art · Public Domain",
+      "evidenceUrl": "https://www.metmuseum.org/hubs/open-access"
+    }
   },
 ];

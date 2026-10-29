@@ -1,4 +1,4 @@
-// Regression checks for retained layout previews and the first approved Library article.
+// Regression checks for retained layout previews and approved Library articles.
 // Run against the real (non-fixture) Astro build before CI swaps collections.
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -23,9 +23,11 @@ const expected = [
 ];
 
 // Preview MDX is retained for visual/editorial QA, but not emitted as routes.
-// The finished Hekate study is a distinct reviewed, published entry.
+// Finished deity studies are distinct reviewed, published entries.
 const finished = [{ collection: "library", slug: "hekate-crossroads-protection",
-  title: "Hekate: The Ancient Greek Goddess of Crossroads, Protection, and Magic" }];
+  title: "Hekate: The Ancient Greek Goddess of Crossroads, Protection, and Magic" },
+  { collection: "library", slug: "hermes-trade-trickery-safe-passage",
+    title: "Hermes: The Greek God of Trade, Trickery, and Safe Passage" }];
 for (const collection of ["library", "grimoire"]) {
   const files = fs.readdirSync(path.join("src/content", collection))
     .filter((name) => name.endsWith(".mdx"));
@@ -44,10 +46,10 @@ for (const section of ["library", "grimoire"]) {
       html.includes("The first entries are still to come."),
       "Empty Grimoire hub remains noindex and shows its genuine empty state");
   } else {
-    assert.ok(html.includes('href="/library/hekate-crossroads-protection/"') &&
-      html.includes(finished[0].title) &&
+    assert.ok(finished.every(({slug,title}) =>
+      html.includes('href="/library/' + slug + '/"') && html.includes(title)) &&
       !html.includes("The first studies are being prepared."),
-      "Library archive displays the approved Hekate article instead of an empty state");
+      "Library archive displays the approved Greek deity studies instead of an empty state");
   }
   assert.ok(!html.includes("Layout previews"),
     "Preview section must not be exposed as an archive listing");
@@ -84,11 +86,13 @@ for (const { collection, slug, title } of finished) {
   const html = fs.readFileSync(htmlPath, "utf8");
   assert.ok(html.includes(title) && html.includes('data-pagefind-body'),
     "Finished article is readable and has the published search marker");
-  assert.ok(html.includes("Carole Raddato") && html.includes("The Metropolitan Museum of Art"),
+  assert.ok(html.includes("The Metropolitan Museum of Art") &&
+    (slug === "hekate-crossroads-protection" ? html.includes("Carole Raddato") :
+      html.includes("Sabouroff Painter") && html.includes("Hermes")),
     "Historical reference image captions retain provenance and attribution");
   assert.ok(!html.includes("LAYOUT PREVIEW"), "Finished article must not present as a layout preview");
 }
-console.log("PASS: finished Hekate Library study, references, and publication gate");
+console.log("PASS: finished Hekate and Hermes Library studies, references, and publication gates");
 
 // Homepage now contains a deliberately curated finished Library feature.
 const homepage = fs.readFileSync("dist/index.html", "utf8");
@@ -103,9 +107,9 @@ for (const href of ["/library/", "/grimoire/"]) {
   assert.ok(homepage.includes('href="' + href + '"'), "Homepage links to live archive: " + href);
 }
 assert.ok(!homepage.includes("data-home-features-empty") &&
-  homepage.includes('href="/library/hekate-crossroads-protection/"') &&
+  finished.every(({ slug }) => homepage.includes('href="/library/' + slug + '/"')) &&
   homepage.includes('class="article-card'),
-  "Homepage shows the curated finished Hekate study without an empty-state fallback");
+  "Homepage shows both curated finished Library studies without an empty-state fallback");
 for (const { collection, slug, title } of expected) {
   assert.ok(!homepage.includes('href="/' + collection + '/' + slug + '/"') &&
     !homepage.includes(title), "Layout previews must not be featured");
@@ -323,7 +327,7 @@ console.log("PASS: Prompt 27 no-domain robots, no sitemap/canonical, preview exc
 
 // Prompt 28: only the finished Hekate article enters Pagefind; preview routes remain absent.
 const {eligibleArticles,verifyMarkers}=await import("../scripts/build-pagefind.mjs");
-const indexedRoutes = ["/library/hekate-crossroads-protection/"];
+const indexedRoutes = finished.map(({ slug }) => "/library/" + slug + "/");
 assert.deepEqual(eligibleArticles(), indexedRoutes);
 assert.doesNotThrow(()=>verifyMarkers("dist", indexedRoutes));
 assert.deepEqual(JSON.parse(fs.readFileSync("dist/pagefind/indexed-routes.json", "utf8")),
