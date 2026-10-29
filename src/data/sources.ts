@@ -284,4 +284,35 @@ export const sources: readonly SourceRecord[] = [
     stableUrl: "https://academic.oup.com/book/5742",
     kind: "scholarly",
   },
+
+  {
+    id: "diodorus-siculus-book-five",
+    title: "Library of History, Book 5",
+    creator: "Diodorus Siculus",
+    period: "First century BCE",
+    stableUrl: "https://www.theoi.com/Text/DiodorusSiculus5C.html",
+    kind: "primary",
+  },
+  {
+    id: "philostratus-imagines",
+    title: "Imagines, Book 2",
+    creator: "Philostratus the Elder",
+    period: "Third century CE",
+    stableUrl: "https://www.theoi.com/Text/PhilostratusElder2B.html",
+    kind: "primary",
+  },
+  {
+    id: "bowie-aristophanes",
+    title: "Aristophanes: Myth, Ritual and Comedy",
+    creator: "Angus M. Bowie",
+    publisher: "Cambridge University Press, 1993",
+    kind: "scholarly",
+  },
+  {
+    id: "oxford-classical-dictionary-ploutos",
+    title: "Ploutos",
+    publisher: "Oxford Classical Dictionary, Oxford University Press",
+    stableUrl: "https://academic.oup.com/edited-volume/61673/chapter-abstract/549703726",
+    kind: "scholarly",
+  },
 ];
