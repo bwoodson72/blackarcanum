@@ -45,4 +45,180 @@ export const sources: readonly SourceRecord[] = [
     "kind": "primary"
   },
   {
-    "id": "aristo¶»§q«^
+    "id": "aristophanes-wealth",
+    "title": "Wealth (Plutus)",
+    "creator": "Aristophanes",
+    "period": "388 BCE",
+    "stableUrl": "https://classics.mit.edu/Aristophanes/plutus.html",
+    "kind": "primary"
+  },
+  {
+    "id": "euripides-medea",
+    "title": "Medea",
+    "creator": "Euripides",
+    "period": "431 BCE",
+    "stableUrl": "https://chs.harvard.edu/primary-source/euripides-medea/",
+    "kind": "primary"
+  },
+  {
+    "id": "theocritus-idyll-two",
+    "title": "Idyll 2 (The Sorceress)",
+    "creator": "Theocritus",
+    "period": "Third century BCE",
+    "stableUrl": "https://www.theoi.com/Text/TheocritusIdylls1.html",
+    "kind": "primary"
+  },
+  {
+    "id": "pgm-iv",
+    "title": "Greek Magical Papyri, PGM IV.2714â€“2783",
+    "period": "Fourth-century CE manuscript",
+    "archive": "See Magical Hymns from Roman Egypt (Cambridge University Press)",
+    "stableUrl": "https://www.cambridge.org/core/books/abs/magical-hymns-from-roman-egypt/hymn-to-hecateselenepersephoneartemis-iv-271483-fourth-century/9A0F53A8305D38B7BD41FE9838459718",
+    "kind": "primary"
+  },
+  {
+    "id": "orphic-hymns",
+    "title": "Orphic Hymns, Hymn 1 to Hekate",
+    "period": "Roman imperial period",
+    "stableUrl": "https://www.theoi.com/Text/OrphicHymns1.html",
+    "kind": "primary"
+  },
+  {
+    "id": "herring-lagina-2022",
+    "title": "Hekate of Lagina: A Goddess Performing Her Civic Duty",
+    "creator": "Amanda Herring",
+    "publisher": "Anatolian Studies 72 (2022), 141â€“165",
+    "stableUrl": "https://doi.org/10.1017/S0066154622000072",
+    "kind": "scholarly"
+  },
+  {
+    "id": "herring-lagina-2020",
+    "title": "Reconstructing the Sacred Experience at the Sanctuary of Hekate at Lagina",
+    "creator": "Amanda Herring",
+    "publisher": "Journal of the Society of Architectural Historians 79, no. 3 (2020), 247â€“263",
+    "stableUrl": "https://online.ucpress.edu/jsah/article-abstract/79/3/247/111804/Reconstructing-the-Sacred-Experience-at-the",
+    "kind": "scholarly"
+  },
+  {
+    "id": "johnston-restless-dead",
+    "title": "Restless Dead: Encounters Between the Living and the Dead in Ancient Greece",
+    "creator": "Sarah Iles Johnston",
+    "publisher": "University of California Press, 1999",
+    "stableUrl": "https://doi.org/10.1525/california/9780520217072.003.0006",
+    "kind": "scholarly"
+  },
+  {
+    "id": "johnston-hekate-soteira",
+    "title": "Hekate Soteira: A Study of Hekate's Roles in the Chaldean Oracles and Related Literature",
+    "creator": "Sarah Iles Johnston",
+    "publisher": "Scholars Press, 1990",
+    "kind": "scholarly"
+  },
+  {
+    "id": "clay-hesiods-cosmos",
+    "title": "Hesiod's Cosmos",
+    "creator": "Jenny Strauss Clay",
+    "publisher": "Cambridge University Press, 2003",
+    "kind": "scholarly"
+  },  {
+    "id": "homeric-hymn-hermes",
+    "title": "Homeric Hymn to Hermes",
+    "period": "Archaic Greek poetry",
+    "stableUrl": "https://www.theoi.com/Text/HomericHymns2.html",
+    "kind": "primary"
+  },
+  {
+    "id": "hesiod-works-days",
+    "title": "Works and Days",
+    "creator": "Hesiod",
+    "period": "Archaic Greek poetry",
+    "stableUrl": "https://www.theoi.com/Text/HesiodWorksDays.html",
+    "kind": "primary"
+  },
+  {
+    "id": "homer-iliad",
+    "title": "Iliad",
+    "creator": "Homer",
+    "period": "Archaic Greek epic",
+    "kind": "primary"
+  },
+  {
+    "id": "homer-odyssey",
+    "title": "Odyssey",
+    "creator": "Homer",
+    "period": "Archaic Greek epic",
+    "stableUrl": "https://www.theoi.com/Text/HomerOdyssey10.html",
+    "kind": "primary"
+  },
+  {
+    "id": "homeric-hymn-pan",
+    "title": "Homeric Hymn to Pan",
+    "period": "Greek hymn tradition",
+    "stableUrl": "https://www.theoi.com/Text/HomericHymns3.html",
+    "kind": "primary"
+  },
+  {
+    "id": "apollodorus-library",
+    "title": "Bibliotheca (Library)",
+    "creator": "Pseudo-Apollodorus",
+    "period": "Ancient Greek mythography",
+    "kind": "primary"
+  },
+  {
+    "id": "thucydides-peloponnesian-war",
+    "title": "History of the Peloponnesian War",
+    "creator": "Thucydides",
+    "period": "Fifth century BCE",
+    "kind": "primary"
+  },
+  {
+    "id": "attic-inscription-igi3-776",
+    "title": "Dedication to Hermes by a herald (IG IÂ³ 776)",
+    "period": "Early fifth century BCE",
+    "archive": "Attic Inscriptions Online",
+    "stableUrl": "https://www.atticinscriptions.com/inscription/IGI3/776",
+    "kind": "primary"
+  },
+  {
+    "id": "adak-klazomenai-hermes",
+    "title": "Zwei Weihungen aus Klazomenai",
+    "creator": "Mustafa Adak",
+    "publisher": "Philia, 2015",
+    "kind": "scholarly"
+  },
+  {
+    "id": "pgm-vii-hermes-thoth",
+    "title": "Greek Magical Papyri VII.664â€“685: Dream request to Hermes-Thoth",
+    "period": "Roman Egyptian ritual tradition",
+    "kind": "primary"
+  },
+  {
+    "id": "vergados-homeric-hymn-hermes",
+    "title": "The Homeric Hymn to Hermes: Introduction, Text and Commentary",
+    "creator": "Athanassios Vergados",
+    "publisher": "De Gruyter, 2013",
+    "kind": "scholarly"
+  },
+  {
+    "id": "miller-clay-tracking-hermes",
+    "title": "Tracking Hermes, Pursuing Mercury",
+    "creator": "John F. Miller and Jenny Strauss Clay (editors)",
+    "publisher": "Oxford University Press, 2019",
+    "stableUrl": "https://academic.oup.com/book/7176",
+    "kind": "scholarly"
+  },
+  {
+    "id": "fowden-egyptian-hermes",
+    "title": "The Egyptian Hermes: A Historical Approach to the Late Pagan Mind",
+    "creator": "Garth Fowden",
+    "publisher": "Cambridge University Press, 1986",
+    "kind": "scholarly"
+  },
+  {
+    "id": "bull-tradition-hermes-trismegistus",
+    "title": "The Tradition of Hermes Trismegistus",
+    "creator": "Christian H. Bull",
+    "publisher": "Brill, 2018",
+    "kind": "scholarly"
+  },
+];
