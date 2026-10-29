@@ -340,4 +340,59 @@ export const media: readonly MediaRecord[] = [
       "evidenceUrl": "https://www.metmuseum.org/policies/image-resources"
     }
   },
+  {
+    "id": "persephone-underworld-queen-hero",
+    "sourceFile": "src/assets/media/editorial/greek-deities/persephone-enthroned-with-pomegranate-and-scepter.webp",
+    "role": "editorial",
+    "origin": "modern-artwork",
+    "alt": "Persephone seated on a stone throne in deep red Greek drapery, wearing a gold diadem and holding a pomegranate and scepter in a shadowed stone hall.",
+    "decorative": false,
+    "rights": {
+      "status": "cleared",
+      "basis": "owned",
+      "license": "Original editorial illustration created at the project owner’s request for Mystagogia.",
+      "creditLine": "Mystagogia",
+      "evidenceNote": "Owner approved the concept, requested built-in image generation, and authorized local incorporation on 2026-10-29. Generated source: exec-11e8b484-f05b-4ed5-aecb-8923c5f54be8.png. No third-party reference images were provided."
+    }
+  },
+  {
+    "id": "persephone-ascent-krater-met",
+    "sourceFile": "src/assets/media/reference/greek-deities/persephone-ascent-krater-met.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Attic red-figure bell-krater showing Persephone rising from the earth beside Hermes, with torch-bearing Hekate and Demeter to the right.",
+    "decorative": false,
+    "caption": "Persephone rising from the underworld, accompanied by Hermes and Hekate, with Demeter at the right. Attic red-figure bell-krater attributed to the Persephone Painter, c. 440 BCE. The Metropolitan Museum of Art, Fletcher Fund, 1928, object 28.57.23. Open Access image; converted to WebP.",
+    "creator": "Attributed to the Persephone Painter",
+    "period": "Greek, Attic, c. 440 BCE",
+    "repository": "The Metropolitan Museum of Art, object 28.57.23",
+    "sourceUrl": "https://www.metmuseum.org/art/collection/search/252973",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "The image is marked Public Domain by The Metropolitan Museum of Art and made available under its CC0 Open Access policy; converted to WebP.",
+      "creditLine": "The Metropolitan Museum of Art · Fletcher Fund, 1928 · Open Access (CC0)",
+      "evidenceUrl": "https://www.metmuseum.org/policies/image-resources"
+    }
+  },
+  {
+    "id": "persephone-bridal-bed-cleveland",
+    "sourceFile": "src/assets/media/reference/greek-deities/persephone-bridal-bed-cleveland.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Fragmentary terracotta plaque showing Persephone arranging cloth on a bridal bed, with a rooster below the bed and a column behind her.",
+    "decorative": false,
+    "caption": "Votive Plaque (Pinax) with Persephone Making her Bridal Bed. Locri Epizephirii, South Italy, c. 490–450 BCE. Terracotta. Cleveland Museum of Art, Gift of Barbara S. Robinson and Family, accession 2023.103. Open Access image; resized and converted to WebP.",
+    "period": "West Greek / South Italian, c. 490–450 BCE",
+    "repository": "Cleveland Museum of Art, accession 2023.103",
+    "sourceUrl": "https://www.clevelandart.org/art/2023.103",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "Cleveland Museum of Art Open Access image, designated CC0 in the object metadata and available under the museum’s CC0 Open Access program; resized and converted to WebP.",
+      "creditLine": "Cleveland Museum of Art · Gift of Barbara S. Robinson and Family · CC0",
+      "evidenceUrl": "https://www.clevelandart.org/open-access",
+      "evidenceNote": "Museum API object 394307, accession 2023.103, reports share_license_status: CC0."
+    }
+  },
 ];

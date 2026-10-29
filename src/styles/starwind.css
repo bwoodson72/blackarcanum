@@ -140,6 +140,9 @@
 :root {
   color-scheme: light;
 
+  /* Set per accordion by the Starwind runtime; declared so the keyframes resolve. */
+  --starwind-accordion-content-height: auto;
+
   /* Light = parchment-led editorial reading experience. */
   --surface: var(--color-parchment);
   --surface-secondary: var(--color-aged-paper);
@@ -224,7 +227,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-interface);
+    font-family: var(--font-interface), sans-serif;
   }
 
   button {

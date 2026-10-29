@@ -366,4 +366,112 @@ export const sources: readonly SourceRecord[] = [
     "stableUrl": "https://www.metmuseum.org/art/collection/search/248899",
     "kind": "scholarly"
   },
+  {
+    "id": "oxford-persephone-kore",
+    "title": "Persephone/Kore",
+    "creator": "Ana Isabel Jiménez San Cristóbal",
+    "publisher": "Oxford Classical Dictionary, Oxford University Press",
+    "edition": "Updated 30 July 2020; first published 7 March 2016",
+    "stableUrl": "https://doi.org/10.1093/acrefore/9780199381135.013.4880",
+    "kind": "scholarly"
+  },
+  {
+    "id": "diodorus-siculus-book-four",
+    "title": "Library of History, Book 4",
+    "creator": "Diodorus Siculus",
+    "period": "First century BCE",
+    "kind": "primary"
+  },
+  {
+    "id": "cleveland-persephone-bridal-bed",
+    "title": "Votive Plaque (Pinax) with Persephone Making her Bridal Bed, 2023.103",
+    "archive": "Cleveland Museum of Art",
+    "period": "c. 490–450 BCE",
+    "stableUrl": "https://www.clevelandart.org/art/2023.103",
+    "kind": "scholarly"
+  },
+  {
+    "id": "sourvinou-inwood-persephone-aphrodite-locri",
+    "title": "Persephone and Aphrodite at Locri: A Model for Personality Definitions in Greek Religion",
+    "creator": "Christiane Sourvinou-Inwood",
+    "publisher": "The Journal of Hellenic Studies 98 (1978), 101–121",
+    "stableUrl": "https://www.cambridge.org/core/journals/journal-of-hellenic-studies/article/abs/persephone-and-aphrodite-at-locri-a-model-for-personality-definitions-in-greek-religion/A3BC291B9BF958E1DC3B10455E3B6585",
+    "kind": "scholarly"
+  },
+  {
+    "id": "eisenfeld-lokrian-goddess",
+    "title": "Life, Death, and a Lokrian Goddess: Revisiting the Nature of Persephone in the Gold Leaves of Magna Graecia",
+    "creator": "Hanne Eisenfeld",
+    "publisher": "Kernos 29 (2016), 41–72",
+    "stableUrl": "https://journals.openedition.org/kernos/2388",
+    "kind": "scholarly"
+  },
+  {
+    "id": "clinton-myth-and-cult",
+    "title": "Myth and Cult: The Iconography of the Eleusinian Mysteries",
+    "creator": "Kevin Clinton",
+    "publisher": "Swedish Institute at Athens, 1992",
+    "stableUrl": "https://ecsi.se/actaath-8-11/",
+    "kind": "scholarly"
+  },
+  {
+    "id": "cosmopoulos-bronze-age-eleusis",
+    "title": "Bronze Age Eleusis and the Origins of the Eleusinian Mysteries",
+    "creator": "Michael B. Cosmopoulos",
+    "publisher": "Cambridge University Press, 2015",
+    "kind": "scholarly"
+  },
+  {
+    "id": "graf-johnston-ritual-texts-afterlife",
+    "title": "Ritual Texts for the Afterlife: Orpheus and the Bacchic Gold Tablets",
+    "creator": "Fritz Graf and Sarah Iles Johnston",
+    "edition": "Second edition",
+    "publisher": "Routledge, 2013",
+    "stableUrl": "https://www.routledge.com/Ritual-Texts-for-the-Afterlife-Orpheus-and-the-Bacchic-Gold-Tablets-2nd/Graf-Johnston/p/book/9780203564240",
+    "kind": "scholarly"
+  },
+  {
+    "id": "edmonds-myths-underworld-journey",
+    "title": "Myths of the Underworld Journey: Plato, Aristophanes, and the Orphic Gold Tablets",
+    "creator": "Radcliffe G. Edmonds III",
+    "publisher": "Cambridge University Press, 2004",
+    "kind": "scholarly"
+  },
+  {
+    "id": "bernabe-jimenez-instructions-netherworld",
+    "title": "Instructions for the Netherworld: The Orphic Gold Tablets",
+    "creator": "Alberto Bernabé and Ana Isabel Jiménez San Cristóbal",
+    "publisher": "Brill, 2008",
+    "kind": "scholarly"
+  },
+  {
+    "id": "plato-meno",
+    "title": "Meno",
+    "creator": "Plato",
+    "period": "Fourth century BCE",
+    "kind": "primary"
+  },
+  {
+    "id": "burkert-greek-religion",
+    "title": "Greek Religion: Archaic and Classical",
+    "creator": "Walter Burkert",
+    "translator": "John Raffan",
+    "publisher": "Harvard University Press, 1985",
+    "kind": "scholarly"
+  },
+  {
+    "id": "cicero-against-verres",
+    "title": "Against Verres",
+    "creator": "Cicero",
+    "period": "70 BCE",
+    "kind": "primary"
+  },
+  {
+    "id": "met-persephone-ascent-krater",
+    "title": "Terracotta bell-krater attributed to the Persephone Painter, object 28.57.23",
+    "archive": "The Metropolitan Museum of Art",
+    "period": "c. 440 BCE",
+    "stableUrl": "https://www.metmuseum.org/art/collection/search/252973",
+    "kind": "scholarly"
+  },
 ];
