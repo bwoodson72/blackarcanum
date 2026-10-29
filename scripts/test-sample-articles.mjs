@@ -1,4 +1,4 @@
-// Regression checks for the three owner-approved public layout samples.
+// Regression checks for retained layout previews and the first approved Library article.
 // Run against the real (non-fixture) Astro build before CI swaps collections.
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -23,25 +23,34 @@ const expected = [
 ];
 
 // Preview MDX is retained for visual/editorial QA, but not emitted as routes.
+// The finished Hekate study is a distinct reviewed, published entry.
+const finished = [{ collection: "library", slug: "hekate-crossroads-protection",
+  title: "Hekate: The Ancient Greek Goddess of Crossroads, Protection, and Magic" }];
 for (const collection of ["library", "grimoire"]) {
   const files = fs.readdirSync(path.join("src/content", collection))
     .filter((name) => name.endsWith(".mdx"));
-  const slugs = expected.filter((entry) => entry.collection === collection)
+  const slugs = [...expected, ...finished].filter((entry) => entry.collection === collection)
     .map((entry) => entry.slug + ".mdx");
   assert.deepEqual(files.sort(), slugs.sort(),
-    "Only the three owner-approved Greek-deity layout MDX files are committed");
+    "Only approved layout previews and completed articles may be committed");
 }
 const archive = Object.fromEntries(["library", "grimoire"].map((section) => [
   section, fs.readFileSync(path.join("dist", section, "index.html"), "utf8"),
 ]));
 for (const section of ["library", "grimoire"]) {
   const html = archive[section];
-  assert.ok(html.includes('<meta name="robots" content="noindex, nofollow"'),
-    "Empty archive hubs are not search indexed");
-  assert.ok(!html.includes("Layout previews") &&
-    (section === "library" ? html.includes("The first studies are being prepared.") :
-      html.includes("The first entries are still to come.")),
-    "Public hubs must show an honest empty state, not preview content");
+  if (section === "grimoire") {
+    assert.ok(html.includes('<meta name="robots" content="noindex, nofollow"') &&
+      html.includes("The first entries are still to come."),
+      "Empty Grimoire hub remains noindex and shows its genuine empty state");
+  } else {
+    assert.ok(html.includes('href="/library/hekate-crossroads-protection/"') &&
+      html.includes(finished[0].title) &&
+      !html.includes("The first studies are being prepared."),
+      "Library archive displays the approved Hekate article instead of an empty state");
+  }
+  assert.ok(!html.includes("Layout previews"),
+    "Preview section must not be exposed as an archive listing");
   assert.ok(html.includes('href="/library/"') && html.includes('href="/grimoire/"'),
     "Site navigation links to both archive gateways");
 }
@@ -66,8 +75,22 @@ for (const { collection, slug, title } of expected) {
   }
 }
 console.log("PASS: three retained layout MDX fixtures have no public routes, cards or search pages");
+for (const { collection, slug, title } of finished) {
+  const markdown = fs.readFileSync(path.join("src/content", collection, slug + ".mdx"), "utf8");
+  assert.match(markdown, /^status: published$/m);
+  assert.doesNotMatch(markdown, /^preview: true$/m);
+  const htmlPath = path.join("dist", collection, slug, "index.html");
+  assert.ok(fs.existsSync(htmlPath), "Finished article must generate a real HTML route");
+  const html = fs.readFileSync(htmlPath, "utf8");
+  assert.ok(html.includes(title) && html.includes('data-pagefind-body'),
+    "Finished article is readable and has the published search marker");
+  assert.ok(html.includes("Carole Raddato") && html.includes("The Metropolitan Museum of Art"),
+    "Historical reference image captions retain provenance and attribution");
+  assert.ok(!html.includes("LAYOUT PREVIEW"), "Finished article must not present as a layout preview");
+}
+console.log("PASS: finished Hekate Library study, references, and publication gate");
 
-// Prompt 25: honest homepage in the absence of any curated feature IDs.
+// Homepage now contains a deliberately curated finished Library feature.
 const homepage = fs.readFileSync("dist/index.html", "utf8");
 assert.ok(homepage.includes('id="home-title"') && homepage.includes("Practical Wisdom") &&
   homepage.includes("Living Tradition") && homepage.includes("Explore the crossroads of history"),
@@ -79,10 +102,14 @@ for (const id of ["home-paths-heading", "home-research-heading", "home-practice-
 for (const href of ["/library/", "/grimoire/"]) {
   assert.ok(homepage.includes('href="' + href + '"'), "Homepage links to live archive: " + href);
 }
-assert.ok(homepage.includes("data-home-features-empty"),
-  "Empty curated registry must not cause a newest-article fallback");
-assert.ok(!homepage.includes('class="article-card'),
-  "Uncurated layout previews must not appear as featured research");
+assert.ok(!homepage.includes("data-home-features-empty") &&
+  homepage.includes('href="/library/hekate-crossroads-protection/"') &&
+  homepage.includes('class="article-card'),
+  "Homepage shows the curated finished Hekate study without an empty-state fallback");
+for (const { collection, slug, title } of expected) {
+  assert.ok(!homepage.includes('href="/' + collection + '/' + slug + '/"') &&
+    !homepage.includes(title), "Layout previews must not be featured");
+}
 assert.ok(!homepage.includes('href="/shop/"') && !homepage.includes('href="/newsletter/"'),
   "Unimplemented Shop and newsletter routes must not be exposed");
 assert.ok(homepage.includes('data-newsletter-form') && homepage.includes('data-newsletter-form hidden'),
@@ -92,8 +119,8 @@ assert.ok(homepage.includes('name="consent"') && homepage.includes('type="checkb
 assert.ok(homepage.includes('name="email"') && homepage.includes('type="email"'),
   "Signup uses a labeled native email input");
 assert.ok(homepage.includes("Newsletter in preparation"), "Unavailable newsletter state remains honest");
-assert.ok(homepage.includes('name="robots" content="noindex, nofollow"'),
-  "Homepage remains noindex until real editorial features are curated");
+assert.ok(!homepage.includes('name="robots" content="noindex, nofollow"'),
+  "Homepage is an article-curated route; robots.txt still prevents public discovery without an approved domain");
 const heroLinks = [...homepage.matchAll(/<a class="hero-action" href="(\/(?:library|grimoire)\/)">([\s\S]*?)<\/a>/g)];
 assert.deepEqual(heroLinks.map((link) => link[1]), ["/library/", "/grimoire/"],
   "Both compact homepage actions point to real archive destinations");
@@ -124,7 +151,7 @@ assert.equal((homepage.match(/class="engraved-frame"/g) ?? []).length, 5,
 assert.ok(!homepage.includes('class="home-path__body"><p'),
   "No detached parchment body beneath gateway artwork");
 console.log("PASS: ornate hero CTA framing, real destinations, accessible icons and text");
-console.log("PASS: Prompt 25 homepage gateway, intentional empty-state, newsletter and noindex");
+console.log("PASS: Prompt 25 homepage gateways, curated Library feature, and disabled newsletter");
 
 const assetPath = "public/images/homepage/mystagogia-editorial-atlas.avif";
 assert.ok(fs.existsSync(assetPath), "Approved homepage artwork must ship with the site");
@@ -294,15 +321,17 @@ for (const [, filename] of qaPages) {
 console.log("PASS: Prompt 27 no-domain robots, no sitemap/canonical, preview exclusion, site URL validation");
 
 
-// Prompt 28: current layout previews must not produce an accidental search index.
+// Prompt 28: only the finished Hekate article enters Pagefind; preview routes remain absent.
 const {eligibleArticles,verifyMarkers}=await import("../scripts/build-pagefind.mjs");
-assert.deepEqual(eligibleArticles(),[]);
-assert.doesNotThrow(()=>verifyMarkers("dist",[]));
-assert.equal(fs.existsSync("dist/pagefind"),false,
-  "Do not index noneditorial pages when only noindex previews exist");
-assert.equal(fs.existsSync(".vercel/output/static/pagefind"),false,
-  "Preview deployments must not contain an old Pagefind index");
-console.log("PASS: Pagefind empty-site indexing fails closed");
+const indexedRoutes = ["/library/hekate-crossroads-protection/"];
+assert.deepEqual(eligibleArticles(), indexedRoutes);
+assert.doesNotThrow(()=>verifyMarkers("dist", indexedRoutes));
+assert.deepEqual(JSON.parse(fs.readFileSync("dist/pagefind/indexed-routes.json", "utf8")),
+  indexedRoutes, "Pagefind index contains only the approved article");
+assert.ok(fs.existsSync("dist/pagefind/pagefind.js") &&
+  fs.existsSync(".vercel/output/static/pagefind/pagefind.js"),
+  "Finished article Pagefind index is bundled into Vercel output");
+console.log("PASS: Pagefind indexes only published editorial content");
 
 
 // Shared hero refactor: all four routes render the SAME prop-driven component.
