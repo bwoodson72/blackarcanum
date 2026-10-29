@@ -31,7 +31,9 @@ const finished = [{ collection: "library", slug: "hekate-crossroads-protection",
   { collection: "library", slug: "tyche-goddess-fortune-prosperity-fate",
     title: "Tyche: The Greek Goddess of Fortune, Prosperity, and Fate" },
   { collection: "library", slug: "ploutos-wealth-abundance-prosperity",
-    title: "Ploutos: The Greek God of Wealth, Abundance, and Prosperity" }];
+    title: "Ploutos: The Greek God of Wealth, Abundance, and Prosperity" },
+  { collection: "library", slug: "demeter-harvest-fertility-abundance",
+    title: "Demeter: The Greek Goddess of Harvest, Fertility, and Abundance" }];
 for (const collection of ["library", "grimoire"]) {
   const files = fs.readdirSync(path.join("src/content", collection))
     .filter((name) => name.endsWith(".mdx"));
@@ -90,15 +92,19 @@ for (const { collection, slug, title } of finished) {
   const html = fs.readFileSync(htmlPath, "utf8");
   assert.ok(html.includes(title) && html.includes('data-pagefind-body'),
     "Finished article is readable and has the published search marker");
-  assert.ok(html.includes("The Metropolitan Museum of Art") &&
-    (slug === "hekate-crossroads-protection" ? html.includes("Carole Raddato") :
-      (slug === "hermes-trade-trickery-safe-passage" ?
-      html.includes("Sabouroff Painter") && html.includes("Hermes") :
-      (slug === "tyche-goddess-fortune-prosperity-fate" ? html.includes("Incituna") && html.includes("Tyche") : html.includes("Bibi Saint-Pol") && html.includes("ArchaiOptix")))),
-    "Historical reference image captions retain provenance and attribution");
+  const provenanceBySlug = {
+    "hekate-crossroads-protection": ["The Metropolitan Museum of Art", "Carole Raddato"],
+    "hermes-trade-trickery-safe-passage": ["The Metropolitan Museum of Art", "Sabouroff Painter", "Hermes"],
+    "tyche-goddess-fortune-prosperity-fate": ["The Metropolitan Museum of Art", "Incituna", "Tyche"],
+    "ploutos-wealth-abundance-prosperity": ["The Metropolitan Museum of Art", "Bibi Saint-Pol", "ArchaiOptix"],
+    "demeter-harvest-fertility-abundance": ["Raymond.ellis", "The Metropolitan Museum of Art", "ArchaiOptix"],
+  };
+  const missingProvenance = provenanceBySlug[slug].filter((detail) => !html.includes(detail));
+  assert.deepEqual(missingProvenance, [],
+    `Historical reference captions for ${slug} must retain provenance: ${missingProvenance.join(", ")}`);
   assert.ok(!html.includes("LAYOUT PREVIEW"), "Finished article must not present as a layout preview");
 }
-console.log("PASS: three finished Greek deity Library studies, references, and publication gates");
+console.log(`PASS: ${finished.length} finished Greek deity Library studies, references, and publication gates`);
 
 // Homepage now contains a deliberately curated finished Library feature.
 const homepage = fs.readFileSync("dist/index.html", "utf8");
