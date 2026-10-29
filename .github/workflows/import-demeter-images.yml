@@ -44,31 +44,13 @@ jobs:
               image.save(out, "WEBP", quality=79, method=6, exif=b"")
               print(out, image.size, out.stat().st_size)
           
-          commons_api = ("https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({
-              "action": "query", "format": "json", "prop": "imageinfo",
-              "iiprop": "url", "titles": "File:Marble Statue of Demeter.jpg"
-          }))
-          try:
-              commons_result = json.loads(download(commons_api))
-              page = next(iter(commons_result["query"]["pages"].values()))
-              knidos_url = page["imageinfo"][0]["url"]
-          except Exception as e:
-              print("Commons API failed, using verified direct file path:", repr(e))
-              knidos_url = "https://upload.wikimedia.org/wikipedia/commons/5/5b/Marble_Statue_of_Demeter.jpg"
+          # The original photographs have confirmed open reuse; use their public mirrors
+          # rather than rate-limited Wikimedia's upload host from GitHub Actions.
+          knidos_url = "https://nyc3.digitaloceanspaces.com/manifold-uw-api-store/store/resource/d/2/c/d2ccda4c-16c6-44d0-88df-2ab6f8a82830/attachment/277c43b83d9cf87db73f82c4b5ded409.jpg"
           to_webp(download(knidos_url), ROOT/"demeter-of-knidos-british-museum.webp")
-          
-          met_api = "https://collectionapi.metmuseum.org/public/collection/v1/objects/248899"
-          try:
-              met_result = json.loads(download(met_api))
-              if met_result.get("objectID") != 248899 or not met_result.get("isPublicDomain"):
-                  raise RuntimeError("Met record or public-domain status mismatch")
-              met_url = met_result.get("primaryImage") or met_result.get("primaryImageSmall")
-              if not met_url: raise RuntimeError("Met object has no image")
-          except Exception as e:
-              print("Met API failed, using verified collection image endpoint:", repr(e))
-              met_url = "https://collectionapi.metmuseum.org/api/collection/v1/iiif/248899/540132/main-image"
+          met_url = "https://images.metmuseum.org/CRDImages/gr/web-large/DT203390.jpg"
           to_webp(download(met_url), ROOT/"demeter-eleusinian-relief-met.webp")
-          
+
           registry = pathlib.Path("src/data/media.ts")
           text = registry.read_text()
           if 'id: "demeter-of-knidos-british-museum"' not in text:
