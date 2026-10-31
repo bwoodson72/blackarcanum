@@ -5,10 +5,13 @@ import PageHero from "../site/PageHero.astro";
 import Container from "../foundation/Container.astro";
 import SectionHeading from "../foundation/SectionHeading.astro";
 import ServiceProductFilter from "./ServiceProductFilter.astro";
+import { loveIntroduction, loveOfferingPreviews } from "../../data/service-love-copy";
 import type { PublishedSphereView } from "../../lib/services-presentation";
 import type { PublishedService } from "../../lib/services-catalog";
 import { serviceSphereUrl } from "../../lib/services-catalog";
+import "../../styles/service-cards.css";
 import "../../styles/services-sphere.css";
+
 interface Props { sphere: PublishedSphereView; products: readonly PublishedService[] }
 const { sphere, products } = Astro.props;
 if (!sphere.published || !sphere.visible || sphere.href !== serviceSphereUrl(sphere.id) ||
@@ -16,7 +19,17 @@ if (!sphere.published || !sphere.visible || sphere.href !== serviceSphereUrl(sph
     products.some((product) => product.sphere !== sphere.id)) {
   throw new Error("Sphere pages require a matching published catalog.");
 }
+const isLoveSphere = sphere.id === "love";
 const description = sphere.summary ?? `Readings and constructive ritual work in the sphere of ${sphere.label.toLowerCase()}.`;
+// Informational previews do not bypass published-product price or release gates.
+// Remove a preview when its canonical, owner-approved offering is published.
+const previews = isLoveSphere
+  ? loveOfferingPreviews.filter((preview) => !products.some((product) => product.slug === preview.slug))
+  : [];
+const previewGroups = [
+  { kind: "reading", title: "Divination", items: previews.filter((preview) => preview.kind === "reading") },
+  { kind: "spellwork", title: "Ritual Work", items: previews.filter((preview) => preview.kind === "spellwork") },
+];
 ---
 <BaseLayout title={`${sphere.label} — Services`} description={description} noindex={products.length === 0 || servicesNoindex(Astro.site)}
   breadcrumbs={[{ label: "Services", href: "/services/" }, { label: sphere.label }]}>
@@ -24,11 +37,46 @@ const description = sphere.summary ?? `Readings and constructive ritual work in 
     <PageHero mode="services" titleId="sphere-title" title={sphere.label}
       tagline={["Services", "Sphere of Practice"]} description={description}
       actions={[{ label: "Explore the work", href: "#sphere-products" }]} />
+
+    {isLoveSphere && <section class="services-sphere__introduction" aria-label="Love and relationship practice">
+      <Container width="reading">
+        {loveIntroduction.map((paragraph) => <p>{paragraph}</p>)}
+      </Container>
+    </section>}
+
     <section class="services-sphere__catalog" id="sphere-products" aria-labelledby="sphere-products-heading" tabindex="-1">
       <Container width="wide">
-        <SectionHeading id="sphere-products-heading" title="Explore the work"
-          description={products.length > 0 ? "Read each detailed page for the purpose, scope, process and requirements of the work." : "Specific offerings will explain their purpose, scope, process and requirements here."} />
-        {products.length > 0 ? <ServiceProductFilter products={products} /> : (
+        <SectionHeading id="sphere-products-heading" title={isLoveSphere ? "Explore Love & Relationship Services" : "Explore the work"}
+          description={products.length > 0
+            ? "Read each detailed page for the purpose, scope, process and requirements of the work."
+            : previews.length > 0
+              ? "The following services are in preparation. Prices, full details and availability will be published when finalized."
+              : "Specific offerings will explain their purpose, scope, process and requirements here."} />
+
+        {products.length > 0 && <ServiceProductFilter products={products} />}
+
+        {previews.length > 0 && <div class="services-sphere__previews" data-service-previews>
+          {previewGroups.map((group) => group.items.length > 0 && (
+            <section class="services-sphere__preview-group" aria-labelledby={`service-previews-${group.kind}`}>
+              <h3 class="services-sphere__preview-heading" id={`service-previews-${group.kind}`}>{group.title}</h3>
+              <ul class="service-grid">
+                {group.items.map((preview) => (
+                  <li>
+                    <article class="service-card services-sphere__preview-card" data-service-preview={preview.slug}>
+                      <div class="service-card__body">
+                        <span class="service-card__kind">{preview.kind === "reading" ? "Reading" : "Spellwork"}</span>
+                        <h4 class="service-card__title">{preview.title}</h4>
+                        <p class="service-card__summary">{preview.summary}</p>
+                      </div>
+                    </article>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>}
+
+        {products.length === 0 && previews.length === 0 && (
           <p data-services-unavailable>Offerings in this sphere are in preparation. No readings or ritual packages are currently available here.</p>
         )}
       </Container>

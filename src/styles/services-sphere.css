@@ -1,3 +1,33 @@
 /* Sphere composition only; cards and hero reuse the existing Services styles. */
+.services-sphere__introduction { padding-top: var(--spacing-section); }
+.services-sphere__introduction p {
+  margin: 0 0 1.25em;
+  color: var(--text-primary);
+  font-family: var(--font-reading);
+  font-size: var(--text-body);
+  line-height: 1.7;
+}
+.services-sphere__introduction p:last-child { margin-bottom: 0; }
 .services-sphere__catalog { padding-block: var(--spacing-section); }
 .services-sphere__catalog:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: -4px; }
+.services-sphere__previews { margin-top: var(--spacing-article-gap); }
+.services-sphere__preview-group + .services-sphere__preview-group { margin-top: var(--spacing-section); }
+.services-sphere__preview-heading {
+  margin: 0 0 1.5rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  font-weight: 600;
+  line-height: 1.12;
+}
+.services-sphere__preview-card {
+  min-width: 0;
+  height: 100%;
+  border: 1px solid var(--border-subtle);
+  border-top: 3px solid var(--color-antique-gold);
+  background: var(--surface);
+}
+.services-sphere__preview-card .service-card__body {
+  padding: var(--spacing-gutter);
+  gap: 1rem;
+}
