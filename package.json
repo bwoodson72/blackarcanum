@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
+    "test:services-filter": "node scripts/test-services-sphere-pages.mjs --filters",
     "test:services-spheres": "node scripts/test-services-sphere-pages.mjs",
     "test:services-hub": "node scripts/test-services-hub.mjs",
     "test:services-cards": "node scripts/test-services-cards.mjs",

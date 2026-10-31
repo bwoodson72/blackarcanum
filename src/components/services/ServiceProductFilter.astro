@@ -1,0 +1,25 @@
+---
+import ServiceProductGrid from "./ServiceProductGrid.astro";
+import type { PublishedService } from "../../lib/services-catalog";
+import "../../styles/services-filter.css";
+interface Props { products: readonly PublishedService[] }
+const { products } = Astro.props;
+const hasBothKinds = products.some(p => p.kind === "reading") && products.some(p => p.kind === "spellwork");
+---
+<div class="services-filter" data-service-filter>
+  {hasBothKinds && <div class="services-filter__controls" data-service-filter-controls
+    role="group" aria-label="Filter services by type" hidden>
+    <button type="button" data-service-filter-kind="all" aria-pressed="true">All</button>
+    <button type="button" data-service-filter-kind="reading" aria-pressed="false">Readings</button>
+    <button type="button" data-service-filter-kind="spellwork" aria-pressed="false">Spellwork</button>
+  </div>}
+  <p class="services-filter__count" data-service-count role="status" aria-live="polite" aria-atomic="true">
+    {products.length} {products.length === 1 ? "service" : "services"}
+  </p>
+  <ServiceProductGrid products={products} />
+  <p class="services-filter__empty" data-service-filter-empty hidden={products.length > 0}>No services to display.</p>
+</div>
+<script>
+  import { initializeServiceFilters } from "../../scripts/service-filters";
+  initializeServiceFilters();
+</script>

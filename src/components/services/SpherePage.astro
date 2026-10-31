@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHero from "../site/PageHero.astro";
 import Container from "../foundation/Container.astro";
 import SectionHeading from "../foundation/SectionHeading.astro";
-import ServiceProductGrid from "./ServiceProductGrid.astro";
+import ServiceProductFilter from "./ServiceProductFilter.astro";
 import type { PublishedSphereView } from "../../lib/services-presentation";
 import type { PublishedService } from "../../lib/services-catalog";
 import { serviceSphereUrl } from "../../lib/services-catalog";
@@ -27,8 +27,7 @@ const description = sphere.summary ?? `Explore the approved work in ${sphere.lab
       <Container width="wide">
         <SectionHeading id="sphere-products-heading" title="Explore the work"
           description="Read each detailed page for the purpose, scope, process and requirements of the work." />
-        <p class="services-sphere__count" data-service-count>{products.length} {products.length === 1 ? "service" : "services"}</p>
-        <ServiceProductGrid products={products} />
+        <ServiceProductFilter products={products} />
       </Container>
     </section>
   </div>

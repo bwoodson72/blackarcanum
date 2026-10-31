@@ -1,0 +1,34 @@
+/* Filter controls are enhanced only after initialization succeeds. */
+.services-filter { margin-top: var(--spacing-gutter); }
+.services-filter__controls:not([hidden]) { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.services-filter__controls button {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  color: var(--text-primary);
+  background: var(--surface);
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+  font-weight: 600;
+}
+.services-filter__controls button[aria-pressed="true"] {
+  background: var(--button-primary);
+  color: var(--button-primary-foreground);
+}
+.services-filter__controls button:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+.services-filter__controls button:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.services-filter__count {
+  min-block-size: 1.5em;
+  margin-block: var(--spacing-gutter);
+  color: var(--text-muted);
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+}
+.services-filter__empty {
+  padding-block: var(--spacing-gutter);
+  font-family: var(--font-reading);
+  font-size: var(--text-body);
+}
+/* Keep native hidden semantics even if the surrounding list later gains display rules. */
+.services-filter [hidden] { display: none !important; }
