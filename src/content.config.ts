@@ -1,3 +1,4 @@
+import { serviceSchema, createServiceIdGenerator } from "./lib/services-schema";
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { createEditorialIdGenerator, editorialSchema } from "./lib/editorial-schema";
@@ -24,4 +25,13 @@ const grimoire = defineCollection({
   schema: editorialSchema,
 });
 
-export const collections = { library, grimoire };
+const services = defineCollection({
+  loader: glob({
+    base: "./src/content/services",
+    pattern: "**/*.mdx",
+    generateId: createServiceIdGenerator(),
+  }),
+  schema: serviceSchema,
+});
+
+export const collections = { library, grimoire, services };

@@ -6,6 +6,7 @@
  * Each test remains independently runnable with its test:* script.
  */
 const tests = [
+  "test-services-schema.mjs",
   "test-editorial-schema.mjs",
   "test-editorial-qa.mjs",
   "test-editorial-presentation.mjs",

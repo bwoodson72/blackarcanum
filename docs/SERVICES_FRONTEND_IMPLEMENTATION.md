@@ -212,7 +212,7 @@ Update a row only after that one prompt has been completed and accepted by the o
 
 | Prompt | Scope | State | Commit | Verification / blockers |
 | --- | --- | --- | --- | --- |
-| SF-01 | Service schema and publish gate | Not started | — | — |
+| SF-01 | Service schema and publish gate | Completed; owner accepted | Local commit only | Unit suites, build, typecheck, high/critical audit and route checks pass. Full qa:fast stops at pre-existing outdated sample-article expectations. No push or deployment. |
 | SF-02 | Reusable cards and grids | Not started | — | — |
 | SF-03 | Services hub | Not started | — | — |
 | SF-04 | Sphere pages | Not started | — | — |

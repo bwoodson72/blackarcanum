@@ -15,11 +15,11 @@ This repository is the **Astro frontend** for Mystagogia (GitHub repository name
 
 ## Current approved development workflow (supersedes older review/branch conventions)
 
-- The owner has explicitly authorized **working directly on `master`** for the development phase. Do not create feature branches or pull requests. Build each prompt's complete changes before moving the branch reference; use one atomic commit directly on `master` when possible.
+- Work directly on `master` in the existing local checkout. **Local commits are authorized after relevant checks and self-review. Do not push, create branches or pull requests, or trigger deployments unless the owner explicitly requests that action.** Prefer one focused commit per assigned prompt.
 - Complete tests and self-review for the assigned prompt and stop. A later prompt requires a new user instruction.
-- Keep Vercel's existing **automatic deployments from `master` enabled**, as the owner explicitly requested. Do not manually trigger duplicate deployments; verify the automatic deployment status after the atomic commit. The team previously encountered Hobby deployment-rate limits, so minimize unnecessary builds.
+- **Do not deploy or push changes that would trigger an automatic deployment.** Do not change Vercel deployment settings. Deployment and post-deployment verification are outside the default assignment and require an explicit owner request.
 - **Use the optimized CI workflow:** `npm run qa:fast` (one combined unit process, one real Astro build, real content checks, typecheck, and high/critical audit) is the routine master-push gate. Do not make each small change run the repeatedly rebuilding fixture/browser suites. Those are preserved in the separately triggered `Deep Regression` workflow (manual suite selection and weekly full run). Run the relevant deep suite when changes materially affect reading layout, TOC, citations, cross-links, or media rendering.
-- Keep implementation narrowly scoped. Read needed files in batches, assemble and review one complete diff, make one atomic master commit, and inspect the resulting CI/deployment result. Avoid staging many intermediate GitHub trees, speculative test harnesses, repeated Vercel deployments, and rapid-fire CI status polling. See [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
+- Keep implementation narrowly scoped. Read needed files in batches, assemble and review one complete local diff, run relevant local checks, and create one focused local commit when ready. Do not trigger remote CI workflows or inspect deployments as a required handoff step unless explicitly requested. Avoid speculative test harnesses and repeated builds. See [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) for check selection; this section supersedes its older commit, push, and deployment instructions.
 - Keep **CI-only** test articles out of committed content collections; isolated runner fixtures must restore the real directories. The owner separately authorized **three public Greek-deity layout previews** on October 28, 2026. Those are intentionally committed, labeled `preview: true`, visible for layout testing, and `noindex` until replaced or withdrawn. Do not mistake them for completed editorial scholarship or practitioner reports.
 
 ## Rules for all changes
@@ -35,7 +35,7 @@ This repository is the **Astro frontend** for Mystagogia (GitHub repository name
 
 ## Verification and handoff
 - Execute relevant build, type checks and tests (or explain blockers). Review responsive output for visual work.
-- Report the prompt ID, files modified, commands/results, relevant commit/PR, unresolved issues, and confirmation that work stopped after that prompt.
+- Report the prompt ID, files modified, local checks/results, unresolved issues, and confirmation that work stopped after that prompt. Report the local commit SHA and confirm no push or deployment was performed. Include PR or deployment details only when those actions were explicitly requested.
 - If required assets, credentials, references, or external APIs are missing, document the blocker; do not fabricate substitutes.
 
 ## Local development
