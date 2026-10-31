@@ -7,13 +7,14 @@ import "../../styles/page-hero.css";
 
 type HeroActionProps = { label: string; href: string; icon?: "book" | "botanical" };
 interface Props {
-  mode: "home" | "archive" | "about";
+  mode: "home" | "archive" | "about" | "services";
   title: string;
   titleId?: string;
   tagline: readonly string[];
   description: string;
   actions?: readonly HeroActionProps[];
-  artSrc: string;
+  /** Services may use a text-only hero until imagery is approved. */
+  artSrc?: string;
   artViewBox?: string;
   artWidth?: number;
   artHeight?: number;
@@ -26,7 +27,8 @@ const {
 } = Astro.props;
 const Tag = mode === "archive" ? "header" : "section";
 const prefix = mode === "home" ? "home-hero" :
-  mode === "about" ? "about-hero" : "archive-hero";
+  mode === "about" ? "about-hero" : mode === "services" ? "services-hero" : "archive-hero";
+if (mode !== "services" && !artSrc) throw new Error("Existing hero modes require their approved artwork.");
 ---
 <Tag
   class:list={["page-hero", prefix, mode === "home" ? "page-hero--home" : "page-hero--compact",
@@ -34,11 +36,11 @@ const prefix = mode === "home" ? "home-hero" :
   aria-labelledby={titleId}
   data-archive-hero={archive}
 >
-  <div class="page-hero__art" aria-hidden="true">
+  {artSrc && <div class="page-hero__art" aria-hidden="true">
     <svg class="page-hero__image" viewBox={artViewBox} preserveAspectRatio="xMidYMid slice" focusable="false" aria-hidden="true">
       <image href={artSrc} x="0" y="0" width={artWidth} height={artHeight} />
     </svg>
-  </div>
+  </div>}
   <Container width="full" class="page-hero__inner">
     <div class="page-hero__copy">
       <CelestialDivider />

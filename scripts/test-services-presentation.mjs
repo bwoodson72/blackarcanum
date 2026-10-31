@@ -21,3 +21,12 @@ assert.deepEqual(toPublishedSphereViews([product]), []);
 assert.deepEqual(toPublishedSphereViews([], spheres), []);
 assert.deepEqual(toPublishedSphereViews([product], spheres).map((s) => [s.id, s.href, s.productCount]), [["love", "/services/love/", 1]]);
 console.log("PASS: Services card prices, types, canonical links and nonempty published sphere views");
+
+// A teaser must not leak an unapproved or unpublished profile into the hub.
+const { approvedPractitionerTeaser } = await import("../src/lib/services-hub.ts");
+assert.equal(approvedPractitionerTeaser(), undefined);
+for (const teaser of [{ approved: false, published: true, excerpt: "Unapproved fixture" }, { approved: true, published: false, excerpt: "Draft fixture" }, { approved: true, published: true, excerpt: " " }]) {
+  assert.equal(approvedPractitionerTeaser(teaser), undefined);
+}
+assert.deepEqual(approvedPractitionerTeaser({ approved: true, published: true, excerpt: " Fixture only " }), { excerpt: "Fixture only", href: "/services/practitioner/" });
+console.log("PASS: hub practitioner teaser requires approved, published, nonempty content");

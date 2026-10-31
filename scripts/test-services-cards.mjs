@@ -2,52 +2,11 @@
 // No synthetic products, routes or image approvals are written into the live src/.
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
-import { spawn, spawnSync } from "node:child_process";
-import { setTimeout as pause } from "node:timers/promises";
-const root = process.cwd();
-const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "mystagogia-service-cards-"));
-const origin = "http://127.0.0.1:4192";
-const cdp = "http://127.0.0.1:9252";
-let chrome, server, socket;
-const pending = new Map();
-let nextId = 0;
-const screenshots = process.env.SERVICES_SCREENSHOTS || path.join(fixture, "screenshots");
-function write(name, content) {
-  const file = path.join(fixture, name);
-  fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, content);
-}
-async function waitFor(probe, label) {
-  for (let i = 0; i < 100; i++) {
-    try { if (await probe()) return; } catch {}
-    await pause(200);
-  }
-  throw new Error("Timed out awaiting " + label);
-}
-function send(method, params = {}) {
-  return new Promise((resolve, reject) => {
-    const id = ++nextId;
-    const timer = setTimeout(() => { pending.delete(id); reject(new Error("CDP timeout: " + method)); }, 10000);
-    pending.set(id, { resolve, reject, timer });
-    socket.send(JSON.stringify({ id, method, params }));
-  });
-}
-async function evaluate(expression) {
-  const response = await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true });
-  assert.equal(response.result.exceptionDetails, undefined, JSON.stringify(response.result.exceptionDetails));
-  return response.result.result.value;
-}
+import { createServicesFixture } from "./lib/services-fixture-qa.mjs";
+const { fixture, origin, write, prepare, build, startBrowser, send, evaluate, waitFor, capture, close } = createServicesFixture("cards", 4192, 9252);
 try {
-  fs.cpSync(path.join(root, "src"), path.join(fixture, "src"), { recursive: true });
-  fs.rmSync(path.join(fixture, "src/pages"), { recursive: true });
-  fs.cpSync(path.join(root, "public/fonts"), path.join(fixture, "public/fonts"), { recursive: true });
-  fs.symlinkSync(path.join(root, "node_modules"), path.join(fixture, "node_modules"), "dir");
-  write("package.json", JSON.stringify({ type: "module" }));
-  write("astro.config.mjs", `import { defineConfig } from 'astro/config';
-import tailwindcss from '@tailwindcss/vite';
-import mdx from '@astrojs/mdx';
-export default defineConfig({ vite: { plugins: [tailwindcss()] }, integrations: [mdx()] });`);
+  prepare();
   // Plain technical test pixels, no artwork, historical claim or production approval.
   write("src/assets/media/editorial/qa-services.svg", '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480"><rect width="720" height="480" fill="black"/></svg>');
   const registry = path.join(fixture, "src/data/media.ts");
@@ -85,28 +44,12 @@ const sphereViews = toPublishedSphereViews(products, spheres);
       write(`src/pages/services/${sphere}/${suffix}index.astro`, '<!doctype html><html lang="en"><title>Fixture target</title><h1>Isolated fixture destination</h1></html>');
     }
   }
-  const build = spawnSync(process.execPath, [fs.realpathSync(path.join(root, "node_modules/.bin/astro")), "build"], { cwd: fixture, encoding: "utf8", timeout: 180000 });
-  assert.equal(build.status, 0, "Isolated build failed: " + build.stdout?.slice(-5000) + build.stderr?.slice(-5000));
+  build();
   const html = fs.readFileSync(path.join(fixture, "dist/index.html"), "utf8");
   assert.match(html, /noindex, nofollow/);
   assert.doesNotMatch(html, /<script\b/, "Cards work without client-side JavaScript");
   assert.equal((html.match(/data-service-card[ >]/g) || []).length, 3);
-  server = spawn("python3", ["-m", "http.server", "4192", "--bind", "127.0.0.1", "--directory", path.join(fixture, "dist")], { stdio: "ignore" });
-  chrome = spawn(process.env.CHROME_BIN || "google-chrome", ["--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--remote-allow-origins=*", "--remote-debugging-port=9252", "--user-data-dir=" + path.join(fixture, "chrome"), origin], { stdio: "ignore" });
-  chrome.on("error", (error) => console.error("Browser startup:", error.message));
-  await waitFor(async () => (await fetch(origin)).ok, "fixture server");
-  let tab;
-  await waitFor(async () => { tab = (await (await fetch(cdp + "/json/list")).json()).find(t => t.type === "page"); return !!tab; }, "headless Chrome (set CHROME_BIN if needed)");
-  socket = new WebSocket(tab.webSocketDebuggerUrl);
-  socket.addEventListener("message", ({ data }) => {
-    const response = JSON.parse(data); const target = pending.get(response.id);
-    if (!target) return;
-    clearTimeout(target.timer); pending.delete(response.id);
-    if (response.error) target.reject(new Error(JSON.stringify(response.error))); else target.resolve(response);
-  });
-  await new Promise((resolve, reject) => { socket.addEventListener("open", resolve, { once: true }); socket.addEventListener("error", reject, { once: true }); });
-  await send("Page.enable"); await send("Runtime.enable");
-  fs.mkdirSync(screenshots, { recursive: true });
+  await startBrowser();
   for (const width of [375, 768, 1024, 1280, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 1000, deviceScaleFactor: 1, mobile: false });
     await send("Page.navigate", { url: origin });
@@ -154,9 +97,7 @@ const sphereViews = toPublishedSphereViews(products, spheres);
     assert.equal(await evaluate("getComputedStyle(document.querySelector('.service-card__link')).transitionDuration"), "0s");
     await send("Emulation.setEmulatedMedia", { features: [] });
     await evaluate('document.body.tabIndex=-1; document.body.focus(); document.body.removeAttribute("tabindex"); window.scrollTo(0, 0)');
-    const layout = await send("Page.getLayoutMetrics");
-    const capture = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: layout.result.cssContentSize.height, scale: 1 } });
-    fs.writeFileSync(path.join(screenshots, `services-cards-${width}.png`), Buffer.from(capture.result.data, "base64"));
+    await capture(`services-cards-${width}.png`, width);
     console.log(`PASS: cards at ${width}px: grid, overflow, labels, price, image fallback, targets, accessibility tree, Tab focus, reduced motion`);
   }
   // Enter activates the native product anchor; no client-side JavaScript needed.
@@ -166,9 +107,5 @@ const sphereViews = toPublishedSphereViews(products, spheres);
   await waitFor(() => evaluate('location.pathname === "/services/love/qa-product-0/"'), "native link navigation");
   console.log("PASS: native Enter navigation; test products, approvals and routes isolated from production");
 } finally {
-  socket?.close(); chrome?.kill("SIGTERM"); server?.kill("SIGTERM");
-  for (const { timer } of pending.values()) clearTimeout(timer);
-  // Allow child processes to release their temporary directories before cleanup.
-  await pause(300);
-  fs.rmSync(fixture, { recursive: true, force: true });
+  await close();
 }

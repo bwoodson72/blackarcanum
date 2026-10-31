@@ -1,0 +1,111 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../site/PageHero.astro";
+import Container from "../foundation/Container.astro";
+import SectionHeading from "../foundation/SectionHeading.astro";
+import ActionLink from "../foundation/ActionLink.astro";
+import SphereCard from "./SphereCard.astro";
+import { serviceSpheres } from "../../data/service-spheres";
+import type { PublishedSphereView } from "../../lib/services-presentation";
+import { approvedPractitionerTeaser } from "../../lib/services-hub";
+import type { PractitionerTeaser } from "../../lib/services-hub";
+import "../../styles/services-hub.css";
+
+interface Props {
+  /** Only use views backed by real, approved sphere destinations. */
+  spheres?: readonly PublishedSphereView[];
+  practitioner?: PractitionerTeaser;
+}
+const { spheres = [], practitioner } = Astro.props;
+const teaser = approvedPractitionerTeaser(practitioner);
+const hasSpheres = spheres.length > 0;
+---
+<!-- Review composition only: no production route imports this component. -->
+<BaseLayout title="Services — Divination & Ritual Work"
+  description="Mystagogia’s approach to private readings and constructive ritual work, organized by sphere of life." noindex>
+  <div class="services-hub" data-services-hub>
+    <PageHero mode="services" titleId="services-title" title="Divination & Ritual Work"
+      tagline={["Mystagogia", "Private Practice"]}
+      description="Readings and constructive ritual work, with a clearly defined purpose and scope."
+      actions={[{ label: "Explore the spheres", href: "#service-spheres" }]} />
+
+    <section class="services-hub__introduction" aria-label="The private practice">
+      <Container width="reading">
+        <p>{hasSpheres
+          ? "A selective private practice, organized around the part of life you want to address. Begin with a sphere, then consider the specific work described within it."
+          : "The Services section is in preparation. No readings or ritual packages are currently offered here."}</p>
+      </Container>
+    </section>
+
+    <section id="service-spheres" class="services-hub__spheres" aria-labelledby="spheres-heading" tabindex="-1">
+      <Container width="wide">
+        <SectionHeading id="spheres-heading" title="Spheres of practice"
+          description={hasSpheres ? "Begin with the area of life that brings you here." : "Three planned spheres. No services are open through this site."} />
+        {hasSpheres ? (
+          <ul class="service-grid services-hub__sphere-grid">
+            {spheres.map((sphere) => <li><SphereCard sphere={sphere} /></li>)}
+          </ul>
+        ) : (
+          <div class="services-hub__unavailable" data-services-unavailable>
+            <ul>{serviceSpheres.map((sphere) => <li>{sphere.label}</li>)}</ul>
+            <p>Specific offerings, scope, prices and availability will be published only after approval. There is nothing to request or purchase here at present.</p>
+          </div>
+        )}
+      </Container>
+    </section>
+
+    {teaser && <section class="services-hub__section" aria-labelledby="practitioner-heading" data-practitioner-teaser>
+      <Container width="reading">
+        <SectionHeading id="practitioner-heading" title="The practitioner" />
+        <p>{teaser.excerpt}</p>
+        <ActionLink href={teaser.href} variant="secondary">Read the practitioner profile</ActionLink>
+      </Container>
+    </section>}
+
+    <section class="services-hub__section services-hub__methods" aria-labelledby="methods-heading">
+      <Container width="wide">
+        <SectionHeading id="methods-heading" title="Two forms of work" description="Readings and ritual work address different questions. Each specific offering will explain its own method and limits." />
+        <div class="services-hub__panels">
+          <article>
+            <h3>Readings</h3>
+            <p>Divination is concerned with a question or situation. A reading’s description sets out what it covers, how it is approached, and what you receive.</p>
+          </article>
+          <article>
+            <h3>Ritual work</h3>
+            <p>Spellwork is a defined ritual practice directed toward a constructive purpose. Each package’s scope, process and timeframe are explained before it is offered.</p>
+          </article>
+        </div>
+      </Container>
+    </section>
+
+    <section class="services-hub__section" aria-labelledby="principles-heading">
+      <Container width="reading">
+        <SectionHeading id="principles-heading" title="Purpose, consent & clear boundaries" />
+        <ul class="services-hub__principles">
+          <li><strong>Constructive work.</strong> Protection and cleansing are within the practice’s scope. Curses, retaliation and work intended to harm others are not.</li>
+          <li><strong>Respect for consent.</strong> No coercion, domination or nonconsensual manipulation.</li>
+          <li><strong>Specific scope.</strong> Each offering must explain its purpose, inclusions, requirements, timing and price. No unspecified custom work is offered here.</li>
+        </ul>
+      </Container>
+    </section>
+
+    <section class="services-hub__section services-hub__faq" aria-labelledby="faq-heading">
+      <Container width="reading">
+        <SectionHeading id="faq-heading" title="Before you explore further" />
+        <div class="services-hub__questions">
+          <details><summary>How are services organized?</summary><p>Browse by sphere of life. Readings and spellwork sit together within each sphere, with labels explaining the form of work.</p></details>
+          <details><summary>Can I request harmful or coercive work?</summary><p>No. Curses, retaliation, harm, coercion, domination and nonconsensual manipulation are outside the practice’s boundaries.</p></details>
+          <details><summary>Can I book or pay through this site?</summary><p>No booking, payment or intake is available here. This site does not accept orders or collect private client information.</p></details>
+          <details><summary>Where will scope and price be explained?</summary><p>Each approved offering will have its own detailed page. The Services hub introduces the practice and its spheres; it does not list products or prices.</p></details>
+        </div>
+      </Container>
+    </section>
+
+    <section class="services-hub__section services-hub__closing" aria-labelledby="services-closing-heading">
+      <Container width="reading">
+        <SectionHeading id="services-closing-heading" title="Begin with a sphere" description={hasSpheres ? "Return to the spheres to explore the work described within each." : "Return to the planned spheres. Offerings are still in preparation."} />
+        <ActionLink href="#service-spheres">Return to the spheres <span aria-hidden="true">↑</span></ActionLink>
+      </Container>
+    </section>
+  </div>
+</BaseLayout>
