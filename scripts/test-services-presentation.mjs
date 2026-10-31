@@ -17,7 +17,7 @@ assert.equal(serviceCardPresentation({ ...product, kind: "spellwork" }).kindLabe
 for (const patch of [{ href: "https://example.org" }, { status: "draft" }, { approved: false }, { id: "wrong" }, { priceUsdCents: undefined }]) {
   assert.throws(() => serviceCardPresentation({ ...product, ...patch }));
 }
-assert.deepEqual(toPublishedSphereViews([product]), []);
-assert.deepEqual(toPublishedSphereViews([], spheres), []);
-assert.deepEqual(toPublishedSphereViews([product], spheres).map((s) => [s.id, s.href, s.productCount]), [["love", "/services/love/", 1]]);
-console.log("PASS: Services card prices, types, canonical links and nonempty published sphere views");
+assert.equal(toPublishedSphereViews([product]).length, 3);
+assert.deepEqual(toPublishedSphereViews([], spheres).map(s => s.productCount), [0, 0, 0]);
+assert.deepEqual(toPublishedSphereViews([product], spheres).map((s) => [s.id, s.href, s.productCount]), [["love", "/services/love/", 1], ["money", "/services/money/", 0], ["protection-uncrossing", "/services/protection-uncrossing/", 0]]);
+console.log("PASS: Services card prices, types, canonical links and browsable published spheres, including empty categories");

@@ -15,12 +15,11 @@ for (const p of ["/services-other/", "/service/", "/", "//services/"]) assert.eq
 assert.equal(navigationCurrent("/library/article/", primaryNavigation[0]), undefined, "Existing editorial links retain exact matching");
 assert.equal(navigationCurrent("/library/", primaryNavigation[0]), "page");
 assert.equal(navigationCurrent("/services/love/", { label: "Home", href: "/" }), undefined);
-const ready = { releaseApproved: true, indexableHub: true, sphereRoutes: true, detailRoutes: true, publishedSphereCount: 1 };
+const ready = { hub: true, sphereRoutes: true, detailRoutes: true };
 assert.equal(canShowServicesNavigation(ready), true);
-for (const key of ["releaseApproved", "indexableHub", "sphereRoutes", "detailRoutes"]) assert.equal(canShowServicesNavigation({ ...ready, [key]: false }), false);
-for (const count of [0, -1, 0.5, NaN]) assert.equal(canShowServicesNavigation({ ...ready, publishedSphereCount: count }), false);
+for (const key of Object.keys(ready)) assert.equal(canShowServicesNavigation({ ...ready, [key]: false }), false);
 const files = ["[...index].astro", "[sphere].astro", "[sphere]/[slug].astro", "practitioner/[...page].astro"].map(s=>"../pages/services/"+s);
 assert.ok(Object.values(servicesRouteReadiness(files)).every(Boolean));
 assert.equal(servicesRouteReadiness(["../pages/services/index.astro"]).hub, true);
-assert.equal(servicesRouteReadiness(["../pages/services/index.astro"]).indexableHub, false, "An arbitrary noindex preview does not activate Services nav");
-console.log("PASS: conditional nav, exact/prefix boundary current states, legacy editorial behavior and release/content/route readiness");
+assert.equal(servicesRouteReadiness(["../pages/services/index.astro"]).indexableHub, false, "Indexability metadata is separate from ordinary hub readiness");
+console.log("PASS: conditional nav, exact/prefix boundary current states, legacy editorial behavior and route readiness independent of commercial launch and inventory");

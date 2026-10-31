@@ -13,13 +13,14 @@ import "../../styles/services-hub.css";
 interface Props {
   /** Only use views backed by real, approved sphere destinations. */
   spheres?: readonly PublishedSphereView[];
-  /** Only the canonical, publication-gated hub route opts in. */
+  /** Search indexing is separate from ordinary content visibility. */
   indexable?: boolean;
 }
 const { spheres = [], indexable = false } = Astro.props;
 const profile = await getPublishedPractitioner();
 const teaser = profile ? { excerpt: profile.summary, href: profile.href } : undefined;
 const hasSpheres = spheres.length > 0;
+const hasOfferings = spheres.some(sphere => sphere.productCount > 0);
 ---
 <!-- Canonical route emission and navigation share the Services visibility gate. -->
 <BaseLayout title="Services — Divination & Ritual Work"
@@ -32,9 +33,9 @@ const hasSpheres = spheres.length > 0;
 
     <section class="services-hub__introduction" aria-label="The private practice">
       <Container width="reading">
-        <p>{hasSpheres
+        <p>{hasOfferings
           ? "A selective private practice, organized around the part of life you want to address. Begin with a sphere, then consider the specific work described within it."
-          : "The Services section is in preparation. No readings or ritual packages are currently offered here."}</p>
+          : "Explore the practice and its spheres below. Specific offerings are in preparation; no readings or ritual packages are currently offered here."}</p>
       </Container>
     </section>
 

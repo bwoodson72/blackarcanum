@@ -14,9 +14,9 @@ const entries = registry.flatMap(sphere => ["reading", "spellwork", "draft", "re
 }));
 assert.equal(servicesPublicReleaseApproved, false, "Implementation does not authorize release");
 const products = selectPublishedServices(entries, registry);
-assert.deepEqual(buildServiceSpherePaths(products), []);
+assert.equal(buildServiceSpherePaths(products).length, 3);
 assert.deepEqual(buildServiceSpherePaths(products, false, registry), []);
-assert.deepEqual(buildServiceSpherePaths([], true, registry), []);
+assert.deepEqual(buildServiceSpherePaths([], true, registry).map(p => p.props.products.length), [0, 0, 0]);
 const paths = buildServiceSpherePaths(products, true, registry);
 assert.deepEqual(paths.map(p => p.params.sphere), registry.map(s => s.id));
 for (const { params, props } of paths) {
@@ -25,9 +25,9 @@ for (const { params, props } of paths) {
   assert.deepEqual(props.products.map(p => p.kind).sort(), ["reading", "spellwork"]);
   assert.ok(props.products.every(p => p.href.startsWith(props.sphere.href)));
 }
-assert.deepEqual(buildServiceSpherePaths(products.filter(p => p.sphere !== "money"), true, registry).map(p => p.params.sphere), ["love", "protection-uncrossing"]);
+assert.deepEqual(buildServiceSpherePaths(products.filter(p => p.sphere !== "money"), true, registry).map(p => p.params.sphere), ["love", "money", "protection-uncrossing"]);
 const restricted = registry.map(s => ({ ...s, published: s.id !== "money", visible: s.id !== "love" }));
 assert.deepEqual(buildServiceSpherePaths(selectPublishedServices(entries, restricted), true, restricted).map(p => p.params.sphere), ["protection-uncrossing"]);
 assert.throws(() => buildServiceSpherePaths([{ ...products[0], status: "draft" }], true, registry));
 assert.throws(() => buildServiceSpherePaths(products, true, [{ ...registry[0], id: "future" }]));
-console.log("PASS: sphere paths, release approval, all three IDs, mixed kinds, draft/review/hidden/empty exclusion");
+console.log("PASS: sphere paths, ordinary visibility, all three IDs, empty categories, mixed kinds, draft/review/hidden exclusion");

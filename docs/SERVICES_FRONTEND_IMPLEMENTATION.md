@@ -232,3 +232,8 @@ Update a row only after that one prompt has been completed and accepted by the o
 - Services-specific hero/category/product imagery or explicit approval of text-first layouts.
 - Exact commercial, privacy and refund terms and a deliberate public release decision.
 - Stripe's written approval and all payments/intake/backend functionality are **outside this frontend workstream**.
+
+
+## Owner visibility instruction — October 31, 2026
+
+Services must be viewable through ordinary pages, site navigation and the homepage, without a development preview mode. This supersedes the earlier release-wide hiding and empty-category suppression requirements. The three approved sphere pages remain browsable with an honest empty state until actual offerings are approved. Individual draft/review offerings and unapproved practitioner facts remain excluded. Informational visibility does not authorize sales, pushes or deployments; commercial launch remains unapproved.

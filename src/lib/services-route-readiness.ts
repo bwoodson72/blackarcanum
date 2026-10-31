@@ -1,4 +1,4 @@
-/** Exact modules only: a preview page or future category is not a live hub. */
+/** Check real route modules before emitting ordinary Services links. */
 export function servicesRouteReadiness(files: readonly string[]) {
   const has = (name: string) => files.includes("../pages/services/" + name);
   return {

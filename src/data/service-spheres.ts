@@ -1,4 +1,4 @@
-/** Approved taxonomy only; publication awaits real products and owner approval. */
+/** Approved spheres are browsable independently of individual offering publication. */
 export const SERVICE_SPHERE_IDS = ["love", "money", "protection-uncrossing"] as const;
 export type ServiceSphereId = typeof SERVICE_SPHERE_IDS[number];
 
@@ -12,9 +12,9 @@ export interface ServiceSphere {
 }
 
 export const serviceSpheres: readonly ServiceSphere[] = [
-  { id: "love", label: "Love & Relationships", order: 1, visible: false, published: false },
-  { id: "money", label: "Money & Prosperity", order: 2, visible: false, published: false },
-  { id: "protection-uncrossing", label: "Protection & Uncrossing", order: 3, visible: false, published: false },
+  { id: "love", label: "Love & Relationships", order: 1, visible: true, published: true },
+  { id: "money", label: "Money & Prosperity", order: 2, visible: true, published: true },
+  { id: "protection-uncrossing", label: "Protection & Uncrossing", order: 3, visible: true, published: true },
 ];
 
 /** Editorial rights clearance alone never approves an image for Services. */

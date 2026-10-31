@@ -45,7 +45,7 @@ const spheres = toPublishedSphereViews(await getPublishedServices());
   fs.appendFileSync(path.join(fixture, "src/data/media.ts"), `\n(media as MediaRecord[]).push({ id: "qa-detail-image", sourceFile: "src/assets/media/editorial/qa-detail-image.svg", role: "editorial", origin: "modern-artwork", alt: "Neutral technical detail image fixture", decorative: false, rights: { status: "cleared", basis: "owned", license: "Technical fixture", creditLine: "Test only", evidenceNote: "Isolated neutral test pixels only" } });`);
   for (const row of rows) write(`src/content/services/${row.slug}.mdx`, mdx(row));
   cleanBuild();
-  assert.equal(fs.existsSync(path.join(fixture, "dist/services/love/qa-detail-reading/index.html")), false, "No release approval means no product pages");
+  assert.equal(fs.existsSync(path.join(fixture, "dist/services/love/qa-detail-reading/index.html")), true, "Approved offerings are normally browsable independently of commercial launch");
   write("src/data/services-release.ts", "// Isolated test copy only.\nexport const servicesPublicReleaseApproved: boolean = true;\n");
   const hubFile = path.join(fixture, "src/pages/services/index.astro");
   const hubSource = fs.readFileSync(hubFile, "utf8");
@@ -124,5 +124,5 @@ const spheres = toPublishedSphereViews(await getPublishedServices());
   // H1 guard is tested through the real MDX route, not a text-only approximation.
   write("src/content/services/qa-detail-reading.mdx", mdx(rows[0], "# Invalid second h1"));
   assert.throws(() => cleanBuild(), /Service MDX must not define h1/);
-  console.log("PASS: closed release/missing ancestor/draft/review exclusion and duplicate-H1 build rejection; fixtures isolated");
+  console.log("PASS: normal visibility, missing ancestor/draft/review exclusion and duplicate-H1 build rejection; fixtures isolated");
 } finally { await close(); }

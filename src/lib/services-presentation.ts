@@ -9,7 +9,7 @@ export interface PublishedSphereView extends ServiceSphere {
   productCount: number;
 }
 
-/** Only spheres with approved products can be linked; no empty destinations. */
+/** Approved spheres remain browsable while individual offerings are in preparation. */
 export function toPublishedSphereViews(
   products: readonly PublishedService[],
   spheres: readonly ServiceSphere[] = serviceSpheres,
@@ -19,7 +19,6 @@ export function toPublishedSphereViews(
       productCount: products.filter((product) => product.sphere === sphere.id &&
         product.status === "published" && product.approved).length,
     }))
-    .filter((sphere) => sphere.productCount > 0)
     .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
 }
 

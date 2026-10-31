@@ -53,9 +53,9 @@ import ServiceProductFilter from "../components/services/ServiceProductFilter.as
   const enabled = fs.readFileSync(registryFile, "utf8").replaceAll("visible: false, published: false", "visible: true, published: true");
   fs.writeFileSync(registryFile, enabled);
   products();
-  // Populated catalog does not imply permission to release Services.
+  // Ordinary content browsing is independent of commercial launch approval.
   cleanBuild();
-  for (const sphere of ids) assert.equal(fs.existsSync(path.join(fixture, `dist/services/${sphere}/index.html`)), false, "Unapproved release excludes sphere route");
+  for (const sphere of ids) assert.equal(fs.existsSync(path.join(fixture, `dist/services/${sphere}/index.html`)), true, "Approved spheres are ordinarily browsable");
   write("src/data/services-release.ts", "// Isolated test copy only.\nexport const servicesPublicReleaseApproved: boolean = true;\n");
   const detailFile = path.join(fixture, "src/pages/services/[sphere]/[slug].astro");
   const detailSource = fs.readFileSync(detailFile, "utf8");
@@ -221,12 +221,13 @@ import ServiceProductFilter from "../components/services/ServiceProductFilter.as
   }
   fs.writeFileSync(registryFile, enabled.replace('id: "money", label: "Money & Prosperity", order: 2, visible: true, published: true', 'id: "money", label: "Money & Prosperity", order: 2, visible: true, published: false'));
   cleanBuild();
-  for (const sphere of ["love", "money"]) {
+  for (const sphere of ["money"]) {
     assert.equal(fs.existsSync(path.join(fixture, `dist/services/${sphere}/index.html`)), false);
     assert.equal(fs.existsSync(path.join(fixture, `dist/services/${sphere}`)), false, "No empty/unpublished category directory");
   }
   assert.equal(fs.existsSync(path.join(fixture, "dist/services/protection-uncrossing/index.html")), true);
-  assert.equal((await fetch(origin + "/services/love/")).status, 404);
+  assert.equal((await fetch(origin + "/services/love/")).status, 200);
+  assert.match(fs.readFileSync(path.join(fixture, "dist/services/love/index.html"), "utf8"), /data-services-unavailable/);
   assert.equal((await fetch(origin + "/services/money/")).status, 404);
-  console.log("PASS: empty/unpublished spheres emit no pages or directories; only the populated approved sphere remains");
+  console.log("PASS: empty approved sphere stays browsable; unpublished sphere emits no destination");
 } finally { await close(); }

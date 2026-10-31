@@ -35,9 +35,10 @@ try {
   const registry = path.join(fixture, "src/data/service-spheres.ts");
   const enabled = fs.readFileSync(registry, "utf8").replaceAll("visible: false, published: false", "visible: true, published: true");
   fs.writeFileSync(registry, enabled); products();
-  cleanBuild(); // Source remains release-closed: even valid products must not promote Services.
+  cleanBuild(); // Normal browsing is available even while commercial launch remains unapproved.
   const closedHtml = fs.readFileSync(path.join(fixture, "dist/index.html"), "utf8");
-  assert.doesNotMatch(closedHtml, /data-home-services|href="\/services\/"/);
+  assert.match(closedHtml, /data-home-services/);
+  assert.match(closedHtml, /href="\/services\/"/);
   await startBrowser();
   for (const width of widths) { await visit(width); snapshots.set(width, await originalParts()); }
   write("src/data/services-release.ts", "export const servicesPublicReleaseApproved: boolean = true;\n");
@@ -95,14 +96,17 @@ try {
     await waitFor(()=>evaluate("location.pathname==='/services/' && !!document.querySelector('[data-services-hub]')"),"homepage invitation navigation");
     console.log(`PASS: homepage@${width}: exact editorial markup/hero dimensions, one H1, correct placement, live sphere links, no prices/artwork, focus/Tab/Enter, responsive layout`);
   }
-  // A sphere lacking approved products must not leave a promotional link behind.
+  // An explicitly unpublished sphere must not leave a promotional link behind.
   fs.writeFileSync(registry,enabled.replace('id: "protection-uncrossing", label: "Protection & Uncrossing", order: 3, visible: true, published: true','id: "protection-uncrossing", label: "Protection & Uncrossing", order: 3, visible: true, published: false'));
   cleanBuild(); await visit(375);
   assert.deepEqual(await evaluate("[...document.querySelectorAll('.home-services__spheres a')].map(a=>a.getAttribute('href'))"),["/services/love/","/services/money/"]);
   assert.equal(fs.existsSync(path.join(fixture,"dist/services/protection-uncrossing/index.html")),false);
   products("draft");cleanBuild();await visit(375);
-  assert.equal(await evaluate("!!document.querySelector('[data-home-services]')"),false);
-  assert.equal(await evaluate("document.querySelectorAll('a[href=\"/services/\"]').length"),0);
+  assert.equal(await evaluate("!!document.querySelector('[data-home-services]')"),true);
+  assert.ok(await evaluate("document.querySelectorAll('a[href=\"/services/\"]').length") > 0);
+  const emptySphere = fs.readFileSync(path.join(fixture,"dist/services/love/index.html"),"utf8");
+  assert.match(emptySphere, /data-services-unavailable/);
+  assert.doesNotMatch(emptySphere, /data-service-card/);
   assert.deepEqual(await originalParts(),snapshots.get(375));
-  console.log("PASS: release-closed and empty catalogs suppress invitation/nav; unpublished sphere link omitted; existing editorial homepage unchanged");
+  console.log("PASS: ordinary homepage/navigation/category browsing survives draft-only catalogs; no draft product cards; hidden sphere omitted; existing editorial homepage unchanged");
 } finally { await close(); }

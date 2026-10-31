@@ -7,8 +7,8 @@ interface Props { sphere: PublishedSphereView; headingLevel?: "h2" | "h3" }
 const { sphere, headingLevel: Heading = "h3" } = Astro.props;
 const href = serviceSphereUrl(sphere.id);
 if (!sphere.published || !sphere.visible || !Number.isSafeInteger(sphere.productCount) ||
-    sphere.productCount < 1 || sphere.href !== href) {
-  throw new Error("Sphere cards require a published destination with approved products.");
+    sphere.productCount < 0 || sphere.href !== href) {
+  throw new Error("Sphere cards require a published destination and a valid offering count.");
 }
 ---
 <article class="sphere-card" data-sphere-card>

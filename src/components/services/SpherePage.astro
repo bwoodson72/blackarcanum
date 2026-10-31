@@ -11,11 +11,11 @@ import "../../styles/services-sphere.css";
 interface Props { sphere: PublishedSphereView; products: readonly PublishedService[] }
 const { sphere, products } = Astro.props;
 if (!sphere.published || !sphere.visible || sphere.href !== serviceSphereUrl(sphere.id) ||
-    products.length === 0 || sphere.productCount !== products.length ||
+    sphere.productCount !== products.length ||
     products.some((product) => product.sphere !== sphere.id)) {
-  throw new Error("Sphere pages require a nonempty, matching published catalog.");
+  throw new Error("Sphere pages require a matching published catalog.");
 }
-const description = sphere.summary ?? `Explore the approved work in ${sphere.label.toLowerCase()}, with scope and price explained on each detailed page.`;
+const description = sphere.summary ?? `Readings and constructive ritual work in the sphere of ${sphere.label.toLowerCase()}.`;
 ---
 <BaseLayout title={`${sphere.label} — Services`} description={description} noindex
   breadcrumbs={[{ label: "Services", href: "/services/" }, { label: sphere.label }]}>
@@ -26,8 +26,10 @@ const description = sphere.summary ?? `Explore the approved work in ${sphere.lab
     <section class="services-sphere__catalog" id="sphere-products" aria-labelledby="sphere-products-heading" tabindex="-1">
       <Container width="wide">
         <SectionHeading id="sphere-products-heading" title="Explore the work"
-          description="Read each detailed page for the purpose, scope, process and requirements of the work." />
-        <ServiceProductFilter products={products} />
+          description={products.length > 0 ? "Read each detailed page for the purpose, scope, process and requirements of the work." : "Specific offerings will explain their purpose, scope, process and requirements here."} />
+        {products.length > 0 ? <ServiceProductFilter products={products} /> : (
+          <p data-services-unavailable>Offerings in this sphere are in preparation. No readings or ritual packages are currently available here.</p>
+        )}
       </Container>
     </section>
   </div>

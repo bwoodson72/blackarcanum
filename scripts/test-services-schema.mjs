@@ -10,12 +10,12 @@ const entry = (data) => ({ id: data.slug, data: serviceSchema.parse(data) });
 const spheres = serviceSpheres.map((s) => ({ ...s, visible: true, published: true }));
 assert.deepEqual(selectPublishedServices([]), []);
 assert.deepEqual(serviceSpheres.map((s) => s.id), ["love", "money", "protection-uncrossing"]);
-assert.ok(serviceSpheres.every((s) => !s.visible && !s.published));
+assert.ok(serviceSpheres.every((s) => s.visible && s.published));
 assert.equal(serviceSchema.safeParse(draft).success, true);
 for (const status of ["draft", "review"]) {
   assert.deepEqual(selectPublishedServices([entry({ ...published, status })], spheres), []);
 }
-assert.deepEqual(selectPublishedServices([entry(published)]), [], "Real spheres remain closed");
+assert.equal(selectPublishedServices([entry(published)]).length, 1, "Approved offerings use ordinary visible spheres");
 assert.deepEqual(selectPublishedServices([entry(published)], spheres.map((s) => ({ ...s, visible: false }))), []);
 assert.deepEqual(selectPublishedServices([entry(published)], spheres.map((s) => ({ ...s, published: false }))), []);
 for (const slug of ["", "Bad", "bad slug", "../escape", "a/b", "a-", "%2f"]) {

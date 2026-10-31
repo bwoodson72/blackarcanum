@@ -41,7 +41,7 @@ try {
   const product = { slug: "qa-profile-service", title: "Synthetic service fixture", summary: "Technical fixture only", sphere: "love", kind: "reading", status: "published", approved: true, priceUsdCents: 12345, scope: "Fixture", inclusions: ["Fixture"], process: ["Fixture"], turnaround: "Fixture", clientRequirements: ["Fixture"] };
   write("src/content/services/qa-profile-service.mdx", "---\n" + Object.entries(product).map(([k,v])=>`${k}: ${JSON.stringify(v)}`).join("\n") + "\n---\n");
   source(profile);
-  cleanBuild(); noProfileLinks(); // Data approval alone does not approve release.
+  cleanBuild(); assert.equal(fs.existsSync(path.join(fixture, "dist/services/practitioner/index.html")), true); // Approved facts are normally browsable.
   write("src/data/services-release.ts", "export const servicesPublicReleaseApproved: boolean = true;\n");
   source({ status: "draft" }); cleanBuild(); noProfileLinks();
   source(profile); cleanBuild();
@@ -104,5 +104,5 @@ try {
   fs.rmSync(path.join(fixture, "src/pages/services/[...index].astro"));
   cleanBuild();
   assert.equal(fs.existsSync(path.join(fixture, "dist/services/practitioner/index.html")), false);
-  console.log("PASS: release-closed/draft/missing-hub exclusion, optional blocks omitted, no public invented identity or credential");
+  console.log("PASS: approved profile visibility and draft/missing-hub exclusion, optional blocks omitted, no public invented identity or credential");
 } finally { await close(); }

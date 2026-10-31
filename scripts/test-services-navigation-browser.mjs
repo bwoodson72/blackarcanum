@@ -8,10 +8,10 @@ function cleanBuild() {
   fs.rmSync(path.join(fixture, "dist"), { recursive: true, force: true });
   fs.rmSync(path.join(fixture, ".astro"), { recursive: true, force: true }); build();
 }
-function expectNoNav() {
+function expectNormalNav() {
   const html = fs.readFileSync(path.join(fixture, "dist/index.html"), "utf8");
-  assert.doesNotMatch(html, /href="\/services\/"/);
-  assert.equal(fs.existsSync(path.join(fixture, "dist/services/index.html")), false);
+  assert.match(html, /href="\/services\/"/);
+  assert.equal(fs.existsSync(path.join(fixture, "dist/services/index.html")), true);
 }
 async function key(key, code, number, text) {
   await send("Input.dispatchKeyEvent", { type: "keyDown", key, code, windowsVirtualKeyCode: number, ...(text ? { text } : {}) });
@@ -43,14 +43,14 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   write("src/content/services/qa-nav-product.mdx", mdx(product));
   const fact = { text: "Synthetic practitioner fixture, not a real biography.", approved: true, verified: true };
   write("src/data/practitioner.ts", "export const practitionerProfile = " + JSON.stringify({ status: "published", approved: true, summary: fact, biography: [fact] }) + ";\n");
-  cleanBuild(); expectNoNav(); // closed release, despite populated approved fixture data
+  cleanBuild(); expectNormalNav(); // Ordinary browsing does not require commercial launch.
   write("src/data/services-release.ts", "export const servicesPublicReleaseApproved: boolean = true;\n");
   write("src/content/services/qa-nav-product.mdx", mdx({ ...product, status: "draft" }));
-  cleanBuild(); expectNoNav(); // release alone is insufficient; no published sphere
+  cleanBuild(); expectNormalNav(); // Draft offerings do not hide informational pages.
   write("src/content/services/qa-nav-product.mdx", mdx(product));
   cleanBuild();
   const hub = fs.readFileSync(path.join(fixture, "dist/services/index.html"), "utf8");
-  assert.doesNotMatch(hub, /<meta name="robots" content="noindex/);
+  assert.match(hub, /<meta name="robots" content="noindex/);
   assert.ok(hub.includes('href="/services/love/"'));
   await startBrowser();
   const paths = ["/", "/services/", "/services/love/", "/services/love/qa-nav-product/", "/services/practitioner/", "/library/", "/library/qa-article/"];
@@ -126,7 +126,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     }
     console.log(`PASS: nav@${width}: all surfaces, nested active state, editorial behavior, real links, breadcrumbs, header fit, modal focus/Escape/resize`);
   }
-  // A noindex informational review hub must never activate top-level Services.
+  // Search indexing is independent of ordinary navigation.
   fs.rmSync(path.join(fixture, "src/pages/services/[...index].astro"));
   write("src/pages/services/index.astro", `---
 import ServicesHub from "../../components/services/ServicesHub.astro";
@@ -134,6 +134,6 @@ import ServicesHub from "../../components/services/ServicesHub.astro";
 <ServicesHub />`);
   cleanBuild();
   assert.match(fs.readFileSync(path.join(fixture, "dist/services/index.html"), "utf8"), /<meta name="robots" content="noindex/);
-  assert.doesNotMatch(fs.readFileSync(path.join(fixture, "dist/index.html"), "utf8"), /href="\/services\/"/);
-  console.log("PASS: noindex/unlaunched hub and empty catalog cannot activate Services navigation; fixtures isolated");
+  assert.match(fs.readFileSync(path.join(fixture, "dist/index.html"), "utf8"), /href="\/services\/"/);
+  console.log("PASS: normal navigation supports noindex informational pages and empty catalogs; fixtures isolated");
 } finally { await close(); }

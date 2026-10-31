@@ -80,7 +80,7 @@ export function createServicesFixture(name, port, debugPort) {
     write("astro.config.mjs", `import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
-export default defineConfig({ vite: { plugins: [tailwindcss()] }, integrations: [mdx()] });`);
+export default defineConfig({ cacheDir: './.astro/cache/', vite: { plugins: [tailwindcss()] }, integrations: [mdx()] });`);
   }
   return { root, fixture, origin, write, prepare, build, startBrowser, send, evaluate, waitFor, capture, close };
 }

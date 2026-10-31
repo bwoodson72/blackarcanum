@@ -13,7 +13,8 @@ const raw = [
   { ...base, slug: "fixture-review", sphere: "love", status: "review" },
 ];
 const products = selectPublishedServices(raw.map(data => ({ id: data.slug, data: serviceSchema.parse(data) })), spheres);
-assert.deepEqual(buildServiceProductPaths(products), []);
+assert.equal(buildServiceProductPaths(products).length, 2);
+assert.deepEqual(buildServiceProductPaths(products, false), []);
 assert.deepEqual(buildServiceProductPaths([], true, spheres), []);
 const paths = buildServiceProductPaths(products, true, spheres);
 assert.deepEqual(paths.map(p => p.params), [{ sphere: "love", slug: "fixture-reading" }, { sphere: "money", slug: "fixture-spellwork" }]);
@@ -24,4 +25,4 @@ assert.throws(() => buildServiceProductPaths([...products, products[0]], true, s
 assert.throws(() => buildServiceProductPaths([{ ...products[0], status: "draft" }], true, spheres));
 assert.deepEqual(buildServiceProductPaths(products, true, spheres.map(s => ({ ...s, visible: false }))), []);
 assert.deepEqual(buildServiceProductPaths([{ ...products[0], relatedIds: ["missing"] }], true, spheres)[0].props.related, []);
-console.log("PASS: product paths, release approval, canonical sphere, published-only curated relations and exact catalog price");
+console.log("PASS: product paths, destination readiness, canonical sphere, published-only curated relations and exact catalog price");
