@@ -505,4 +505,369 @@ export const sources: readonly SourceRecord[] = [
     stableUrl: "https://www.miletgrabung.uni-hamburg.de/en/milet-tour/tour-humeitepe/demetertempel.html",
     kind: "scholarly",
   },
+  {
+    "id": "sekita-hades-heracles-pylos",
+    "title": "Hades and Heracles at Pylos: Dione’s Tale Dismantled",
+    "creator": "Karolina Sekita",
+    "publisher": "The Classical Quarterly 68.1 (2018): 1–9",
+    "stableUrl": "https://doi.org/10.1017/S0009838818000216",
+    "kind": "scholarly"
+  },
+  {
+    "id": "virgil-georgics",
+    "title": "Georgics",
+    "creator": "Virgil",
+    "kind": "primary"
+  },
+  {
+    "id": "ovid-metamorphoses",
+    "title": "Metamorphoses",
+    "creator": "Ovid",
+    "kind": "primary"
+  },
+  {
+    "id": "plato-cratylus",
+    "title": "Cratylus",
+    "creator": "Plato",
+    "kind": "primary"
+  },
+  {
+    "id": "oxford-hades",
+    "title": "Hades",
+    "creator": "Ellie Mackin Roberts",
+    "publisher": "Oxford Classical Dictionary, Oxford University Press, 2023",
+    "stableUrl": "https://doi.org/10.1093/acrefore/9780199381135.013.ORE_CLA-08995.R1",
+    "kind": "scholarly"
+  },
+  {
+    "id": "burton-worshipping-hades",
+    "title": "Worshipping Hades: Myth and Cult in Elis and Triphylia",
+    "creator": "Diana Burton",
+    "publisher": "Archiv für Religionsgeschichte 20.1 (2018): 211–227",
+    "stableUrl": "https://doi.org/10.1515/arege-2018-0013",
+    "kind": "scholarly"
+  },
+  {
+    "id": "getty-underworld-exhibition",
+    "title": "Underworld: Imagining the Afterlife",
+    "archive": "J. Paul Getty Museum",
+    "stableUrl": "https://www.getty.edu/art/exhibitions/ancient_underworld/inner.html",
+    "kind": "scholarly"
+  },
+  {
+    "id": "getty-head-hades",
+    "title": "Head of Hades, catalogue 60, Ancient Terracottas from South Italy and Sicily",
+    "creator": "Maria Lucia Ferruzza",
+    "publisher": "Getty Publications, 2016",
+    "stableUrl": "https://www.getty.edu/publications/terracottas/catalogue/60/",
+    "kind": "scholarly"
+  },
+  {
+    "id": "euripides-bacchae",
+    "title": "Bacchae",
+    "creator": "Euripides",
+    "period": "First performed 405 BCE",
+    "kind": "primary"
+  },
+  {
+    "id": "homeric-hymn-seven-dionysus",
+    "title": "Homeric Hymn 7 to Dionysus",
+    "kind": "primary"
+  },
+  {
+    "id": "bernabe-dionysos-mycenaean-world",
+    "title": "Dionysos in the Mycenaean World",
+    "creator": "Alberto Bernabé",
+    "publisher": "In Redefining Dionysos, De Gruyter, 2013, pp. 23–37",
+    "stableUrl": "https://doi.org/10.1515/9783110301328.23",
+    "kind": "scholarly"
+  },
+  {
+    "id": "bremmer-maenads",
+    "title": "Maenads",
+    "creator": "Jan N. Bremmer",
+    "publisher": "Oxford Classical Dictionary, Oxford University Press, 2016",
+    "stableUrl": "https://academic.oup.com/edited-volume/61673/chapter-abstract/549652240",
+    "kind": "scholarly"
+  },
+  {
+    "id": "dodds-maenadism-bacchae",
+    "title": "Maenadism in the Bacchae",
+    "creator": "E. R. Dodds",
+    "publisher": "Harvard Theological Review 33 (1940): 155–176",
+    "stableUrl": "https://www.cambridge.org/core/journals/harvard-theological-review/article/abs/maenadism-in-the-bacchae/D8D3C87CB63128C1AE28856EF55B268B",
+    "kind": "scholarly"
+  },
+  {
+    "id": "magnesia-dionysian-associations",
+    "title": "I.Magnesia 215: foundation tradition of Dionysian associations at Magnesia",
+    "archive": "Inventory of Ancient Associations, University of Copenhagen",
+    "stableUrl": "https://ancientassociations.ku.dk/assoc/viewing.php?id=1401&view=resultassoc",
+    "kind": "primary"
+  },
+  {
+    "id": "kraemer-womens-religions",
+    "title": "Women’s Religions in the Greco-Roman World: A Sourcebook",
+    "creator": "Ross Shepard Kraemer (editor)",
+    "publisher": "Oxford University Press, 2004",
+    "kind": "scholarly"
+  },
+  {
+    "id": "parker-anthesteria",
+    "title": "Anthesteria",
+    "creator": "Robert Parker",
+    "publisher": "Oxford Classical Dictionary, Oxford University Press, 2015",
+    "kind": "scholarly"
+  },
+  {
+    "id": "parker-polytheism-athens",
+    "title": "Polytheism and Society at Athens",
+    "creator": "Robert Parker",
+    "publisher": "Oxford University Press, 2005",
+    "stableUrl": "https://academic.oup.com/book/11496",
+    "kind": "scholarly"
+  },
+  {
+    "id": "edmonds-orphic-gold-tablets",
+    "title": "The “Orphic” Gold Tablets and Greek Religion: Further Along the Path",
+    "creator": "Radcliffe G. Edmonds III (editor)",
+    "publisher": "Cambridge University Press, 2011",
+    "kind": "scholarly"
+  },
+  {
+    "id": "heraclitus-fragments",
+    "title": "Fragments",
+    "creator": "Heraclitus",
+    "kind": "primary"
+  },
+  {
+    "id": "edmonds-tearing-zagreus",
+    "title": "Tearing Apart the Zagreus Myth: A Few Disparaging Remarks on Orphism and Original Sin",
+    "creator": "Radcliffe G. Edmonds III",
+    "publisher": "Classical Antiquity 18.1 (1999): 35–73",
+    "stableUrl": "https://doi.org/10.2307/25011092",
+    "kind": "scholarly"
+  },
+  {
+    "id": "bernabe-redefining-dionysos",
+    "title": "Redefining Dionysos",
+    "creator": "Alberto Bernabé, Miguel Herrero de Jáuregui, Ana Isabel Jiménez San Cristóbal, and Raquel Martín Hernández (editors)",
+    "publisher": "De Gruyter, 2013",
+    "kind": "scholarly"
+  },
+  {
+    "id": "carpenter-dionysian-imagery",
+    "title": "Dionysian Imagery in Fifth-Century Athens",
+    "creator": "Thomas H. Carpenter",
+    "publisher": "Oxford University Press, 1997",
+    "kind": "scholarly"
+  },
+  {
+    "id": "edmonds-redefining-orphism",
+    "title": "Redefining Ancient Orphism: A Study in Greek Religion",
+    "creator": "Radcliffe G. Edmonds III",
+    "publisher": "Cambridge University Press, 2013",
+    "kind": "scholarly"
+  },
+  {
+    "id": "seaford-dionysos",
+    "title": "Dionysos",
+    "creator": "Richard Seaford",
+    "publisher": "Routledge, 2006",
+    "kind": "scholarly"
+  },
+  {
+    "id": "epidaurian-healing-inscriptions",
+    "title": "Epidaurian healing inscriptions (iamata), IG IV² 1.121–124",
+    "period": "Fourth century BCE",
+    "kind": "primary"
+  },
+  {
+    "id": "lidonnici-epidaurian-miracles",
+    "title": "The Epidaurian Miracle Inscriptions: Text, Translation, and Commentary",
+    "creator": "Lynn R. LiDonnici",
+    "publisher": "Scholars Press, 1995",
+    "kind": "scholarly"
+  },
+  {
+    "id": "dillon-didactic-iamata",
+    "title": "The Didactic Nature of the Epidaurian Iamata",
+    "creator": "Michael P. J. Dillon",
+    "publisher": "Zeitschrift für Papyrologie und Epigraphik 101 (1994): 239–260",
+    "stableUrl": "https://www.uni-koeln.de/phil-fak/ifa/zpe/downloads/1994/101pdf/101239.pdf",
+    "kind": "scholarly"
+  },
+  {
+    "id": "graf-incubation",
+    "title": "Incubation",
+    "creator": "Fritz Graf",
+    "publisher": "Oxford Classical Dictionary",
+    "stableUrl": "https://doi.org/10.1093/acrefore/9780199381135.013.3275",
+    "kind": "scholarly"
+  },
+  {
+    "id": "pindar-pythian-three",
+    "title": "Pythian Ode 3",
+    "creator": "Pindar",
+    "kind": "primary"
+  },
+  {
+    "id": "telemachos-asklepieion-monument",
+    "title": "Monument of Telemachos, founder of the Asklepieion (IG II³ 4.665)",
+    "archive": "PHI Greek Inscriptions",
+    "stableUrl": "https://inscriptions.packhum.org/text/360195",
+    "kind": "primary"
+  },
+  {
+    "id": "livy-periochae",
+    "title": "Periochae",
+    "creator": "Livy",
+    "kind": "primary"
+  },
+  {
+    "id": "hippocratic-oath",
+    "title": "Hippocratic Oath",
+    "kind": "primary"
+  },
+  {
+    "id": "aristides-sacred-tales",
+    "title": "Sacred Tales (Hieroi Logoi)",
+    "creator": "Aelius Aristides",
+    "kind": "primary"
+  },
+  {
+    "id": "israelowich-sacred-tales",
+    "title": "Society, Medicine and Religion in the Sacred Tales of Aelius Aristides",
+    "creator": "Ido Israelowich",
+    "publisher": "Brill, 2012",
+    "kind": "scholarly"
+  },
+  {
+    "id": "british-museum-tyche-votive-leg",
+    "title": "Marble anatomical votive relief dedicated by Tyche to Asclepius and Hygieia, 1867,0508.117",
+    "archive": "British Museum",
+    "stableUrl": "https://www.britishmuseum.org/collection/object/G_1867-0508-117",
+    "kind": "scholarly"
+  },
+  {
+    "id": "plato-phaedo",
+    "title": "Phaedo",
+    "creator": "Plato",
+    "kind": "primary"
+  },
+  {
+    "id": "edelsteins-asclepius-testimonies",
+    "title": "Asclepius: Collection and Interpretation of the Testimonies",
+    "creator": "Emma J. Edelstein and Ludwig Edelstein",
+    "publisher": "Johns Hopkins University Press, 1945",
+    "kind": "scholarly"
+  },
+  {
+    "id": "nutton-ancient-medicine",
+    "title": "Ancient Medicine",
+    "creator": "Vivian Nutton",
+    "edition": "Second edition",
+    "publisher": "Routledge, 2013",
+    "kind": "scholarly"
+  },
+  {
+    "id": "wickkiser-asklepios-medicine-politics",
+    "title": "Asklepios, Medicine, and the Politics of Healing in Fifth-Century Greece: Between Craft and Cult",
+    "creator": "Bronwen L. Wickkiser",
+    "publisher": "Johns Hopkins University Press, 2008",
+    "kind": "scholarly"
+  },
+  {
+    "id": "athenian-sacred-orgas-decree",
+    "title": "Decree of Athens concerning the boundaries of the sacred Orgas (IG II³ 1.292 / IG II² 204)",
+    "archive": "PHI Greek Inscriptions",
+    "period": "352/351 BCE",
+    "stableUrl": "https://inscriptions.packhum.org/text/347149",
+    "kind": "primary"
+  },
+  {
+    "id": "scott-delphi-history",
+    "title": "Delphi: A History of the Center of the Ancient World",
+    "creator": "Michael Scott",
+    "publisher": "Princeton University Press, 2014",
+    "kind": "scholarly"
+  },
+  {
+    "id": "unesco-delphi",
+    "title": "Archaeological Site of Delphi",
+    "archive": "UNESCO World Heritage Centre",
+    "stableUrl": "https://whc.unesco.org/en/list/393/",
+    "kind": "scholarly"
+  },
+  {
+    "id": "homeric-hymn-apollo",
+    "title": "Homeric Hymn to Apollo",
+    "kind": "primary"
+  },
+  {
+    "id": "aeschylus-eumenides",
+    "title": "Eumenides",
+    "creator": "Aeschylus",
+    "kind": "primary"
+  },
+  {
+    "id": "plutarch-pythian-oracles",
+    "title": "On the Oracles of the Pythia (De Pythiae Oraculis)",
+    "creator": "Plutarch",
+    "kind": "primary"
+  },
+  {
+    "id": "plutarch-obsolescence-oracles",
+    "title": "On the Obsolescence of Oracles (De Defectu Oraculorum)",
+    "creator": "Plutarch",
+    "kind": "primary"
+  },
+  {
+    "id": "herodotus-histories",
+    "title": "Histories",
+    "creator": "Herodotus",
+    "kind": "primary"
+  },
+  {
+    "id": "delphi-hymns-apollo",
+    "title": "The hymns to Apollo",
+    "archive": "Ephorate of Antiquities of Phocis, Archaeological Site of Delphi",
+    "stableUrl": "https://delphi.culture.gr/the-hymns-to-apollo-and-the-white-kylix/",
+    "kind": "scholarly"
+  },
+  {
+    "id": "bilic-apollo-sun",
+    "title": "Early Identifications of Apollo with the Physical Sun in Ancient Greece: Tradition and Interpretation",
+    "creator": "Tomislav Bilić",
+    "publisher": "Mnemosyne 74.5 (2021)",
+    "kind": "scholarly"
+  },
+  {
+    "id": "bowden-athens-delphic-oracle",
+    "title": "Classical Athens and the Delphic Oracle: Divination and Democracy",
+    "creator": "Hugh Bowden",
+    "publisher": "Cambridge University Press, 2005",
+    "kind": "scholarly"
+  },
+  {
+    "id": "fontenrose-delphic-oracle",
+    "title": "The Delphic Oracle: Its Responses and Operations with a Catalogue of Responses",
+    "creator": "Joseph Fontenrose",
+    "publisher": "University of California Press, 1978",
+    "kind": "scholarly"
+  },
+  {
+    "id": "johnston-ancient-greek-divination",
+    "title": "Ancient Greek Divination",
+    "creator": "Sarah Iles Johnston",
+    "publisher": "Wiley-Blackwell, 2008",
+    "kind": "scholarly"
+  },
+  {
+    "id": "kindt-revisiting-delphi",
+    "title": "Revisiting Delphi: Religion and Storytelling in Ancient Greece",
+    "creator": "Julia Kindt",
+    "publisher": "Cambridge University Press, 2016",
+    "kind": "scholarly"
+  },
 ];

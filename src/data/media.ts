@@ -416,4 +416,227 @@ export const media: readonly MediaRecord[] = [
       evidenceUrl: "https://commons.wikimedia.org/wiki/File:Marble_Statue_of_Demeter.jpg",
     },
   },
+  {
+    "id": "hades-enthroned-cerberus-hero",
+    "sourceFile": "src/assets/media/editorial/greek-deities/hades-enthroned-with-scepter-and-cerberus.webp",
+    "role": "editorial",
+    "origin": "modern-artwork",
+    "alt": "Hades seated on a stone throne holding a gold scepter, with three-headed Cerberus beside him and a subterranean hall illuminated by warm golden light.",
+    "decorative": false,
+    "rights": {
+      "status": "cleared",
+      "basis": "owned",
+      "license": "Original editorial illustration created at the project owner’s request for Mystagogia.",
+      "creditLine": "Mystagogia",
+      "evidenceNote": "Owner approved concept and requested generation, then authorized local incorporation on 2026-10-29. Built-in image generation output exec-a66c8573-b12c-4cf0-b771-c22fbaca8d9c.png; no third-party reference images supplied."
+    }
+  },
+  {
+    "id": "hades-herakles-krater-met",
+    "sourceFile": "src/assets/media/reference/greek-deities/hades-herakles-krater-met.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Attic red-figure calyx-krater with an upper frieze depicting Hades, Perithoos, Theseus, Herakles, and Hermes.",
+    "decorative": false,
+    "caption": "Herakles, Theseus, and Perithoos in Hades, depicted in the upper zone of an Attic red-figure calyx-krater, c. 450–440 BCE. Hades stands behind Perithoos. The Metropolitan Museum of Art, Rogers Fund, 1908, object 08.258.21. Open Access photograph; converted to WebP.",
+    "creator": "Attributed to the Nekyia Painter",
+    "period": "Greek, Attic, c. 450–440 BCE",
+    "repository": "The Metropolitan Museum of Art, 08.258.21",
+    "sourceUrl": "https://www.metmuseum.org/art/collection/search/248093",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "Met Open Access photograph, marked Public Domain and provided under CC0; converted to WebP.",
+      "creditLine": "The Metropolitan Museum of Art · Rogers Fund, 1908 · CC0",
+      "evidenceUrl": "https://www.metmuseum.org/policies/image-resources",
+      "evidenceNote": "Object page marks the selected photograph Public Domain. Image endpoint: https://collectionapi.metmuseum.org/api/collection/v1/iiif/248093/544593/main-image"
+    }
+  },
+  {
+    "id": "hades-head-morgantina-getty",
+    "sourceFile": "src/assets/media/reference/greek-deities/hades-head-morgantina-getty.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Terracotta head of Hades with thick curling hair and beard and surviving traces of colored pigment.",
+    "decorative": false,
+    "caption": "Terracotta head of Hades from Morgantina, Sicily, 400–300 BCE, with surviving traces of painted decoration. Former Getty inventory 85.AD.105, marked deaccessioned in the catalogue. Photograph published in Maria Lucia Ferruzza, Ancient Terracottas from South Italy and Sicily (2016), cat. 60; converted to WebP.",
+    "period": "400–300 BCE",
+    "repository": "Morgantina, Sicily; former Getty inventory 85.AD.105 (deaccessioned)",
+    "sourceUrl": "https://www.getty.edu/publications/terracottas/catalogue/60/",
+    "rights": {
+      "status": "cleared",
+      "basis": "cc-license",
+      "license": "Getty Publications catalogue main photograph, made available for unrestricted use; catalogue licensed CC BY 4.0 except where otherwise noted. Converted to WebP.",
+      "creditLine": "J. Paul Getty Museum / Getty Publications · CC BY 4.0",
+      "evidenceUrl": "https://www.getty.edu/publications/terracottas/about/",
+      "evidenceNote": "Downloaded cat60_85-AD-105.jpg from the official Catalogue Main Images archive; About page explicitly permits unrestricted use of these main photographs."
+    }
+  },
+  {
+    "id": "dionysus-ivy-thyrsus-panther-hero",
+    "sourceFile": "src/assets/media/editorial/greek-deities/dionysus-with-ivy-thyrsus-and-panther.webp",
+    "role": "editorial",
+    "origin": "modern-artwork",
+    "alt": "Dionysus wearing an ivy wreath and wine-colored Greek drapery, holding a thyrsus and two-handled cup beside a resting panther among grapevines at sunset.",
+    "decorative": false,
+    "rights": {
+      "status": "cleared",
+      "basis": "owned",
+      "license": "Original editorial illustration created at the project owner’s request for Mystagogia.",
+      "creditLine": "Mystagogia",
+      "evidenceNote": "Owner approved concept, requested built-in image generation, and authorized local article incorporation on 2026-10-29. Generated source exec-77f2df5c-630f-4e5e-ac2a-1f6bca80ae44.png; no third-party reference images supplied."
+    }
+  },
+  {
+    "id": "dionysus-exekias-ship-cup",
+    "sourceFile": "src/assets/media/reference/greek-deities/dionysus-exekias-ship-cup.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Interior of an Attic black-figure cup showing Dionysus reclining aboard a ship beneath a grapevine, surrounded by dolphins.",
+    "decorative": false,
+    "caption": "Dionysus aboard a ship surrounded by dolphins. Interior of an Attic black-figure kylix by Exekias, c. 530 BCE, found at Vulci. Staatliche Antikensammlungen, Munich, inventory 2044. Photograph by Bibi Saint-Pol, 2007; resized and converted to WebP.",
+    "creator": "Exekias; photograph by Bibi Saint-Pol",
+    "period": "Greek, Attic, c. 530 BCE",
+    "repository": "Staatliche Antikensammlungen, Munich, inventory 2044",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Exekias_Dionysos_Staatliche_Antikensammlungen_2044_n2.jpg",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "Photographer Bibi Saint-Pol released this photograph into the public domain worldwide; resized and converted to WebP.",
+      "creditLine": "Photo: Bibi Saint-Pol · Public domain",
+      "evidenceUrl": "https://commons.wikimedia.org/wiki/File:Exekias_Dionysos_Staatliche_Antikensammlungen_2044_n2.jpg"
+    }
+  },
+  {
+    "id": "dionysus-maenad-satyr-amphora-met",
+    "sourceFile": "src/assets/media/reference/greek-deities/dionysus-maenad-satyr-amphora-met.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Attic black-figure neck-amphora with Dionysus, a maenad, and a satyr depicted between a pair of large painted eyes on its shoulder.",
+    "decorative": false,
+    "caption": "Dionysus with a maenad and satyr, painted between eyes on the shoulder of an Attic black-figure neck-amphora, last quarter of the sixth century BCE. The Metropolitan Museum of Art, Fletcher Fund, 1926, object 26.60.19. Open Access photograph; converted to WebP.",
+    "period": "Greek, Attic, last quarter of the sixth century BCE",
+    "repository": "The Metropolitan Museum of Art, 26.60.19",
+    "sourceUrl": "https://www.metmuseum.org/art/collection/search/252486",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "The selected photograph is marked Public Domain and provided under the Met’s CC0 Open Access policy; converted to WebP.",
+      "creditLine": "The Metropolitan Museum of Art · Fletcher Fund, 1926 · CC0",
+      "evidenceUrl": "https://www.metmuseum.org/policies/image-resources",
+      "evidenceNote": "Image endpoint: https://collectionapi.metmuseum.org/api/collection/v1/iiif/252486/534551/main-image"
+    }
+  },
+  {
+    "id": "asclepius-serpent-staff-sanctuary-hero",
+    "sourceFile": "src/assets/media/editorial/greek-deities/asclepius-with-serpent-staff-and-dog.webp",
+    "role": "editorial",
+    "origin": "modern-artwork",
+    "alt": "Asclepius in ivory Greek drapery holding a wooden staff entwined by one serpent, with a dog resting beside him in a sunlit sanctuary colonnade.",
+    "decorative": false,
+    "rights": {
+      "status": "cleared",
+      "basis": "owned",
+      "license": "Original editorial illustration created at the project owner’s request for Mystagogia.",
+      "creditLine": "Mystagogia",
+      "evidenceNote": "Owner approved concept, requested built-in image generation, and authorized local incorporation on 2026-10-29. Generated source exec-15177e34-8390-4763-928e-b50a9c9f98bf.png; no third-party reference images supplied."
+    }
+  },
+  {
+    "id": "asclepius-epidaurus-abaton",
+    "sourceFile": "src/assets/media/reference/greek-deities/asclepius-epidaurus-abaton.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Remains and reconstructed columns of the abaton at the sanctuary of Asclepius at Epidaurus.",
+    "decorative": false,
+    "caption": "The abaton at Epidaurus, the sanctuary building associated with sacred sleep. This modern photograph shows the archaeological remains and reconstructed colonnade. Photograph by Rabe!, 5 May 2011; resized and converted to WebP.",
+    "creator": "Rabe! (photographer)",
+    "date": "2011-05-05",
+    "repository": "Sanctuary of Asclepius, Epidaurus, Greece",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Epidauros_-_Abaton.jpg",
+    "rights": {
+      "status": "cleared",
+      "basis": "cc-license",
+      "license": "Creative Commons Attribution-ShareAlike 3.0 Unported (https://creativecommons.org/licenses/by-sa/3.0/). Resized and converted to WebP; this derivative is distributed under the same license.",
+      "creditLine": "Photo: Rabe! · CC BY-SA 3.0 · resized and converted to WebP",
+      "evidenceUrl": "https://commons.wikimedia.org/wiki/File:Epidauros_-_Abaton.jpg"
+    }
+  },
+  {
+    "id": "asclepius-tyche-votive-leg",
+    "sourceFile": "src/assets/media/reference/greek-deities/asclepius-tyche-votive-leg.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Marble relief of a left leg beside a Greek inscription dedicating a thank-offering from Tyche to Asclepius and Hygieia.",
+    "decorative": false,
+    "caption": "Marble anatomical votive dedicated by Tyche to Asclepius and Hygieia as a thank-offering, probably for recovery from an affliction of the left leg. From Melos, 100–200 CE. British Museum, 1867,0508.117. Photograph by Marie-Lan Nguyen, 2006; resized and converted to WebP.",
+    "creator": "Marie-Lan Nguyen (photographer)",
+    "date": "2006-11-22",
+    "period": "Greek, Roman Imperial, 100–200 CE",
+    "repository": "British Museum, 1867,0508.117",
+    "sourceUrl": "https://www.britishmuseum.org/collection/object/G_1867-0508-117",
+    "rights": {
+      "status": "cleared",
+      "basis": "public-domain",
+      "license": "Photographer Marie-Lan Nguyen released this photograph into the public domain worldwide; resized and converted to WebP.",
+      "creditLine": "Photo: Marie-Lan Nguyen · Public domain",
+      "evidenceUrl": "https://commons.wikimedia.org/wiki/File:Votive_relief_Asklepios_BM809.jpg"
+    }
+  },
+  {
+    "id": "apollo-laurel-lyre-bow-hero",
+    "sourceFile": "src/assets/media/editorial/greek-deities/apollo-with-laurel-lyre-and-bow.webp",
+    "role": "editorial",
+    "origin": "modern-artwork",
+    "alt": "Dark-haired Apollo with a laurel wreath and ivory Greek drapery holds a lyre on a mountain sanctuary terrace, with bow and quiver beside him.",
+    "decorative": false,
+    "rights": {
+      "status": "cleared",
+      "basis": "owned",
+      "license": "Original editorial illustration created at the project owner’s request for Mystagogia.",
+      "creditLine": "Mystagogia",
+      "evidenceNote": "Owner approved concept, requested built-in generation and a revision to dark brown hair and warmer olive complexion, then authorized local incorporation on 2026-10-29. Approved revised output exec-f6b5a930-0299-49a2-a939-a57916563986.png, edited from original project-generated exec-b6a8ae2f-b30c-4b3c-99e2-e0004f015a82.png."
+    }
+  },
+  {
+    "id": "apollo-temple-delphi",
+    "sourceFile": "src/assets/media/reference/greek-deities/apollo-temple-delphi.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "Surviving foundations and standing columns of the Temple of Apollo at Delphi beneath steep mountain cliffs.",
+    "decorative": false,
+    "caption": "The archaeological remains of the Temple of Apollo at Delphi, beneath the cliffs of Mount Parnassus. Modern photograph by Luarvick; resized and converted to WebP.",
+    "creator": "Luarvick (photographer)",
+    "repository": "Sanctuary of Apollo, Delphi, Greece",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Temple_of_Apollo_at_Delphi.jpg",
+    "rights": {
+      "status": "cleared",
+      "basis": "cc-license",
+      "license": "Creative Commons Attribution-ShareAlike 3.0 Unported (https://creativecommons.org/licenses/by-sa/3.0/). Resized and converted to WebP; this derivative is distributed under the same license.",
+      "creditLine": "Photo: Luarvick · CC BY-SA 3.0 · resized and converted to WebP",
+      "evidenceUrl": "https://commons.wikimedia.org/wiki/File:The_Temple_of_Apollo_at_Delphi.jpg"
+    }
+  },
+  {
+    "id": "apollo-lyre-libation-cup",
+    "sourceFile": "src/assets/media/reference/greek-deities/apollo-lyre-libation-cup.webp",
+    "role": "reference",
+    "origin": "historical-reproduction",
+    "alt": "White-ground cup interior showing laurel-crowned Apollo seated with a lyre, pouring a libation from a shallow bowl, with a black bird opposite him.",
+    "decorative": false,
+    "caption": "Apollo holding a lyre and pouring a libation, accompanied by a black bird. Attic white-ground kylix, c. 470 BCE according to the museum catalogue. Archaeological Museum of Delphi, inventory 8140. Photograph by Fingalo, 2007; resized and converted to WebP.",
+    "creator": "Fingalo (photographer)",
+    "date": "2007-06-19",
+    "period": "Greek, Attic, c. 470 BCE",
+    "repository": "Archaeological Museum of Delphi, inventory 8140",
+    "sourceUrl": "https://delphi.culture.gr/lefkh-kilika-2/",
+    "rights": {
+      "status": "cleared",
+      "basis": "cc-license",
+      "license": "Creative Commons Attribution-ShareAlike 2.0 Germany (https://creativecommons.org/licenses/by-sa/2.0/de/). Resized and converted to WebP; this derivative is distributed under the same license.",
+      "creditLine": "Photo: Fingalo · CC BY-SA 2.0 DE · resized and converted to WebP",
+      "evidenceUrl": "https://commons.wikimedia.org/wiki/File:Apollo_black_bird_AM_Delphi_8140.jpg",
+      "evidenceNote": "Object date follows museum catalogue (c. 470 BCE); Commons description supplies an alternative date around 460 BCE and uncertain painter attributions, which are not asserted here."
+    }
+  },
 ];
