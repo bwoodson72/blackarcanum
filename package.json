@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
+    "test:services-home": "node scripts/test-services-home.mjs",
     "test:services-navigation": "node scripts/test-services-navigation-browser.mjs",
     "test:practitioner": "node scripts/test-practitioner-pages.mjs",
     "test:services-details": "node scripts/test-services-details.mjs",

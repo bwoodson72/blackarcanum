@@ -9,9 +9,11 @@ import NewsletterSection from "../components/site/NewsletterSection.astro";
 import { checkEditorialBuild } from "../lib/editorial-build-qa";
 import { getPublishedLibraryEntries, getPublishedGrimoireEntry } from "../lib/editorial-public";
 import { toPublishedArticle } from "../lib/editorial-presentation";
+import { getServicesVisibility } from "../lib/services-visibility-public";
 import "../styles/homepage.css";
 
 export const prerender = true;
+const services = await getServicesVisibility();
 
 // The homepage uses only explicitly curated IDs, never newest-article fallback.
 const selected = await checkEditorialBuild();
@@ -167,6 +169,22 @@ const launched = featuredLibrary.some((article) => !article.preview) ||
       </div>
     </Container>
   </section>
+
+  {services.live && <section class="home-services" aria-labelledby="home-services-heading" data-home-services>
+    <Container width="wide" class="home-services__inner">
+      <div class="home-services__copy">
+        <p class="home-eyebrow">Private practice</p>
+        <h2 id="home-services-heading">Divination &amp; Ritual Work</h2>
+        <p class="home-services__description">Explore Mystagogia’s approach to readings and constructive ritual work, organized by sphere of life.</p>
+        <a class="home-text-link" href="/services/">Explore Services <span aria-hidden="true">→</span></a>
+      </div>
+      <nav class="home-services__spheres" aria-label="Services by sphere">
+        <ul>{services.spheres.slice(0, 3).map((sphere) => <li>
+          <a href={sphere.href}>{sphere.label}<span aria-hidden="true">→</span></a>
+        </li>)}</ul>
+      </nav>
+    </Container>
+  </section>}
 
   <NewsletterSection />
 </BaseLayout>

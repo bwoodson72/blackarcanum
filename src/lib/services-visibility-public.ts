@@ -5,7 +5,7 @@ import type { PublishedSphereView } from "./services-presentation.ts";
 import { getServicesRouteReadiness } from "./services-route-readiness.ts";
 import { canShowServicesNavigation } from "./services-visibility.ts";
 
-/** One source for the real hub route, header/footer navigation and later home CTA. */
+/** One source for the real hub route, header/footer navigation and homepage invitation. */
 export async function getServicesVisibility(): Promise<{ live: boolean; spheres: PublishedSphereView[] }> {
   const routes = getServicesRouteReadiness();
   if (!servicesPublicReleaseApproved || !routes.indexableHub || !routes.spheres || !routes.details) {

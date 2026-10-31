@@ -2,7 +2,7 @@
 
 ## One live-state contract
 
-getServicesVisibility is shared by the canonical Services hub route, SiteHeader, SiteFooter and the practitioner publication gate. It returns live only when the owner has explicitly approved release, the canonical hub/sphere/detail modules exist, and at least one sphere has approved published products. The real release flag is still false and the catalog remains empty, so all actual Services navigation remains hidden.
+getServicesVisibility is shared by the canonical Services hub route, SiteHeader, SiteFooter the practitioner publication gate, and (since SF-09) the homepage invitation. It returns live only when the owner has explicitly approved release, the canonical hub/sphere/detail modules exist, and at least one sphere has approved published products. The real release flag is still false and the catalog remains empty, so all actual Services navigation remains hidden.
 
 The new services/[...index].astro route emits exactly /services/, or nothing. It opts the existing ServicesHub composition into indexability only when that same live gate succeeds. An arbitrary index.astro review fixture remains noindex by default and cannot activate navigation. Merely creating route modules or completing this prompt is not release authorization.
 
