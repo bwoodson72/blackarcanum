@@ -1,4 +1,5 @@
 ---
+import { navigationCurrent } from "../../lib/site-navigation";
 import type { NavigationLink } from "../../lib/site-navigation";
 interface Props { links: NavigationLink[]; pathname?: string; }
 const { links, pathname = "/" } = Astro.props;
@@ -15,8 +16,8 @@ const { links, pathname = "/" } = Astro.props;
       </button>
     </div>
     <nav aria-label="Mobile primary navigation">
-      <ul>{links.map(({ label, href }) => (
-        <li><a href={href} aria-current={pathname === href ? "page" : undefined}>{label}</a></li>
+      <ul>{links.map((link) => (
+        <li><a href={link.href} aria-current={navigationCurrent(pathname, link)}>{link.label}</a></li>
       ))}</ul>
     </nav>
   </dialog>
@@ -83,6 +84,6 @@ const { links, pathname = "/" } = Astro.props;
     border-bottom: 1px solid var(--color-deep-brown); color: var(--color-parchment);
     font-family: var(--font-interface); text-decoration: none;
   }
-  .mobile-dialog nav a:hover, .mobile-dialog nav a[aria-current="page"] { color: var(--color-antique-gold); }
+  .mobile-dialog nav a:hover, .mobile-dialog nav a[aria-current] { color: var(--color-antique-gold); }
   @media (min-width: 1024px) { .mobile-navigation { display: none; } }
 </style>

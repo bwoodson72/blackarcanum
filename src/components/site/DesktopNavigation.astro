@@ -1,12 +1,13 @@
 ---
+import { navigationCurrent } from "../../lib/site-navigation";
 import type { NavigationLink } from "../../lib/site-navigation";
 interface Props { links: NavigationLink[]; pathname?: string; }
 const { links, pathname = "/" } = Astro.props;
 ---
 {links.length > 0 && (
   <nav class="desktop-navigation" aria-label="Primary navigation">
-    <ul>{links.map(({ label, href }) => (
-      <li><a href={href} aria-current={pathname === href ? "page" : undefined}>{label}</a></li>
+    <ul>{links.map((link) => (
+      <li><a href={link.href} aria-current={navigationCurrent(pathname, link)}>{link.label}</a></li>
     ))}</ul>
   </nav>
 )}
@@ -16,7 +17,7 @@ const { links, pathname = "/" } = Astro.props;
     .desktop-navigation { display: block; margin-left: auto; }
     .desktop-navigation ul { display: flex; align-items: center; gap: 2rem; margin: 0; padding: 0; list-style: none; }
     .desktop-navigation a { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-parchment); font-family: var(--font-interface); font-size: var(--text-ui); text-decoration: none; }
-    .desktop-navigation a:hover, .desktop-navigation a[aria-current="page"] { color: var(--color-antique-gold); text-decoration: underline; }
+    .desktop-navigation a:hover, .desktop-navigation a[aria-current] { color: var(--color-antique-gold); text-decoration: underline; }
     .desktop-navigation a:focus-visible { outline: 3px solid var(--color-antique-gold); outline-offset: 3px; }
   }
 </style>

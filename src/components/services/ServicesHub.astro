@@ -13,15 +13,17 @@ import "../../styles/services-hub.css";
 interface Props {
   /** Only use views backed by real, approved sphere destinations. */
   spheres?: readonly PublishedSphereView[];
+  /** Only the canonical, publication-gated hub route opts in. */
+  indexable?: boolean;
 }
-const { spheres = [] } = Astro.props;
-const profile = getPublishedPractitioner();
+const { spheres = [], indexable = false } = Astro.props;
+const profile = await getPublishedPractitioner();
 const teaser = profile ? { excerpt: profile.summary, href: profile.href } : undefined;
 const hasSpheres = spheres.length > 0;
 ---
-<!-- Review composition only: no production route imports this component. -->
+<!-- Canonical route emission and navigation share the Services visibility gate. -->
 <BaseLayout title="Services — Divination & Ritual Work"
-  description="Mystagogia’s approach to private readings and constructive ritual work, organized by sphere of life." noindex>
+  description="Mystagogia’s approach to private readings and constructive ritual work, organized by sphere of life." noindex={!indexable}>
   <div class="services-hub" data-services-hub>
     <PageHero mode="services" titleId="services-title" title="Divination & Ritual Work"
       tagline={["Mystagogia", "Private Practice"]}

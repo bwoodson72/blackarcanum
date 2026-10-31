@@ -1,0 +1,14 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import ServicesHub from "../../components/services/ServicesHub.astro";
+import { getServicesVisibility } from "../../lib/services-visibility-public";
+export const prerender = true;
+// Exactly /services/, or no output until release and content are ready.
+export const getStaticPaths = (async () => {
+  const state = await getServicesVisibility();
+  return state.live ? [{ params: { index: undefined }, props: { spheres: state.spheres } }] : [];
+}) satisfies GetStaticPaths;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { spheres } = Astro.props;
+---
+<ServicesHub spheres={spheres} indexable />

@@ -32,17 +32,10 @@ function noProfileLinks() {
 }
 try {
   prepare();
-  for (const file of ["services/[sphere].astro", "services/[sphere]/[slug].astro", "services/practitioner/[...page].astro"]) {
+  for (const file of ["services/[...index].astro", "services/[sphere].astro", "services/[sphere]/[slug].astro", "services/practitioner/[...page].astro"]) {
     write("src/pages/" + file, fs.readFileSync(path.join(root, "src/pages", file), "utf8"));
   }
   write("src/pages/index.astro", '<!doctype html><html lang="en"><title>QA only</title><h1>Technical résumé fixtures</h1></html>');
-  write("src/pages/services/index.astro", `---
-import ServicesHub from "../../components/services/ServicesHub.astro";
-import { getPublishedServices } from "../../lib/services-public";
-import { toPublishedSphereViews } from "../../lib/services-presentation";
-const spheres = toPublishedSphereViews(await getPublishedServices());
----
-<ServicesHub spheres={spheres} />`);
   const registry = path.join(fixture, "src/data/service-spheres.ts");
   fs.writeFileSync(registry, fs.readFileSync(registry, "utf8").replace('id: "love", label: "Love & Relationships", order: 1, visible: false, published: false', 'id: "love", label: "Love & Relationships", order: 1, visible: true, published: true'));
   const product = { slug: "qa-profile-service", title: "Synthetic service fixture", summary: "Technical fixture only", sphere: "love", kind: "reading", status: "published", approved: true, priceUsdCents: 12345, scope: "Fixture", inclusions: ["Fixture"], process: ["Fixture"], turnaround: "Fixture", clientRequirements: ["Fixture"] };
@@ -108,7 +101,7 @@ const spheres = toPublishedSphereViews(await getPublishedServices());
   assert.doesNotMatch(minimal, /id="practitioner-(history|disciplines|training|work|writings|principles)"/);
   assert.match(minimal, /id="practitioner-biography"/);
   // A real ancestor module is required even with a fully approved source.
-  fs.rmSync(path.join(fixture, "src/pages/services/index.astro"));
+  fs.rmSync(path.join(fixture, "src/pages/services/[...index].astro"));
   cleanBuild();
   assert.equal(fs.existsSync(path.join(fixture, "dist/services/practitioner/index.html")), false);
   console.log("PASS: release-closed/draft/missing-hub exclusion, optional blocks omitted, no public invented identity or credential");

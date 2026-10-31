@@ -4,8 +4,8 @@ import PractitionerPage from "../../../components/services/PractitionerPage.astr
 import { getPublishedPractitioner } from "../../../lib/practitioner-public";
 export const prerender = true;
 // A rest route can emit exactly the index path, or nothing when unapproved.
-export const getStaticPaths = (() => {
-  const profile = getPublishedPractitioner();
+export const getStaticPaths = (async () => {
+  const profile = await getPublishedPractitioner();
   return profile ? [{ params: { page: undefined }, props: { profile } }] : [];
 }) satisfies GetStaticPaths;
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;

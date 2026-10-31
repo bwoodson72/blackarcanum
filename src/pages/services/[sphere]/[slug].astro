@@ -4,12 +4,13 @@ import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import ServiceDetail from "../../../components/services/ServiceDetail.astro";
 import { getPublishedServices } from "../../../lib/services-public";
 import { buildServiceProductPaths } from "../../../lib/services-details";
+import { getServicesRouteReadiness } from "../../../lib/services-route-readiness";
 import { servicesPublicReleaseApproved } from "../../../data/services-release";
 
 export const prerender = true;
 export const getStaticPaths = (async () => {
-  const routes = import.meta.glob("../**/*.astro");
-  const ancestorsReady = !!routes["../index.astro"] && !!routes["../[sphere].astro"];
+  const routes = getServicesRouteReadiness();
+  const ancestorsReady = routes.hub && routes.spheres;
   return buildServiceProductPaths(await getPublishedServices(), servicesPublicReleaseApproved && ancestorsReady);
 }) satisfies GetStaticPaths;
 

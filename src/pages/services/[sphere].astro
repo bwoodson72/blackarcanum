@@ -3,14 +3,15 @@ import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import SpherePage from "../../components/services/SpherePage.astro";
 import { getPublishedServices } from "../../lib/services-public";
 import { buildServiceSpherePaths } from "../../lib/services-spheres";
+import { getServicesRouteReadiness } from "../../lib/services-route-readiness";
 import { servicesPublicReleaseApproved } from "../../data/services-release";
 
 export const prerender = true;
 export const getStaticPaths = (async () => {
   // Do not emit ancestor/detail links before their actual route modules exist.
   // These dependencies are implemented separately; no stubs belong in src/pages.
-  const routes = import.meta.glob("./**/*.astro");
-  const destinationsReady = !!routes["./index.astro"] && !!routes["./[sphere]/[slug].astro"];
+  const routes = getServicesRouteReadiness();
+  const destinationsReady = routes.hub && routes.details;
   return buildServiceSpherePaths(await getPublishedServices(), servicesPublicReleaseApproved && destinationsReady);
 }) satisfies GetStaticPaths;
 

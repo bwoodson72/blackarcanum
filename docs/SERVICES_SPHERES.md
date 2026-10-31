@@ -11,7 +11,7 @@
 
 servicesPublicReleaseApproved in src/data/services-release.ts is false. Completion of SF-04 is not permission to change it. Before a future public release, the owner must separately authorize release and approve the real products, their copy/prices and the sphere visibility records.
 
-The route also requires actual modules for both /services/ (src/pages/services/index.astro) and product detail routes (src/pages/services/[sphere]/[slug].astro). If either is absent, no sphere paths are emitted. SF-06 now supplies the real detail module; the hub route is still absent, and public release approval remains closed. When implemented, they must use the same approved catalog so every emitted breadcrumb and detail link resolves. Merely adding a module is not public-release authorization.
+The route also requires actual modules for both /services/ (the canonical src/pages/services/[...index].astro since SF-08) and product detail routes (src/pages/services/[sphere]/[slug].astro). If either is absent, no sphere paths are emitted. SF-06 supplies the real detail module and SF-08 supplies the gated canonical hub module; public release approval remains closed. When implemented, they must use the same approved catalog so every emitted breadcrumb and detail link resolves. Merely adding a module is not public-release authorization.
 
 Sphere pages remain noindex while this frontend is under development, following BaseLayout's approved-origin policy. Normalized canonical paths are tested; no canonical domain or canonical tag is invented for development previews. No Services navigation or homepage invitation is enabled.
 

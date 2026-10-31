@@ -218,7 +218,7 @@ Update a row only after that one prompt has been completed and accepted by the o
 | SF-04 | Sphere pages | Completed; owner accepted | fa39bbb (local only) | Build, 14 unit suites, typecheck, audit and five-width sphere/hub checks pass; release and route-dependency gates remain closed. Existing sample-article QA failure remains. No push or deployment. |
 | SF-05 | In-sphere filter | Completed; owner accepted | c6019a0 (local only) | Build, 14 unit suites, typecheck, audit and five-width filter/no-JS checks pass. Existing sample-article QA failure remains. No push or deployment. |
 | SF-06 | Product detail pages | Completed; owner accepted | 33a6ef3 (local only) | Build, 15 unit suites, typecheck, audit and five-width detail/flow checks pass. Existing sample-article QA failure remains. No push or deployment. |
-| SF-07 | Practitioner résumé | Not started | — | — |
+| SF-07 | Practitioner résumé | Completed; owner accepted | 7168f84 (local only) | Build, 16 unit suites, typecheck, audit and five-width profile/hub checks pass; real profile remains null. Existing sample-article QA failure remains. No push or deployment. |
 | SF-08 | Navigation and breadcrumbs | Not started | — | — |
 | SF-09 | Homepage invitation | Not started | — | — |
 | SF-10 | SEO and publication QA | Not started | — | — |

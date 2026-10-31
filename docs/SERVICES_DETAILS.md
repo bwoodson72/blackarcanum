@@ -4,7 +4,7 @@
 
 The prerendered route src/pages/services/[sphere]/[slug].astro uses the same published-only service accessor and sphere grouping as the category pages. The buildServiceProductPaths helper supplies canonical sphere/product parameters and explicitly curated related products. Related targets retain the selected order; draft/review, hidden-sphere and absent targets never become public cards. Real unknown references are already rejected by catalog validation. Duplicate published IDs are rejected defensively.
 
-The global Services release flag remains false. Detail routes additionally require the actual Services hub and sphere route modules. The real hub route is still absent, so completion of this prompt cannot expose Services. Category and detail routes share the same catalog and must remain coordinated when public release is separately approved. No navigation or homepage integration is enabled.
+The global Services release flag remains false. Detail routes additionally require the actual Services hub and sphere route modules. SF-08 supplies a gated canonical hub route; it emits nothing while release approval is closed or the published catalog is empty. Category and detail routes share the same catalog and must remain coordinated when public release is separately approved. No navigation or homepage integration is enabled.
 
 ## Presentation and copy
 

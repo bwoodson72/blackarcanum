@@ -20,7 +20,7 @@ interface Props {
 }
 const { product, sphere, related = [], hasDescription = false } = Astro.props;
 const view = serviceCardPresentation(product);
-const practitioner = getPublishedPractitioner();
+const practitioner = await getPublishedPractitioner();
 if (!sphere.visible || !sphere.published || sphere.id !== product.sphere || sphere.href !== serviceSphereUrl(sphere.id)) {
   throw new Error("Service details require their published canonical sphere.");
 }

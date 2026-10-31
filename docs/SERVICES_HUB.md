@@ -2,7 +2,7 @@
 
 ## Scope and visibility
 
-`src/components/services/ServicesHub.astro` is a reusable review composition, not a production route. It uses BaseLayout with unconditional noindex and has no consumer under src/pages. No Services navigation, homepage invitation, products, prices, intake, payment, booking, or public launch is enabled.
+`src/components/services/ServicesHub.astro` is a reusable composition that defaults to noindex. SF-08 adds the canonical services/[...index].astro route, which emits only after the shared live-state gate succeeds and then opts the hub into indexability. The real gate remains closed, so no hub page is emitted. No Services navigation, homepage invitation, products, prices, intake, payment, booking, or public launch is enabled.
 
 The copy is an unpublished review draft based on the confirmed frontend plan. Review its wording before future public activation. No practitioner identity, credentials, testimonials, methods, named offerings or prices have been invented.
 

@@ -2,7 +2,9 @@
 import Container from "../foundation/Container.astro";
 import DesktopNavigation from "./DesktopNavigation.astro";
 import MobileNavigation from "./MobileNavigation.astro";
-import { primaryNavigation, headerActions, mobileNavigation } from "../../lib/site-navigation";
+import { getSiteNavigation } from "../../lib/site-navigation";
+import { getServicesVisibility } from "../../lib/services-visibility-public";
+const { primaryNavigation, headerActions, mobileNavigation } = getSiteNavigation((await getServicesVisibility()).live);
 
 const pathname = Astro.url.pathname;
 ---
