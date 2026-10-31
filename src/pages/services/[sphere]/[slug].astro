@@ -1,0 +1,26 @@
+---
+import { getEntry, render } from "astro:content";
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import ServiceDetail from "../../../components/services/ServiceDetail.astro";
+import { getPublishedServices } from "../../../lib/services-public";
+import { buildServiceProductPaths } from "../../../lib/services-details";
+import { servicesPublicReleaseApproved } from "../../../data/services-release";
+
+export const prerender = true;
+export const getStaticPaths = (async () => {
+  const routes = import.meta.glob("../**/*.astro");
+  const ancestorsReady = !!routes["../index.astro"] && !!routes["../[sphere].astro"];
+  return buildServiceProductPaths(await getPublishedServices(), servicesPublicReleaseApproved && ancestorsReady);
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { product, sphere, related } = Astro.props;
+// Lookup is by the exact ID already admitted by the shared published selector.
+const entry = await getEntry("services", product.id);
+if (!entry || entry.data.status !== "published" || !entry.data.approved) throw new Error("Unpublished service cannot be rendered.");
+const { Content, headings } = await render(entry);
+if (headings.some(heading => heading.depth === 1)) throw new Error("Service MDX must not define h1; the detail template supplies it.");
+---
+<ServiceDetail product={product} sphere={sphere} related={related} hasDescription={!!entry.body?.trim()}>
+  <Content />
+</ServiceDetail>

@@ -7,6 +7,7 @@
  */
 const tests = [
   "test-services-schema.mjs",
+  "test-services-details-paths.mjs",
   "test-services-spheres.mjs",
   "test-services-presentation.mjs",
   "test-editorial-schema.mjs",

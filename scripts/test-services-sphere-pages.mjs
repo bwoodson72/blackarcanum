@@ -33,13 +33,7 @@ import { toPublishedSphereViews } from "../../lib/services-presentation";
 const spheres = toPublishedSphereViews(await getPublishedServices());
 ---
 <ServicesHub spheres={spheres} />`);
-  // SF-06 detail templates are NOT implemented here; route targets are test-only stubs.
-  write("src/pages/services/[sphere]/[slug].astro", `---
-import { getPublishedServices } from "../../../lib/services-public";
-export const getStaticPaths = async () => (await getPublishedServices()).map(p => ({ params: { sphere: p.sphere, slug: p.id }, props: { title: p.title } }));
-const { title } = Astro.props;
----
-<!doctype html><html lang="en"><head><meta name="robots" content="noindex, nofollow"/><title>Technical destination</title></head><body><h1>{title}</h1></body></html>`);
+  write("src/pages/services/[sphere]/[slug].astro", fs.readFileSync(path.join(root, "src/pages/services/[sphere]/[slug].astro"), "utf8"));
   if (testFilters) {
     write("src/pages/single-kind.astro", `---
 import SpherePage from "../components/services/SpherePage.astro";

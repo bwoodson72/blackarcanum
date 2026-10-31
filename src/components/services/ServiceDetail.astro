@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../foundation/Container.astro";
+import SectionHeading from "../foundation/SectionHeading.astro";
+import MediaImage from "../media/MediaImage.astro";
+import ServiceProductGrid from "./ServiceProductGrid.astro";
+import type { PublishedService } from "../../lib/services-catalog";
+import type { PublishedSphereView } from "../../lib/services-presentation";
+import { serviceCardPresentation } from "../../lib/services-presentation";
+import { serviceSphereUrl } from "../../lib/services-catalog";
+import "../../styles/service-detail.css";
+
+interface Props {
+  product: PublishedService;
+  sphere: PublishedSphereView;
+  related?: readonly PublishedService[];
+  hasDescription?: boolean;
+}
+const { product, sphere, related = [], hasDescription = false } = Astro.props;
+const view = serviceCardPresentation(product);
+if (!sphere.visible || !sphere.published || sphere.id !== product.sphere || sphere.href !== serviceSphereUrl(sphere.id)) {
+  throw new Error("Service details require their published canonical sphere.");
+}
+if (related.some(item => item.id === product.id || !product.relatedIds.includes(item.id))) {
+  throw new Error("Related services must be explicitly curated and exclude this product.");
+}
+---
+<BaseLayout title={`${view.title} — Services`} description={view.seoSummary ?? view.summary} noindex
+  breadcrumbs={[{ label: "Services", href: "/services/" }, { label: sphere.label, href: sphere.href }, { label: view.title }]}>
+  <article class="service-detail" aria-labelledby="service-title" data-service-detail={product.id}>
+    <header class="service-detail__header">
+      <Container width="reading">
+        <p class="service-detail__metadata"><span class="service-detail__kind" data-detail-kind>{view.kindLabel}</span> <span aria-hidden="true">·</span> {sphere.label}</p>
+        <h1 id="service-title">{view.title}</h1>
+        <p class="service-detail__summary">{view.summary}</p>
+        <p class="service-detail__price" data-detail-price>{view.price} <span>USD</span></p>
+      </Container>
+    </header>
+    <Container width="reading" class="service-detail__body">
+      {view.mediaId && <div class="service-detail__media"><MediaImage id={view.mediaId} variant="hero" sizes="(min-width: 768px) 720px, 100vw" /></div>}
+      {hasDescription && <div class="service-detail__description" data-detail-description><slot /></div>}
+      <section aria-labelledby="service-scope"><h2 id="service-scope">Scope</h2><p>{product.scope}</p></section>
+      <section aria-labelledby="service-inclusions"><h2 id="service-inclusions">What is included</h2><ul>{product.inclusions.map(item => <li>{item}</li>)}</ul></section>
+      <section aria-labelledby="service-process"><h2 id="service-process">The process</h2><ol>{product.process.map(item => <li>{item}</li>)}</ol></section>
+      <section aria-labelledby="service-turnaround"><h2 id="service-turnaround">Timing</h2><p>{product.turnaround}</p></section>
+      <section aria-labelledby="service-requirements"><h2 id="service-requirements">Client information & requirements</h2><ul>{product.clientRequirements.map(item => <li>{item}</li>)}</ul></section>
+      <section aria-labelledby="service-boundaries"><h2 id="service-boundaries">Practice boundaries</h2><p>No curses, retaliation, harm, coercion, domination or nonconsensual manipulation.</p></section>
+      <section class="service-detail__availability" aria-labelledby="service-availability" data-detail-availability={view.availability}>
+        <h2 id="service-availability">Availability</h2>
+        {view.availability === "closed" && <p>This service is closed to new requests.</p>}
+        {view.availability === "unavailable" && <p>This service is currently unavailable.</p>}
+        <p>Purchasing is not yet available through this site. No booking or intake is available here.</p>
+      </section>
+    </Container>
+  </article>
+  {related.length > 0 && <section class="service-detail__related" aria-labelledby="related-services-heading" data-related-services>
+    <Container width="wide">
+      <SectionHeading id="related-services-heading" title="Related work" />
+      <ServiceProductGrid products={related} />
+    </Container>
+  </section>}
+</BaseLayout>

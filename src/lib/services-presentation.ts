@@ -5,7 +5,7 @@ import type { PublishedService } from "./services-catalog.ts";
 import { serviceSchema } from "./services-schema.ts";
 
 export interface PublishedSphereView extends ServiceSphere {
-  href: string;
+  href: ReturnType<typeof serviceSphereUrl>;
   productCount: number;
 }
 

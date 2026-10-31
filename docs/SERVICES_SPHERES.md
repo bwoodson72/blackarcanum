@@ -5,13 +5,13 @@
 - `src/pages/services/[sphere].astro` is prerendered and uses getStaticPaths, the shared published-only getPublishedServices accessor, and buildServiceSpherePaths. No draft/review entry or unapproved/hidden sphere can generate a category page.
 - SpherePage reuses BaseLayout, the text-only PageHero, SectionHeading, Container, existing typed breadcrumbs and ServiceProductGrid. One H1 names the sphere; the Services ancestor is linked and the current sphere is unlinked. Readings and spellwork appear together with exact prices from their single integer-cent field, a true product count, and canonical detail paths.
 - Sphere paths follow registry ordering and the existing deterministic product ordering. Empty spheres and future sphere IDs have no static path. The presentational component rejects an empty or mismatched catalog.
-- Shared Services hero CSS moved from the hub stylesheet into services-hero.css. Existing page-hero.css and the homepage remain unchanged. No new imagery, filters or detail template is introduced.
+- Shared Services hero CSS moved from the hub stylesheet into services-hero.css. Existing page-hero.css and the homepage remain unchanged. SF-04 introduced no new imagery, filters or detail template; SF-05 later adds the filter and SF-06 supplies detail routes.
 
 ## Release and route dependencies
 
 servicesPublicReleaseApproved in src/data/services-release.ts is false. Completion of SF-04 is not permission to change it. Before a future public release, the owner must separately authorize release and approve the real products, their copy/prices and the sphere visibility records.
 
-The route also requires actual modules for both /services/ (src/pages/services/index.astro) and product detail routes (src/pages/services/[sphere]/[slug].astro). If either is absent, no sphere paths are emitted. Those modules do not yet exist in the real source, and SF-06 remains responsible for the detail template. When implemented, they must use the same approved catalog so every emitted breadcrumb and detail link resolves. Merely adding a module is not public-release authorization.
+The route also requires actual modules for both /services/ (src/pages/services/index.astro) and product detail routes (src/pages/services/[sphere]/[slug].astro). If either is absent, no sphere paths are emitted. SF-06 now supplies the real detail module; the hub route is still absent, and public release approval remains closed. When implemented, they must use the same approved catalog so every emitted breadcrumb and detail link resolves. Merely adding a module is not public-release authorization.
 
 Sphere pages remain noindex while this frontend is under development, following BaseLayout's approved-origin policy. Normalized canonical paths are tested; no canonical domain or canonical tag is invented for development previews. No Services navigation or homepage invitation is enabled.
 
@@ -19,7 +19,7 @@ Sphere pages remain noindex while this frontend is under development, following 
 
 The new pure path-selection suite is included in qa:units/qa:fast. It checks release approval, all three sphere IDs, mixed kinds, deterministic grouping and draft/review/empty/hidden/unpublished exclusions.
 
-`npm run test:services-spheres` uses the existing isolated-source/CDP helper. It copies the actual dynamic route, creates temporary MDX products and test-only hub/detail destinations, and exercises these real build scenarios:
+`npm run test:services-spheres` uses the existing isolated-source/CDP helper. It copies the actual dynamic sphere route and (since SF-06) the real detail template, creates temporary MDX products and a test-only hub destination, and exercises these real build scenarios:
 
 1. Populated catalog with release approval closed: no sphere pages.
 2. Release approval enabled in the test copy, but detail module absent: no sphere pages.

@@ -1,0 +1,23 @@
+/* Detailed service information, separate from editorial article semantics. */
+.service-detail { overflow-wrap: anywhere; }
+.service-detail__header { padding-block: var(--spacing-section); background: var(--color-charcoal); color: var(--color-parchment); }
+.service-detail__metadata { font-family: var(--font-interface); font-size: var(--text-ui); color: var(--color-antique-gold); }
+.service-detail__kind { display: inline-block; padding: 0.25rem 0.5rem; border: 1px solid var(--color-antique-gold); font-weight: 600; }
+.service-detail h1 { margin-top: var(--spacing-gutter); font-family: var(--font-display); font-size: var(--text-heading); font-weight: 600; line-height: 1.15; color: var(--color-antique-gold); }
+.service-detail__summary { margin-top: var(--spacing-gutter); font-family: var(--font-reading); font-size: var(--text-lead); line-height: 1.6; }
+.service-detail__price { margin-top: var(--spacing-gutter); font-family: var(--font-reading); font-size: var(--text-lead); font-variant-numeric: tabular-nums; }
+.service-detail__price span { font-family: var(--font-interface); font-size: var(--text-ui); }
+.service-detail__body { padding-block: var(--spacing-section); }
+.service-detail__body section + section, .service-detail__description, .service-detail__media { margin-bottom: var(--spacing-gutter); }
+.service-detail__body section { padding-block: var(--spacing-gutter); border-bottom: 1px solid var(--border-subtle); }
+.service-detail__body :is(h2, h3) { margin-block: 0 1rem; font-family: var(--font-display); font-size: var(--text-card-heading); font-weight: 600; line-height: 1.2; }
+.service-detail__body :is(p, li) { font-family: var(--font-reading); font-size: var(--text-body); line-height: 1.7; }
+.service-detail__body :is(ul, ol) { padding-left: 1.5rem; }
+.service-detail__body ul { list-style: disc; }
+.service-detail__body ol { list-style: decimal; }
+.service-detail__body li + li, .service-detail__body p + p { margin-top: 0.75rem; }
+.service-detail__description a { color: var(--accent-interactive); text-decoration: underline; }
+.service-detail__description a:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.service-detail__availability { padding-inline: var(--spacing-gutter); background: var(--surface-secondary); }
+.service-detail__related { padding-block: var(--spacing-section); background: var(--surface-secondary); }
+.service-detail__related .service-grid { margin-top: var(--spacing-gutter); }

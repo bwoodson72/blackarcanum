@@ -15,7 +15,7 @@ export type PublishedService = ServiceData & {
   href: string;
 };
 
-export function serviceSphereUrl(sphere: ServiceSphereId): string {
+export function serviceSphereUrl(sphere: ServiceSphereId): `/services/${ServiceSphereId}/` {
   if (!SERVICE_SPHERE_IDS.includes(sphere)) throw new Error("Unknown Services sphere.");
   return `/services/${sphere}/`;
 }

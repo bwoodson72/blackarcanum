@@ -216,7 +216,7 @@ Update a row only after that one prompt has been completed and accepted by the o
 | SF-02 | Reusable cards and grids | Completed; owner accepted | 5fca2fc (local only) | Unit suites, build, typecheck and five-width browser checks pass. Existing sample-article QA failure remains. No push or deployment. |
 | SF-03 | Services hub | Completed; owner accepted | 91679ae (local only) | Build, unit suites, typecheck, audit and five-width hub/card checks pass. Existing sample-article QA failure remains. No push or deployment. |
 | SF-04 | Sphere pages | Completed; owner accepted | fa39bbb (local only) | Build, 14 unit suites, typecheck, audit and five-width sphere/hub checks pass; release and route-dependency gates remain closed. Existing sample-article QA failure remains. No push or deployment. |
-| SF-05 | In-sphere filter | Not started | — | — |
+| SF-05 | In-sphere filter | Completed; owner accepted | c6019a0 (local only) | Build, 14 unit suites, typecheck, audit and five-width filter/no-JS checks pass. Existing sample-article QA failure remains. No push or deployment. |
 | SF-06 | Product detail pages | Not started | — | — |
 | SF-07 | Practitioner résumé | Not started | — | — |
 | SF-08 | Navigation and breadcrumbs | Not started | — | — |
