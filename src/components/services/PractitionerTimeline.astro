@@ -1,0 +1,14 @@
+---
+interface Props {
+  title: string;
+  id: string;
+  items: readonly { period: string; title: string; description: string }[];
+}
+const { title, id, items } = Astro.props;
+---
+{items.length > 0 && <section class="practitioner-section" aria-labelledby={id}>
+  <h2 id={id}>{title}</h2>
+  <ol class="practitioner-timeline">
+    {items.map(item => <li><p class="practitioner-timeline__period">{item.period}</p><h3>{item.title}</h3><p>{item.description}</p></li>)}
+  </ol>
+</section>}

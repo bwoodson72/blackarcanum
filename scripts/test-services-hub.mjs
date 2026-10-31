@@ -18,8 +18,7 @@ const entries = registry.map(s => { const data=serviceSchema.parse({ slug: "qa-h
  priceUsdCents: 12345, scope: "Fixture", inclusions: ["Fixture"], process: ["Fixture"], turnaround: "Fixture", clientRequirements: ["Fixture"] }); return { id: data.slug, data }; });
 const spheres = toPublishedSphereViews(selectPublishedServices(entries, registry), registry);`;
   write("src/pages/index.astro", `---\n${imports}\n---\n<ServicesHub spheres={spheres} />`);
-  write("src/pages/empty.astro", `---\nimport ServicesHub from "../components/services/ServicesHub.astro";\n---\n<ServicesHub practitioner={{ approved: false, published: true, excerpt: "UNAPPROVED_TEASER" }} />`);
-  write("src/pages/profile.astro", `---\n${imports}\n---\n<ServicesHub spheres={spheres} practitioner={{ approved: true, published: true, excerpt: "SYNTHETIC_TEASER_FOR_QA_ONLY" }} />`);
+  write("src/pages/empty.astro", `---\nimport ServicesHub from "../components/services/ServicesHub.astro";\n---\n<ServicesHub />`);
   for (const sphere of ["love", "money", "protection-uncrossing", "practitioner"]) {
     write(`src/pages/services/${sphere}/index.astro`, '<!doctype html><html lang="en"><title>QA only</title><h1>Isolated test destination</h1></html>');
   }
@@ -33,7 +32,7 @@ import PageHero from "../components/site/PageHero.astro";
 ---
 <BaseLayout noindex><PageHero mode="home" titleId="regression-title" title="Mystagogia" tagline={["Historical Research", "Practical Wisdom", "Living Tradition"]} description="Hero compatibility test" artSrc="/images/homepage/mystagogia-editorial-atlas.avif" /></BaseLayout>`);
   build();
-  for (const name of ["index.html", "empty/index.html", "profile/index.html"]) {
+  for (const name of ["index.html", "empty/index.html"]) {
     const html = fs.readFileSync(path.join(fixture, "dist", name), "utf8");
     assert.match(html, /noindex, nofollow/);
     assert.equal((html.match(/<h1\b/g) || []).length, 1);
@@ -46,7 +45,7 @@ import PageHero from "../components/site/PageHero.astro";
   await startBrowser();
   for (const width of [375, 768, 1024, 1280, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 1000, deviceScaleFactor: 1, mobile: false });
-    for (const state of ["", "empty/", "profile/"]) {
+    for (const state of ["", "empty/"]) {
       await send("Page.navigate", { url: origin + "/" + state });
       await waitFor(() => evaluate('document.readyState === "complete" && !!document.querySelector("[data-services-hub]")'), "hub " + state);
       await evaluate('document.fonts.ready.then(() => true)');
@@ -67,7 +66,7 @@ import PageHero from "../components/site/PageHero.astro";
       assert.equal(data.overflow, false, `No overflow: ${state}@${width}`);
       assert.deepEqual(data.headings, ["Divination & Ritual Work"]); assert.equal(data.heroArt, false);
       assert.equal(data.cards, state === "empty/" ? 0 : 3);
-      assert.equal(data.teaser, state === "profile/"); assert.equal(data.unavailable, state === "empty/");
+      assert.equal(data.teaser, false); assert.equal(data.unavailable, state === "empty/");
       assert.equal(data.forms, 0); assert.ok(data.targets.every(Boolean));
       if (state === "empty/") assert.deepEqual(data.sphereLinks, []);
       else {

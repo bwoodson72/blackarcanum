@@ -1,0 +1,14 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import PractitionerPage from "../../../components/services/PractitionerPage.astro";
+import { getPublishedPractitioner } from "../../../lib/practitioner-public";
+export const prerender = true;
+// A rest route can emit exactly the index path, or nothing when unapproved.
+export const getStaticPaths = (() => {
+  const profile = getPublishedPractitioner();
+  return profile ? [{ params: { page: undefined }, props: { profile } }] : [];
+}) satisfies GetStaticPaths;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { profile } = Astro.props;
+---
+<PractitionerPage profile={profile} />

@@ -21,3 +21,5 @@
 .service-detail__availability { padding-inline: var(--spacing-gutter); background: var(--surface-secondary); }
 .service-detail__related { padding-block: var(--spacing-section); background: var(--surface-secondary); }
 .service-detail__related .service-grid { margin-top: var(--spacing-gutter); }
+
+.service-detail [data-practitioner-link] .foundation-action { margin-top: var(--spacing-gutter); }

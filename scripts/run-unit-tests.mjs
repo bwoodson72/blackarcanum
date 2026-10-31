@@ -6,6 +6,7 @@
  * Each test remains independently runnable with its test:* script.
  */
 const tests = [
+  "test-practitioner-profile.mjs",
   "test-services-schema.mjs",
   "test-services-details-paths.mjs",
   "test-services-spheres.mjs",

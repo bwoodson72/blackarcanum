@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../site/PageHero.astro";
+import Container from "../foundation/Container.astro";
+import ActionLink from "../foundation/ActionLink.astro";
+import PractitionerTimeline from "./PractitionerTimeline.astro";
+import PractitionerFacts from "./PractitionerFacts.astro";
+import type { PublishedPractitioner } from "../../lib/practitioner-profile";
+import "../../styles/practitioner.css";
+interface Props { profile: PublishedPractitioner }
+const { profile } = Astro.props;
+if (!profile.summary.trim() || profile.biography.length === 0 || profile.href !== "/services/practitioner/") {
+  throw new Error("Practitioner page requires an approved, nonempty public profile.");
+}
+---
+<BaseLayout title="The Practitioner — Services" description={profile.summary} noindex
+  breadcrumbs={[{ label: "Services", href: "/services/" }, { label: "The practitioner" }]}>
+  <article class="practitioner-page" data-practitioner-page>
+    <PageHero mode="services" titleId="practitioner-title" title="The practitioner"
+      tagline={["Mystagogia", "Practice & Background"]} description={profile.summary} />
+    <Container width="reading" class="practitioner-page__body">
+      <section class="practitioner-section" aria-labelledby="practitioner-biography">
+        <h2 id="practitioner-biography">Background</h2>{profile.biography.map(paragraph => <p>{paragraph}</p>)}
+      </section>
+      <PractitionerTimeline id="practitioner-history" title="Practice history" items={profile.practiceHistory} />
+      <PractitionerFacts id="practitioner-disciplines" title="Disciplines & traditions" items={profile.disciplines} />
+      <PractitionerTimeline id="practitioner-training" title="Training & initiations" items={profile.training} />
+      <PractitionerFacts id="practitioner-work" title="Kinds of work" items={profile.kindsOfWork} />
+      <PractitionerFacts id="practitioner-writings" title="Selected work & writings" items={profile.selectedWork} />
+      <PractitionerFacts id="practitioner-principles" title="Approach & ethics" items={profile.principles} />
+      <ActionLink href="/services/" variant="secondary">Return to Services</ActionLink>
+    </Container>
+  </article>
+</BaseLayout>

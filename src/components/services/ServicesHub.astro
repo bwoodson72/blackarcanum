@@ -7,17 +7,16 @@ import ActionLink from "../foundation/ActionLink.astro";
 import SphereCard from "./SphereCard.astro";
 import { serviceSpheres } from "../../data/service-spheres";
 import type { PublishedSphereView } from "../../lib/services-presentation";
-import { approvedPractitionerTeaser } from "../../lib/services-hub";
-import type { PractitionerTeaser } from "../../lib/services-hub";
+import { getPublishedPractitioner } from "../../lib/practitioner-public";
 import "../../styles/services-hub.css";
 
 interface Props {
   /** Only use views backed by real, approved sphere destinations. */
   spheres?: readonly PublishedSphereView[];
-  practitioner?: PractitionerTeaser;
 }
-const { spheres = [], practitioner } = Astro.props;
-const teaser = approvedPractitionerTeaser(practitioner);
+const { spheres = [] } = Astro.props;
+const profile = getPublishedPractitioner();
+const teaser = profile ? { excerpt: profile.summary, href: profile.href } : undefined;
 const hasSpheres = spheres.length > 0;
 ---
 <!-- Review composition only: no production route imports this component. -->

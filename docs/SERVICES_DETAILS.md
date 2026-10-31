@@ -16,7 +16,7 @@ A selected media ID requires both the established registry rights clearance and 
 
 Availability is text only. Closed/unavailable records display their factual state; all records state that purchasing, booking and intake are unavailable through this frontend. An informational open state never creates a purchase button or intake link. The practice's existing non-baneful/consent boundary is reiterated. No Product/Offer/Review/Person schema, forms, processor links, sensitive-data inputs, orders or payments are added.
 
-Pages remain noindex under the existing approved-domain policy. Page-specific description uses seoSummary when present, otherwise the summary. Services is not added to Pagefind. Practitioner identity/profile presentation remains SF-07 work.
+Pages remain noindex under the existing approved-domain policy. Page-specific description uses seoSummary when present, otherwise the summary. Services is not added to Pagefind. SF-07 adds a conditional link to the same approved practitioner profile source used by the hub; it remains absent with the real source set to null.
 
 ## Verification
 

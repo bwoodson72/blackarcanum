@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Container from "../foundation/Container.astro";
+import ActionLink from "../foundation/ActionLink.astro";
+import { getPublishedPractitioner } from "../../lib/practitioner-public";
 import SectionHeading from "../foundation/SectionHeading.astro";
 import MediaImage from "../media/MediaImage.astro";
 import ServiceProductGrid from "./ServiceProductGrid.astro";
@@ -18,6 +20,7 @@ interface Props {
 }
 const { product, sphere, related = [], hasDescription = false } = Astro.props;
 const view = serviceCardPresentation(product);
+const practitioner = getPublishedPractitioner();
 if (!sphere.visible || !sphere.published || sphere.id !== product.sphere || sphere.href !== serviceSphereUrl(sphere.id)) {
   throw new Error("Service details require their published canonical sphere.");
 }
@@ -51,6 +54,10 @@ if (related.some(item => item.id === product.id || !product.relatedIds.includes(
         {view.availability === "unavailable" && <p>This service is currently unavailable.</p>}
         <p>Purchasing is not yet available through this site. No booking or intake is available here.</p>
       </section>
+      {practitioner && <section aria-labelledby="service-practitioner" data-practitioner-link>
+        <h2 id="service-practitioner">The practitioner</h2><p>{practitioner.summary}</p>
+        <ActionLink href={practitioner.href} variant="secondary">Read the practitioner profile</ActionLink>
+      </section>}
     </Container>
   </article>
   {related.length > 0 && <section class="service-detail__related" aria-labelledby="related-services-heading" data-related-services>
