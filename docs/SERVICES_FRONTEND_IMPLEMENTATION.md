@@ -221,7 +221,7 @@ Update a row only after that one prompt has been completed and accepted by the o
 | SF-07 | Practitioner résumé | Completed; owner accepted | 7168f84 (local only) | Build, 16 unit suites, typecheck, audit and five-width profile/hub checks pass; real profile remains null. Existing sample-article QA failure remains. No push or deployment. |
 | SF-08 | Navigation and breadcrumbs | Completed; owner accepted | 1805604 (local only) | Build, 17 unit suites, typecheck, audit and five-width navigation/profile checks pass; actual navigation stays hidden. Existing sample-article QA failure remains. No push or deployment. |
 | SF-09 | Homepage invitation | Completed; owner accepted | 7e6b2b0; visibility correction f571d77 (local only) | Homepage and ordinary Services navigation verified at five widths; actual dev server routes verified. No push or deployment. |
-| SF-10 | SEO and publication QA | Not started | — | — |
+| SF-10 | SEO and publication QA | Completed; owner accepted | 5317f5a (local only) | Unit suites, build, typecheck, audit and focused metadata/sitemap/search build assertions pass. Normal Services browsing preserved. Existing sample-article QA failure remains. No push or deployment. |
 | SF-11 | Responsive regression / handoff | Not started | — | — |
 
 ### Owner approvals required later

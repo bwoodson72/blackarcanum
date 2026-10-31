@@ -58,7 +58,8 @@ export function createServicesFixture(name, port, debugPort) {
     await send("Page.enable"); await send("Runtime.enable");
   }
   async function capture(name, width) {
-    await evaluate('document.activeElement?.blur(); window.scrollTo(0, 0)');
+    // Keyboard navigation may leave a scroll/repaint pending. Capture a settled frame.
+    await evaluate('document.activeElement?.blur(); window.scrollTo({ top: 0, left: 0, behavior: "instant" }); new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
     const layout = await send("Page.getLayoutMetrics");
     const image = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: layout.result.cssContentSize.height, scale: 1 } });
     fs.mkdirSync(screenshots, { recursive: true });

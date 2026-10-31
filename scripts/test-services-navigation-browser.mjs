@@ -1,4 +1,4 @@
-// SF-08: actual gated routes and all navigation surfaces in an isolated site.
+// SF-08/SF-11: real routes, all navigation surfaces and the full keyboard browsing journey.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -16,6 +16,39 @@ function expectNormalNav() {
 async function key(key, code, number, text) {
   await send("Input.dispatchKeyEvent", { type: "keyDown", key, code, windowsVirtualKeyCode: number, ...(text ? { text } : {}) });
   await send("Input.dispatchKeyEvent", { type: "keyUp", key, code, windowsVirtualKeyCode: number });
+}
+async function follow(selector, expected) {
+  await evaluate(`document.querySelector(${JSON.stringify(selector)}).focus()`);
+  await key("Enter", "Enter", 13, "\r");
+  await waitFor(() => evaluate(`location.pathname === ${JSON.stringify(expected)} && document.readyState === "complete"`), "keyboard journey " + expected);
+}
+async function reviewPage(name, width) {
+  await evaluate('document.fonts.ready.then(()=>true)');
+  const result = await evaluate(`(() => {
+    const canvas = document.createElement('canvas'); canvas.width = canvas.height = 1;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    function rgba(color) { ctx.clearRect(0,0,1,1); ctx.fillStyle=color;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data]; }
+    function background(node) {
+      for(let n=node;n;n=n.parentElement) { const color=rgba(getComputedStyle(n).backgroundColor);if(color[3]===255)return color; }
+      return [255,255,255,255];
+    }
+    function luminance(color) { return color.slice(0,3).map(v=>{v/=255;return v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4;}).reduce((sum,v,i)=>sum+v*[0.2126,0.7152,0.0722][i],0); }
+    const samples=[...document.querySelectorAll('main h1, main h2, main h3, main p, main li, main a, main summary, main span, main button')]
+      .filter(n=>n.getBoundingClientRect().height>0 && [...n.childNodes].some(c=>c.nodeType===3 && c.textContent.trim()));
+    const contrast=samples.map(n=>{const s=getComputedStyle(n);const a=luminance(rgba(s.color)),b=luminance(background(n));
+      const ratio=(Math.max(a,b)+0.05)/(Math.min(a,b)+0.05);const large=parseFloat(s.fontSize)>=24 || (parseFloat(s.fontSize)>=18.66 && parseFloat(s.fontWeight)>=700);
+      return {text:n.textContent.trim().slice(0,60),ratio,required:large?3:4.5};});
+    return { overflow:document.documentElement.scrollWidth>innerWidth, h1:document.querySelectorAll('h1').length,
+      inputs:document.querySelectorAll('main form, main input, main textarea, main select').length,
+      targets:[...document.querySelectorAll('main a,main button,main summary')].filter(n=>n.getBoundingClientRect().height>0).map(n=>{const r=n.getBoundingClientRect();return {label:n.textContent.trim().slice(0,40),width:r.width,height:r.height};}),
+      contrast, images:[...document.querySelectorAll('main img')].map(n=>({alt:n.alt,loaded:n.complete && n.naturalWidth>0})) };
+  })()`);
+  assert.equal(result.overflow, false); assert.equal(result.h1, 1); assert.equal(result.inputs, 0);
+  assert.ok(result.contrast.length > 0);
+  for (const row of result.contrast) assert.ok(row.ratio >= row.required, `${name}@${width}: contrast ${JSON.stringify(row)}`);
+  for (const target of result.targets) assert.ok(target.width>=44 && target.height>=44, `${name}@${width}: target ${JSON.stringify(target)}`);
+  assert.ok(result.images.every(n=>n.alt.trim() && n.loaded));
+  await capture(`services-journey-${name}-${width}.png`, width);
 }
 try {
   prepare();
@@ -39,8 +72,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   const registry = path.join(fixture, "src/data/service-spheres.ts");
   fs.writeFileSync(registry, fs.readFileSync(registry, "utf8").replace('id: "love", label: "Love & Relationships", order: 1, visible: false, published: false', 'id: "love", label: "Love & Relationships", order: 1, visible: true, published: true'));
   const product = { slug: "qa-nav-product", title: "Synthetic navigation fixture", summary: "Technical QA only", sphere: "love", kind: "reading", status: "published", approved: true, priceUsdCents: 12345, scope: "Fixture", inclusions: ["Fixture"], process: ["Fixture"], turnaround: "Fixture", clientRequirements: ["Fixture"] };
+  const spellwork = { ...product, slug: "qa-nav-spellwork", title: "Synthetic ritual fixture", kind: "spellwork" };
+  product.relatedIds = [spellwork.slug];
   const mdx = data => "---\n" + Object.entries(data).map(([k,v])=>`${k}: ${JSON.stringify(v)}`).join("\n") + "\n---\n";
   write("src/content/services/qa-nav-product.mdx", mdx(product));
+  write("src/content/services/qa-nav-spellwork.mdx", mdx(spellwork));
   const fact = { text: "Synthetic practitioner fixture, not a real biography.", approved: true, verified: true };
   write("src/data/practitioner.ts", "export const practitionerProfile = " + JSON.stringify({ status: "published", approved: true, summary: fact, biography: [fact] }) + ";\n");
   cleanBuild(); expectNormalNav(); // Ordinary browsing does not require commercial launch.
@@ -124,6 +160,33 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         }
       }
     }
+    // Full journey uses real keyboard-activated links, not direct route navigation.
+    await send("Page.navigate", { url: origin + "/services/" });
+    await waitFor(() => evaluate('location.pathname === "/services/" && document.readyState === "complete"'), "journey hub");
+    await reviewPage("hub", width);
+    const ax = await send("Accessibility.getFullAXTree");
+    assert.equal(ax.result.nodes.filter(n => !n.ignored && n.role?.value === "DisclosureTriangle").length, 4);
+    await evaluate("document.querySelector('.services-hub__questions summary').focus()");
+    await key(" ", "Space", 32, " ");
+    assert.equal(await evaluate("document.querySelector('.services-hub__questions details').open"), true);
+    assert.ok(await evaluate("document.activeElement.matches(':focus-visible') && parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 3"));
+    await key("Enter", "Enter", 13, "\r");
+    assert.equal(await evaluate("document.querySelector('.services-hub__questions details').open"), false);
+    await follow('[data-sphere-card] a[href="/services/love/"]', "/services/love/");
+    assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-service-card]')].map(n=>n.dataset.serviceKind).sort()"), ["reading", "spellwork"]);
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
+    assert.equal(await evaluate("getComputedStyle(document.querySelector('.service-card__link')).transitionDuration"), "0s");
+    await reviewPage("sphere", width);
+    await send("Emulation.setEmulatedMedia", { features: [] });
+    await follow('[data-service-card] a[href="/services/love/qa-nav-product/"]', "/services/love/qa-nav-product/");
+    assert.equal(await evaluate("document.querySelectorAll('.service-detail__media img').length"), 0, "Text-first detail requires no placeholder artwork");
+    await reviewPage("reading", width);
+    await follow('[data-related-services] a[href="/services/love/qa-nav-spellwork/"]', "/services/love/qa-nav-spellwork/");
+    await reviewPage("spellwork", width);
+    await follow('[data-practitioner-link] a', "/services/practitioner/");
+    await reviewPage("practitioner", width);
+    await follow('[aria-label="Breadcrumb"] a[href="/services/"]', "/services/");
+    console.log(`PASS: journey@${width}: hub → sphere → reading → related spellwork → practitioner → breadcrumb; native FAQ, contrast, 44px targets, one H1, focus and reduced motion`);
     console.log(`PASS: nav@${width}: all surfaces, nested active state, editorial behavior, real links, breadcrumbs, header fit, modal focus/Escape/resize`);
   }
   // Search indexing is independent of ordinary navigation.

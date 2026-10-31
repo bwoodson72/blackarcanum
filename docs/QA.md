@@ -75,3 +75,8 @@ All three `preview: true` Greek deity MDX articles now fail the single public pu
 The owner-authorized ordinary Services pages/navigation remain visible independently of indexing approval. Actual product and profile sources remain empty; commercial/indexing release approval remains false. SF-10 changes only metadata policy and its assertions, with no visual layout changes.
 
 Validation: 17 fast unit suites, newsletter checks, production build, typecheck (zero errors/warnings; two existing hints), focused Services metadata builds and high/critical audit pass. `qa:fast` still stops at the pre-existing sample-article inventory mismatch; remaining type/audit checks are run separately. No push or deployment is performed.
+
+
+## Final Services frontend review — SF-11
+
+See [SERVICES_FRONTEND_HANDOFF.md](./SERVICES_FRONTEND_HANDOFF.md) for the five-width review results, screenshot inventory, current ordinary browsing behavior and remaining content/launch inputs. The existing Services navigation browser suite now checks a complete keyboard journey, native FAQ operation, computed text contrast, 44px targets and reduced motion. The shared capture helper waits for settled frames after keyboard scrolling. No application layout or real offering/profile data was changed.
