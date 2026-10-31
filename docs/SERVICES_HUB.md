@@ -13,7 +13,7 @@ The composition follows the specified sequence: text-only hero and sphere anchor
 - Pass only `PublishedSphereView` records backed by actual approved sphere destinations. Existing SphereCard validation remains in force. In SF-03, populated views and their destinations exist only in isolated tests.
 - With no sphere views, render a clearly labeled preparation state with the three planned taxonomy names and no category links, product cards, prices, or suggestion that orders are available.
 - A practitioner teaser is absent by default. Its minimal contract requires an approved, published, nonempty excerpt. A future caller must also establish that the real approved profile route exists; full practitioner content and route generation remain SF-07 work. This step supplies no real teaser data or profile route.
-- PageHero adds a services mode that permits omitting artwork. Existing modes still require their approved artwork, and shared page-hero.css is unchanged. All Services hero sizing and typography are scoped under services-hub.css; homepage dimensions are preserved.
+- PageHero adds a services mode that permits omitting artwork. Existing modes still require their approved artwork, and shared page-hero.css is unchanged. Services hero sizing and typography are scoped under services-hero.css (shared with sphere pages since SF-04); homepage dimensions are preserved.
 - No browser script is needed for the hub, sphere navigation or native details/summary FAQ. The existing shell retains its own mobile navigation script.
 
 ## Verification

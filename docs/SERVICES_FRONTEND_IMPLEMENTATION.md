@@ -214,7 +214,7 @@ Update a row only after that one prompt has been completed and accepted by the o
 | --- | --- | --- | --- | --- |
 | SF-01 | Service schema and publish gate | Completed; owner accepted | Local commit only | Unit suites, build, typecheck, high/critical audit and route checks pass. Full qa:fast stops at pre-existing outdated sample-article expectations. No push or deployment. |
 | SF-02 | Reusable cards and grids | Completed; owner accepted | 5fca2fc (local only) | Unit suites, build, typecheck and five-width browser checks pass. Existing sample-article QA failure remains. No push or deployment. |
-| SF-03 | Services hub | Not started | — | — |
+| SF-03 | Services hub | Completed; owner accepted | 91679ae (local only) | Build, unit suites, typecheck, audit and five-width hub/card checks pass. Existing sample-article QA failure remains. No push or deployment. |
 | SF-04 | Sphere pages | Not started | — | — |
 | SF-05 | In-sphere filter | Not started | — | — |
 | SF-06 | Product detail pages | Not started | — | — |

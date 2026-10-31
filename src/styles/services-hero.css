@@ -1,0 +1,33 @@
+/* Shared text-only hero, scoped to Services; other hero modes are unchanged. */
+.page-hero.services-hero { min-height: auto; padding-block: var(--spacing-gutter); }
+.page-hero.services-hero .page-hero__inner {
+  max-width: var(--container-wide);
+  padding-inline: var(--spacing-gutter);
+  margin-inline: auto;
+}
+.page-hero.services-hero .page-hero__copy { max-width: var(--container-reading); }
+.page-hero.services-hero h1 {
+  font-size: var(--text-heading);
+  line-height: 1.12;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.page-hero.services-hero .services-hero__tagline {
+  margin-top: 0.75rem;
+  color: var(--color-antique-gold);
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.page-hero.services-hero .services-hero__lead {
+  max-width: var(--container-reading);
+  margin-top: 1rem;
+  color: var(--color-parchment);
+  font-family: var(--font-reading);
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+.page-hero.services-hero .page-hero__actions { margin-top: 1rem; }

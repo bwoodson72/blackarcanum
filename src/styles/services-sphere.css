@@ -1,0 +1,9 @@
+/* Sphere composition only; cards and hero reuse the existing Services styles. */
+.services-sphere__catalog { padding-block: var(--spacing-section); }
+.services-sphere__count {
+  margin-block: var(--spacing-gutter);
+  color: var(--text-muted);
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+}
+.services-sphere__catalog:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: -4px; }

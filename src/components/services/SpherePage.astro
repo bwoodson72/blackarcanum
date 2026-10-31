@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../site/PageHero.astro";
+import Container from "../foundation/Container.astro";
+import SectionHeading from "../foundation/SectionHeading.astro";
+import ServiceProductGrid from "./ServiceProductGrid.astro";
+import type { PublishedSphereView } from "../../lib/services-presentation";
+import type { PublishedService } from "../../lib/services-catalog";
+import { serviceSphereUrl } from "../../lib/services-catalog";
+import "../../styles/services-sphere.css";
+interface Props { sphere: PublishedSphereView; products: readonly PublishedService[] }
+const { sphere, products } = Astro.props;
+if (!sphere.published || !sphere.visible || sphere.href !== serviceSphereUrl(sphere.id) ||
+    products.length === 0 || sphere.productCount !== products.length ||
+    products.some((product) => product.sphere !== sphere.id)) {
+  throw new Error("Sphere pages require a nonempty, matching published catalog.");
+}
+const description = sphere.summary ?? `Explore the approved work in ${sphere.label.toLowerCase()}, with scope and price explained on each detailed page.`;
+---
+<BaseLayout title={`${sphere.label} — Services`} description={description} noindex
+  breadcrumbs={[{ label: "Services", href: "/services/" }, { label: sphere.label }]}>
+  <div class="services-sphere" data-services-sphere={sphere.id}>
+    <PageHero mode="services" titleId="sphere-title" title={sphere.label}
+      tagline={["Services", "Sphere of Practice"]} description={description}
+      actions={[{ label: "Explore the work", href: "#sphere-products" }]} />
+    <section class="services-sphere__catalog" id="sphere-products" aria-labelledby="sphere-products-heading" tabindex="-1">
+      <Container width="wide">
+        <SectionHeading id="sphere-products-heading" title="Explore the work"
+          description="Read each detailed page for the purpose, scope, process and requirements of the work." />
+        <p class="services-sphere__count" data-service-count>{products.length} {products.length === 1 ? "service" : "services"}</p>
+        <ServiceProductGrid products={products} />
+      </Container>
+    </section>
+  </div>
+</BaseLayout>
