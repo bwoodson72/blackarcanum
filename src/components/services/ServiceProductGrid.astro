@@ -1,0 +1,10 @@
+---
+import ServiceProductCard from "./ServiceProductCard.astro";
+import type { PublishedService } from "../../lib/services-catalog";
+import "../../styles/service-cards.css";
+interface Props { products: readonly PublishedService[]; headingLevel?: "h2" | "h3" }
+const { products, headingLevel = "h3" } = Astro.props;
+---
+{products.length > 0 && <ul class="service-grid" data-service-grid>
+  {products.map((product) => <li><ServiceProductCard product={product} headingLevel={headingLevel} /></li>)}
+</ul>}

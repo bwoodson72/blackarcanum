@@ -11,6 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
+    "test:services-cards": "node scripts/test-services-cards.mjs",
+    "test:services-presentation": "node --experimental-strip-types scripts/test-services-presentation.mjs",
     "test:content": "node --experimental-strip-types scripts/test-editorial-schema.mjs",
     "test:editorial": "node --experimental-strip-types scripts/test-editorial-qa.mjs",
     "qa:units": "node --experimental-strip-types scripts/run-unit-tests.mjs && npm run test:newsletter",

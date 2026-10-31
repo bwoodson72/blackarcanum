@@ -1,0 +1,26 @@
+---
+import MediaImage from "../media/MediaImage.astro";
+import type { PublishedService } from "../../lib/services-catalog";
+import { serviceCardPresentation } from "../../lib/services-presentation";
+import "../../styles/service-cards.css";
+interface Props { product: PublishedService; headingLevel?: "h2" | "h3" }
+const { product, headingLevel: Heading = "h3" } = Astro.props;
+const view = serviceCardPresentation(product);
+---
+<article class="service-card" data-service-card data-service-kind={view.kind}>
+  <a class="service-card__link" href={view.href}>
+    {view.mediaId && <div class="service-card__media">
+      <MediaImage id={view.mediaId} variant="card"
+        sizes="(min-width: 1280px) 400px, (min-width: 768px) 45vw, 100vw" />
+    </div>}
+    <div class="service-card__body">
+      <span class="service-card__kind">{view.kindLabel}</span>
+      <Heading class="service-card__title">{view.title}</Heading>
+      <p class="service-card__summary">{view.summary}</p>
+      <div class="service-card__footer">
+        <span class="service-card__price">{view.price} <span class="service-card__currency">USD</span></span>
+        <span class="service-card__action">View details <span aria-hidden="true">→</span></span>
+      </div>
+    </div>
+  </a>
+</article>

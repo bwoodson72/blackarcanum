@@ -1,0 +1,22 @@
+---
+import EngravedFrame from "../foundation/EngravedFrame.astro";
+import type { PublishedSphereView } from "../../lib/services-presentation";
+import { serviceSphereUrl } from "../../lib/services-catalog";
+import "../../styles/service-cards.css";
+interface Props { sphere: PublishedSphereView; headingLevel?: "h2" | "h3" }
+const { sphere, headingLevel: Heading = "h3" } = Astro.props;
+const href = serviceSphereUrl(sphere.id);
+if (!sphere.published || !sphere.visible || !Number.isSafeInteger(sphere.productCount) ||
+    sphere.productCount < 1 || sphere.href !== href) {
+  throw new Error("Sphere cards require a published destination with approved products.");
+}
+---
+<article class="sphere-card" data-sphere-card>
+  <a class="sphere-card__link" href={href}>
+    <span class="service-card__eyebrow">Sphere of practice</span>
+    <Heading class="service-card__title">{sphere.label}</Heading>
+    {sphere.summary && <p class="sphere-card__summary">{sphere.summary}</p>}
+    <span class="service-card__action">Explore this sphere <span aria-hidden="true">→</span></span>
+    <EngravedFrame />
+  </a>
+</article>

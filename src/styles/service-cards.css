@@ -1,0 +1,90 @@
+/* Services presentation primitives share Mystagogia's existing token system. */
+.service-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-article-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.service-grid > li { min-width: 0; }
+.service-card, .sphere-card { min-width: 0; height: 100%; overflow-wrap: anywhere; }
+.service-card__link, .sphere-card__link {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 2.75rem;
+  color: var(--text-primary);
+  background: var(--surface);
+  text-decoration: none;
+  transition: box-shadow 160ms ease;
+}
+.service-card__link { border: 1px solid var(--border-subtle); border-top: 3px solid var(--color-antique-gold); }
+.service-card__link:hover, .sphere-card__link:hover { box-shadow: var(--shadow-panel); }
+.service-card__link:focus-visible, .sphere-card__link:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+.service-card__body, .sphere-card__link {
+  gap: 1rem;
+  padding: var(--spacing-gutter);
+}
+.service-card__body { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.service-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-card-heading);
+  font-weight: 600;
+  line-height: 1.15;
+}
+.service-card__summary, .sphere-card__summary {
+  margin: 0;
+  color: var(--text-muted);
+  font-family: var(--font-reading);
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+.service-card__kind, .service-card__eyebrow, .service-card__currency {
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+  font-weight: 600;
+  line-height: 1.45;
+}
+.service-card__kind {
+  align-self: flex-start;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+.service-card__eyebrow { letter-spacing: 0.1em; text-transform: uppercase; }
+.service-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+.service-card__price { font-family: var(--font-reading); font-size: var(--text-lead); font-variant-numeric: tabular-nums; }
+.service-card__action {
+  font-family: var(--font-interface);
+  font-size: var(--text-ui);
+  font-weight: 600;
+  color: var(--accent-interactive);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.sphere-card__link { background: var(--color-charcoal); color: var(--color-parchment); }
+.sphere-card__link .service-card__eyebrow, .sphere-card__link .service-card__action {
+  color: var(--color-antique-gold);
+}
+.sphere-card__summary { color: var(--color-parchment); }
+.sphere-card__link .service-card__action { margin-top: auto; padding-top: 1rem; }
+@media (min-width: 768px) { .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1280px) { .service-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) {
+  .service-card__link, .sphere-card__link { transition: none; }
+}
