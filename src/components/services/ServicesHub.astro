@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { servicesNoindex } from "../../lib/services-seo";
 import PageHero from "../site/PageHero.astro";
 import Container from "../foundation/Container.astro";
 import SectionHeading from "../foundation/SectionHeading.astro";
@@ -24,7 +25,7 @@ const hasOfferings = spheres.some(sphere => sphere.productCount > 0);
 ---
 <!-- Canonical route emission and navigation share the Services visibility gate. -->
 <BaseLayout title="Services — Divination & Ritual Work"
-  description="Mystagogia’s approach to private readings and constructive ritual work, organized by sphere of life." noindex={!indexable}>
+  description="Mystagogia’s approach to private readings and constructive ritual work, organized by sphere of life." noindex={!indexable || servicesNoindex(Astro.site)}>
   <div class="services-hub" data-services-hub>
     <PageHero mode="services" titleId="services-title" title="Divination & Ritual Work"
       tagline={["Mystagogia", "Private Practice"]}

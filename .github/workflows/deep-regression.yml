@@ -80,7 +80,9 @@ jobs:
           if-no-files-found: ignore
       - name: SEO approved-domain and published/draft build acceptance
         if: ${{ env.QA_SUITE == 'all' || env.QA_SUITE == 'articles' }}
-        run: npm run test:seo-build
+        run: |
+          npm run test:seo-build
+          npm run test:services-seo
       - name: Preserve homepage responsive screenshots
         if: ${{ always() && (env.QA_SUITE == 'all' || env.QA_SUITE == 'articles') }}
         uses: actions/upload-artifact@v4

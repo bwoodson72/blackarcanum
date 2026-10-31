@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { servicesNoindex } from "../../lib/services-seo";
 import PageHero from "../site/PageHero.astro";
 import Container from "../foundation/Container.astro";
 import ActionLink from "../foundation/ActionLink.astro";
@@ -13,7 +14,7 @@ if (!profile.summary.trim() || profile.biography.length === 0 || profile.href !=
   throw new Error("Practitioner page requires an approved, nonempty public profile.");
 }
 ---
-<BaseLayout title="The Practitioner — Services" description={profile.summary} noindex
+<BaseLayout title="The Practitioner — Services" description={profile.summary} noindex={servicesNoindex(Astro.site)}
   breadcrumbs={[{ label: "Services", href: "/services/" }, { label: "The practitioner" }]}>
   <article class="practitioner-page" data-practitioner-page>
     <PageHero mode="services" titleId="practitioner-title" title="The practitioner"

@@ -66,3 +66,12 @@ All three `preview: true` Greek deity MDX articles now fail the single public pu
 
 `test:samples` verifies that their routes are absent in Astro and deployable output; `test:seo-build` and `test:pagefind-build` validate missing preview pages in their fixture builds. A commit tagged `[release-qa]` on the shared publication gate triggers `Deep Regression` with the `all` suite to cover content, responsive navigation, media, TOC, related entries, citations, SEO and search against one exact commit. Automated browser acceptance must not be mistaken for manual screen-reader sign-off.
 
+
+
+## Services metadata and publication checks — SF-10
+
+`npm run test:services-seo` extends the existing isolated Services fixture harness. It builds the actual hub, sphere, detail and practitioner routes using temporary records and an explicitly synthetic approved `.test` origin. It covers unique titles, page-specific descriptions, canonical/OG URLs, sitemap membership, pending-indexing noindex behavior, empty-category exclusion, draft/review offering and profile omissions, private verification-note removal, curated published relations, no commerce/person JSON-LD and editorial-only Pagefind scope. A separate build with no approved origin and a Vercel hostname confirms robots blocking and the absence of canonical fallbacks. Fixtures and their Astro caches stay outside the checkout. This suite is included in the existing Deep Regression SEO step; it is not added to the fast routine build.
+
+The owner-authorized ordinary Services pages/navigation remain visible independently of indexing approval. Actual product and profile sources remain empty; commercial/indexing release approval remains false. SF-10 changes only metadata policy and its assertions, with no visual layout changes.
+
+Validation: 17 fast unit suites, newsletter checks, production build, typecheck (zero errors/warnings; two existing hints), focused Services metadata builds and high/critical audit pass. `qa:fast` still stops at the pre-existing sample-article inventory mismatch; remaining type/audit checks are run separately. No push or deployment is performed.

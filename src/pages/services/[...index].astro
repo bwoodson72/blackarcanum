@@ -11,4 +11,4 @@ export const getStaticPaths = (async () => {
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { spheres } = Astro.props;
 ---
-<ServicesHub spheres={spheres} />
+<ServicesHub spheres={spheres} indexable />

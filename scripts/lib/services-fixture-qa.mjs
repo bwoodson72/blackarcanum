@@ -36,8 +36,8 @@ export function createServicesFixture(name, port, debugPort) {
     assert.equal(response.result.exceptionDetails, undefined, JSON.stringify(response.result.exceptionDetails));
     return response.result.result.value;
   }
-  function build() {
-    const result = spawnSync(process.execPath, [fs.realpathSync(path.join(root, "node_modules/.bin/astro")), "build"], { cwd: fixture, encoding: "utf8", timeout: 180000 });
+  function build(env = {}) {
+    const result = spawnSync(process.execPath, [fs.realpathSync(path.join(root, "node_modules/.bin/astro")), "build"], { cwd: fixture, env: { ...process.env, ...env }, encoding: "utf8", timeout: 180000 });
     assert.equal(result.status, 0, "Isolated build failed: " + result.stdout?.slice(-5000) + result.stderr?.slice(-5000));
   }
   async function startBrowser() {

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { servicesNoindex } from "../../lib/services-seo";
 import PageHero from "../site/PageHero.astro";
 import Container from "../foundation/Container.astro";
 import SectionHeading from "../foundation/SectionHeading.astro";
@@ -17,7 +18,7 @@ if (!sphere.published || !sphere.visible || sphere.href !== serviceSphereUrl(sph
 }
 const description = sphere.summary ?? `Readings and constructive ritual work in the sphere of ${sphere.label.toLowerCase()}.`;
 ---
-<BaseLayout title={`${sphere.label} — Services`} description={description} noindex
+<BaseLayout title={`${sphere.label} — Services`} description={description} noindex={products.length === 0 || servicesNoindex(Astro.site)}
   breadcrumbs={[{ label: "Services", href: "/services/" }, { label: sphere.label }]}>
   <div class="services-sphere" data-services-sphere={sphere.id}>
     <PageHero mode="services" titleId="sphere-title" title={sphere.label}

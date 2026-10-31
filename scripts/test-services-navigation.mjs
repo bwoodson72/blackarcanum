@@ -23,3 +23,12 @@ assert.ok(Object.values(servicesRouteReadiness(files)).every(Boolean));
 assert.equal(servicesRouteReadiness(["../pages/services/index.astro"]).hub, true);
 assert.equal(servicesRouteReadiness(["../pages/services/index.astro"]).indexableHub, false, "Indexability metadata is separate from ordinary hub readiness");
 console.log("PASS: conditional nav, exact/prefix boundary current states, legacy editorial behavior and route readiness independent of commercial launch and inventory");
+
+// Search indexing never controls whether normal Services browsing is available.
+const { servicesNoindex } = await import("../src/lib/services-seo.ts");
+const approvedTestOrigin = new URL("https://mystagogia.test");
+assert.equal(servicesNoindex(undefined, false), true);
+assert.equal(servicesNoindex(undefined, true), true);
+assert.equal(servicesNoindex(approvedTestOrigin, false), true);
+assert.equal(servicesNoindex(approvedTestOrigin, true), false);
+assert.equal(servicesNoindex(approvedTestOrigin), true, "Real Services indexing remains unapproved");

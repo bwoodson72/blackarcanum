@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { servicesNoindex } from "../../lib/services-seo";
 import Container from "../foundation/Container.astro";
 import ActionLink from "../foundation/ActionLink.astro";
 import { getPublishedPractitioner } from "../../lib/practitioner-public";
@@ -28,7 +29,7 @@ if (related.some(item => item.id === product.id || !product.relatedIds.includes(
   throw new Error("Related services must be explicitly curated and exclude this product.");
 }
 ---
-<BaseLayout title={`${view.title} — Services`} description={view.seoSummary ?? view.summary} noindex
+<BaseLayout title={`${view.title} — Services`} description={view.seoSummary ?? view.summary} noindex={servicesNoindex(Astro.site)}
   breadcrumbs={[{ label: "Services", href: "/services/" }, { label: sphere.label, href: sphere.href }, { label: view.title }]}>
   <article class="service-detail" aria-labelledby="service-title" data-service-detail={product.id}>
     <header class="service-detail__header">
